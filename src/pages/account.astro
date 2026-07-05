@@ -1,0 +1,101 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const sessionCookie = Astro.cookies.get('midnight_session');
+let user = null;
+if (sessionCookie) {
+  try {
+    user = JSON.parse(sessionCookie.value);
+  } catch {
+    user = null;
+  }
+}
+
+if (!user) {
+  return Astro.redirect('/login');
+}
+
+const avatarUrl = user.avatar
+  ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128`
+  : null;
+---
+<Layout title="My Dashboard">
+  <section class="section profile-header">
+    {avatarUrl && <img src={avatarUrl} alt={user.username} class="profile-avatar" />}
+    <h2>Welcome, {user.username}</h2>
+  </section>
+
+  <section class="section">
+    <div class="card-grid">
+      <div class="card">
+        <h3>Level &amp; Currency</h3>
+        <p class="placeholder-note">Coming soon — this will show your Server and Network XP, level, and currency wallets once Midnight Ascend is live.</p>
+      </div>
+
+      <div class="card">
+        <h3>Relationships</h3>
+        <p class="placeholder-note">Coming soon — Owner/Handler, romantic partner, and family bonds will appear here once Midnight Bonds is live.</p>
+      </div>
+
+      <div class="card">
+        <h3>My Profiles</h3>
+        <p class="placeholder-note">Coming soon — quick links to your Kink, Gamer, Anime &amp; Manga, and Books profiles once Midnight Profiles is live.</p>
+      </div>
+
+      <div class="card">
+        <h3>Server Memberships</h3>
+        <p class="placeholder-note">Coming soon — a list of which Midnight Network servers you're a member of.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <a href="/staff-dashboard" class="staff-link">Staff? View the Staff Dashboard &rarr;</a>
+  </section>
+</Layout>
+<style>
+  .profile-header {
+    padding-bottom: 1rem;
+  }
+  .profile-avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    border: 2px solid #2A2145;
+    margin-bottom: 1rem;
+  }
+  h3 {
+    font-size: 1.15rem;
+    color: #C4B5FD;
+    margin: 0 0 0.5rem;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  .card {
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: left;
+  }
+  .placeholder-note {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #8A7FA8;
+    line-height: 1.5;
+  }
+  .staff-link {
+    color: #8A5CF6;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .staff-link:hover {
+    color: #C4B5FD;
+  }
+</style>
