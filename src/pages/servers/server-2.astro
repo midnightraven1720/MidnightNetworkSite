@@ -1,0 +1,79 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const rules = [
+  "Placeholder rule one.",
+  "Placeholder rule two.",
+  "Placeholder rule three.",
+];
+---
+<Layout title="Underground Gamer Lounge">
+  <section class="section">
+    <span class="badge">Partner Server</span>
+    <img src="/icons/underground-gamer-lounge.png" alt="Underground Gamer Lounge icon" class="server-icon" />
+    <h2>Underground Gamer Lounge</h2>
+    <p>Placeholder description of what this server is about.</p>
+    <a href="#" class="invite-button">Join Server</a>
+  </section>
+
+  <section class="section rules-section">
+    <h3>Server Rules</h3>
+    <ol class="rules-list">
+      {rules.map(rule => (
+        <li>{rule}</li>
+      ))}
+    </ol>
+  </section>
+</Layout>
+<style>
+  .badge {
+    display: inline-block;
+    background-color: #8A5CF6;
+    color: #F0EDF7;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    margin-bottom: 0.75rem;
+  }
+  .server-icon {
+    display: block;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0.5rem auto 1rem;
+    border: 1px solid #2A2145;
+  }
+  .invite-button {
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding: 0.75rem 2rem;
+    background-color: #8A5CF6;
+    color: #F0EDF7;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
+  .invite-button:hover {
+    background-color: #7440E0;
+  }
+  .rules-section h3 {
+    font-size: 1.5rem;
+    color: #C4B5FD;
+    margin-bottom: 1.5rem;
+  }
+  .rules-list {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: left;
+    color: #F0EDF7;
+    line-height: 1.8;
+  }
+  .rules-list li {
+    margin-bottom: 0.5rem;
+  }
+</style>

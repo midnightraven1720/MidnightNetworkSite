@@ -1,0 +1,183 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const stats = [
+  { label: "Servers", value: "7" },
+  { label: "Bots", value: "12" },
+  { label: "Members", value: "1,000+" },
+  { label: "Network", value: "1" },
+];
+
+const featuredServers = [
+  { name: "Server 1", slug: "server-1", description: "Placeholder description." },
+  { name: "Server 2", slug: "server-2", description: "Placeholder description." },
+  { name: "Server 3", slug: "server-3", description: "Placeholder description." },
+];
+---
+<Layout title="Home">
+  <section class="hero">
+    <div class="hero-overlay">
+      <p>A connected universe of communities, under one night sky.</p>
+    </div>
+  </section>
+
+  <section class="section intro">
+    <h2>What is Midnight Network?</h2>
+    <p>Placeholder description of the Midnight Network — a collection of connected communities, each with its own identity, all part of one shared universe.</p>
+  </section>
+
+  <section class="section stats">
+    <div class="stats-grid">
+      {stats.map(stat => (
+        <div class="stat">
+          <span class="stat-value">{stat.value}</span>
+          <span class="stat-label">{stat.label}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="section featured">
+    <h2>Featured Servers</h2>
+    <div class="card-grid">
+      {featuredServers.map(server => (
+        <a href={`/servers/${server.slug}`} class="card">
+          <h3>{server.name}</h3>
+          <p>{server.description}</p>
+        </a>
+      ))}
+    </div>
+    <a href="/servers" class="view-all">View All Servers &rarr;</a>
+  </section>
+
+  <section class="cta">
+    <h2>Ready to Join?</h2>
+    <p>Step into the Midnight Network and find your community.</p>
+    <a href="#" class="cta-button">Join Our Discord</a>
+  </section>
+</Layout>
+<style>
+  .hero {
+    background-image: url('/background/hero-banner.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 60vh;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    text-align: center;
+    padding-bottom: 4rem;
+  }
+  .hero-overlay p {
+    font-size: 1.2rem;
+    margin: 0;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  }
+
+  .intro p {
+    max-width: 600px;
+    margin: 1rem auto 0;
+    color: #B8AED0;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1.5rem;
+    max-width: 800px;
+    margin: 1rem auto 0;
+    padding: 0 1rem;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 12px;
+    padding: 1.5rem 1rem;
+  }
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #C4B5FD;
+  }
+  .stat-label {
+    margin-top: 0.25rem;
+    font-size: 0.85rem;
+    color: #8A7FA8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    max-width: 1000px;
+    margin: 2rem auto 0;
+    padding: 0 1rem;
+  }
+  .card {
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: #F0EDF7;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: #8A5CF6;
+  }
+  .card h3 {
+    color: #C4B5FD;
+    margin: 0 0 0.5rem;
+  }
+  .card p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #B8AED0;
+  }
+
+  .view-all {
+    display: inline-block;
+    margin-top: 2rem;
+    color: #8A5CF6;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .view-all:hover {
+    color: #C4B5FD;
+  }
+
+  .cta {
+    text-align: center;
+    padding: 4rem 2rem;
+    background-color: #150F26;
+    border-top: 1px solid #2A2145;
+  }
+  .cta h2 {
+    font-size: 2rem;
+    color: #C4B5FD;
+    margin: 0 0 0.5rem;
+  }
+  .cta p {
+    color: #B8AED0;
+    margin: 0 0 1.5rem;
+  }
+  .cta-button {
+    display: inline-block;
+    padding: 0.85rem 2.5rem;
+    background-color: #8A5CF6;
+    color: #F0EDF7;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
+  .cta-button:hover {
+    background-color: #7440E0;
+  }
+</style>

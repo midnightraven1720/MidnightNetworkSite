@@ -1,0 +1,172 @@
+---
+const { title } = Astro.props;
+const path = Astro.url.pathname;
+
+const isActive = (href) => {
+  if (href === '/') return path === '/';
+  return path.startsWith(href);
+};
+
+const sessionCookie = Astro.cookies.get('midnight_session');
+let user = null;
+if (sessionCookie) {
+  try {
+    user = JSON.parse(sessionCookie.value);
+  } catch {
+    user = null;
+  }
+}
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title} | Midnight Network</title>
+  </head>
+  <body>
+    <nav class="tabs">
+      <a href="/" class="site-title">Midnight Network</a>
+      <div class="tab-links">
+        <a href="/" class={`tab ${isActive('/') ? 'active' : ''}`}>Home</a>
+        <a href="/servers" class={`tab ${isActive('/servers') ? 'active' : ''}`}>Servers</a>
+        <a href="/bots" class={`tab ${isActive('/bots') ? 'active' : ''}`}>Bots</a>
+        <a href="/partnerships" class={`tab ${isActive('/partnerships') ? 'active' : ''}`}>Partnerships</a>
+        <a href="/about-us" class={`tab ${isActive('/about-us') ? 'active' : ''}`}>About Us</a>
+      </div>
+      <div class="auth-area">
+        {user ? (
+          <div class="user-badge">
+            {user.avatar && (
+              <img
+                src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=32`}
+                alt={user.username}
+                class="user-avatar"
+              />
+            )}
+            <span class="username">{user.username}</span>
+            <a href="/logout" class="logout-link">Log out</a>
+          </div>
+        ) : (
+          <a href="/login" class="login-button">Login with Discord</a>
+        )}
+      </div>
+    </nav>
+    <slot />
+    <footer>
+      <p>&copy; Midnight Network</p>
+    </footer>
+  </body>
+</html>
+<style is:global>
+  body {
+    margin: 0;
+    background-color: #0F0B1E;
+    color: #F0EDF7;
+    font-family: system-ui, sans-serif;
+  }
+  .tabs {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background-color: #150F26;
+    border-bottom: 1px solid #2A2145;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .site-title {
+    color: #F0EDF7;
+    text-decoration: none;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .site-title:hover {
+    color: #C4B5FD;
+  }
+  .tab-links {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .tab {
+    color: #F0EDF7;
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .tab:hover {
+    background-color: #8A5CF6;
+  }
+  .tab.active {
+    background-color: #8A5CF6;
+    color: #F0EDF7;
+    font-weight: 600;
+  }
+  .auth-area {
+    display: flex;
+    align-items: center;
+  }
+  .login-button {
+    display: inline-block;
+    padding: 0.5rem 1.25rem;
+    background-color: #5865F2;
+    color: #FFFFFF;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+  }
+  .login-button:hover {
+    background-color: #4752C4;
+  }
+  .user-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+  }
+  .username {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #C4B5FD;
+  }
+  .logout-link {
+    color: #8A7FA8;
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+  }
+  .logout-link:hover {
+    background-color: #2A2145;
+    color: #F0EDF7;
+  }
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: #8A7FA8;
+    font-size: 0.9rem;
+  }
+  .section {
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+  .section h2 {
+    font-size: 2rem;
+    color: #C4B5FD;
+  }
+</style>

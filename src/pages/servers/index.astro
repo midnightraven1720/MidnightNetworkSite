@@ -1,0 +1,81 @@
+---
+import Layout from '../../layouts/Layout.astro';
+const servers = [
+  { name: "Den of Desire", slug: "server-1", icon: "den-of-desire.jpg", description: "Placeholder description.", partner: true },
+  { name: "Underground Gamer Lounge", slug: "server-2", icon: "underground-gamer-lounge.png", description: "Placeholder description.", partner: true },
+  { name: "Chaos Midnight House", slug: "server-3", icon: "chaos-midnight-house.jpg", description: "Placeholder description.", partner: false },
+  { name: "Smutty Library Cafe", slug: "server-4", icon: "smutty-library-cafe.jpg", description: "Placeholder description.", partner: false },
+  { name: "Velvet Cosy Collars", slug: "server-5", icon: "velvet-cosy-collars.jpg", description: "Placeholder description.", partner: false },
+  { name: "Advertising Lounge", slug: "server-6", icon: "advertising-lounge.png", description: "Placeholder description.", partner: false },
+  { name: "Server 7", slug: "server-7", icon: "server-7.png", description: "Placeholder description.", partner: false },
+];
+---
+<Layout title="Servers">
+  <section class="section">
+    <h2>Our Servers</h2>
+    <div class="card-grid">
+      {servers.map(server => (
+        <a href={`/servers/${server.slug}`} class="card">
+          {server.partner && <span class="badge">Partner Server</span>}
+          <img src={`/icons/${server.icon}`} alt={`${server.name} icon`} class="server-icon" />
+          <h3>{server.name}</h3>
+          <p>{server.description}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+</Layout>
+<style>
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    max-width: 1000px;
+    margin: 2rem auto 0;
+    padding: 0 1rem;
+  }
+  .card {
+    position: relative;
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: #F0EDF7;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: #8A5CF6;
+  }
+  .server-icon {
+    display: block;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 0.75rem;
+    border: 1px solid #2A2145;
+  }
+  .card h3 {
+    color: #C4B5FD;
+    margin: 0 0 0.5rem;
+  }
+  .card p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #B8AED0;
+  }
+  .badge {
+    display: inline-block;
+    background-color: #8A5CF6;
+    color: #F0EDF7;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    margin-bottom: 0.75rem;
+  }
+</style>
