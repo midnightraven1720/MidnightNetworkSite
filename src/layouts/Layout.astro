@@ -69,37 +69,41 @@ if (sessionCookie) {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 2rem;
+    padding: 0.85rem 1.5rem;
     background-color: #150F26;
     border-bottom: 1px solid #2A2145;
     position: sticky;
     top: 0;
     z-index: 10;
-    flex-wrap: wrap;
     gap: 1rem;
+    flex-wrap: nowrap;
   }
   .site-title {
     color: #F0EDF7;
     text-decoration: none;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 700;
     letter-spacing: 0.02em;
     white-space: nowrap;
+    flex-shrink: 0;
   }
   .site-title:hover {
     color: #C4B5FD;
   }
   .tab-links {
     display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+    flex-shrink: 1;
+    min-width: 0;
   }
   .tab {
     color: #F0EDF7;
     text-decoration: none;
-    font-size: 1rem;
-    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    padding: 0.45rem 0.7rem;
     border-radius: 6px;
+    white-space: nowrap;
     transition: background-color 0.2s, color 0.2s;
   }
   .tab:hover {
@@ -113,16 +117,18 @@ if (sessionCookie) {
   .auth-area {
     display: flex;
     align-items: center;
+    flex-shrink: 0;
   }
   .login-button {
     display: inline-block;
-    padding: 0.5rem 1.25rem;
+    padding: 0.45rem 1rem;
     background-color: #5865F2;
     color: #FFFFFF;
     text-decoration: none;
     border-radius: 6px;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
     transition: background-color 0.2s;
   }
   .login-button:hover {
@@ -139,16 +145,18 @@ if (sessionCookie) {
     border-radius: 50%;
   }
   .username {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
     color: #C4B5FD;
+    white-space: nowrap;
   }
   .logout-link {
     color: #8A7FA8;
     text-decoration: none;
-    font-size: 0.85rem;
-    padding: 0.25rem 0.6rem;
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
     border-radius: 4px;
+    white-space: nowrap;
     transition: background-color 0.2s;
   }
   .logout-link:hover {
