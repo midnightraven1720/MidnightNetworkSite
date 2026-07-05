@@ -1,4 +1,6 @@
 ---
+console.log('CALLBACK HIT - code present:', !!Astro.url.searchParams.get('code'));
+
 const code = Astro.url.searchParams.get('code');
 
 if (!code) {
@@ -8,7 +10,6 @@ if (!code) {
 const siteUrl = import.meta.env.SITE_URL || Astro.url.origin;
 const redirectUri = `${siteUrl}/auth/callback`;
 
-// Exchange the code for an access token
 const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
   method: 'POST',
   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -22,23 +23,25 @@ const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
 });
 
 if (!tokenResponse.ok) {
+  const errorBody = await tokenResponse.text();
+  console.error('Token exchange failed:', tokenResponse.status, errorBody);
   return Astro.redirect('/login?error=token_exchange_failed');
 }
 
 const tokenData = await tokenResponse.json();
 
-// Fetch the logged-in user's Discord profile
 const userResponse = await fetch('https://discord.com/api/users/@me', {
   headers: { Authorization: `Bearer ${tokenData.access_token}` },
 });
 
 if (!userResponse.ok) {
+  const errorBody = await userResponse.text();
+  console.error('User fetch failed:', userResponse.status, errorBody);
   return Astro.redirect('/login?error=user_fetch_failed');
 }
 
 const discordUser = await userResponse.json();
 
-// Store minimal session info in a cookie
 Astro.cookies.set('midnight_session', JSON.stringify({
   id: discordUser.id,
   username: discordUser.username,
@@ -48,7 +51,7 @@ Astro.cookies.set('midnight_session', JSON.stringify({
   httpOnly: true,
   secure: import.meta.env.PROD,
   sameSite: 'lax',
-  maxAge: 60 * 60 * 24 * 7, // 7 days
+  maxAge: 60 * 60 * 24 * 7,
 });
 
 return Astro.redirect('/account');
