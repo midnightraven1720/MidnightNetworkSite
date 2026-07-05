@@ -1,6 +1,7 @@
 ---
 const clientId = import.meta.env.DISCORD_CLIENT_ID;
-const redirectUri = `${Astro.url.origin}/auth/callback`;
+const siteUrl = import.meta.env.SITE_URL || Astro.url.origin;
+const redirectUri = `${siteUrl}/auth/callback`;
 
 const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=identify`;
 

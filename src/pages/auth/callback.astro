@@ -5,7 +5,8 @@ if (!code) {
   return Astro.redirect('/login');
 }
 
-const redirectUri = `${Astro.url.origin}/auth/callback`;
+const siteUrl = import.meta.env.SITE_URL || Astro.url.origin;
+const redirectUri = `${siteUrl}/auth/callback`;
 
 // Exchange the code for an access token
 const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
