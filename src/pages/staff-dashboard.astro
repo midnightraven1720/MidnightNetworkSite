@@ -14,6 +14,27 @@ if (sessionCookie) {
 if (!user) {
   return Astro.redirect('/login');
 }
+
+const API_BASE = 'http://midnight-tickets.railway.internal:3001';
+const API_KEY = import.meta.env.DASHBOARD_API_KEY;
+
+async function fetchFromBot(path) {
+  try {
+    const res = await fetch(`${API_BASE}${path}`, {
+      headers: { 'x-api-key': API_KEY },
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+const ticketsData = await fetchFromBot('/api/tickets');
+const applicationsData = await fetchFromBot('/api/applications');
+const healthData = await fetchFromBot('/api/health');
+
+const botOnline = healthData !== null;
 ---
 <Layout title="Staff Dashboard">
   <section class="section">
@@ -24,18 +45,63 @@ if (!user) {
   <section class="section">
     <div class="card-grid">
       <div class="card">
-        <h3>Tickets &amp; Applications</h3>
-        <p class="placeholder-note">Coming soon — open tickets and pending staff applications, pulled from Midnight Tickets.</p>
+        <h3>Tickets</h3>
+        {ticketsData ? (
+          <>
+            <p class="stat-number">{ticketsData.count}</p>
+            <p class="stat-label">open right now</p>
+            {ticketsData.tickets.length > 0 && (
+              <ul class="mini-list">
+                {ticketsData.tickets.slice(0, 5).map((t) => (
+                  <li>{t.username} — {t.typeKey}</li>
+                ))}
+              </ul>
+            )}
+          </>
+        ) : (
+          <p class="placeholder-note">Couldn't reach the bot right now.</p>
+        )}
       </div>
 
       <div class="card">
-        <h3>Suggestions Queue</h3>
-        <p class="placeholder-note">Coming soon — suggestions awaiting a staff decision, from the Midnight Network bot.</p>
+        <h3>Staff Applications</h3>
+        {applicationsData ? (
+          <>
+            <p class="stat-number">{applicationsData.count}</p>
+            <p class="stat-label">awaiting review</p>
+            {applicationsData.applications.length > 0 && (
+              <ul class="mini-list">
+                {applicationsData.applications.slice(0, 5).map((a) => (
+                  <li>{a.username}</li>
+                ))}
+              </ul>
+            )}
+          </>
+        ) : (
+          <p class="placeholder-note">Couldn't reach the bot right now.</p>
+        )}
       </div>
 
       <div class="card">
         <h3>Bot Health</h3>
-        <p class="placeholder-note">Coming soon — online/offline status for all 12 network bots.</p>
+        <p class={`status-line ${botOnline ? 'status-online' : 'status-offline'}`}>
+          {botOnline ? '● Online' : '● Offline / Unreachable'}
+        </p>
+        {healthData && (
+          <>
+            <p class="stat-label">Uptime: {Math.floor(healthData.uptimeSeconds / 60)} minutes</p>
+            {healthData.recentErrors.length > 0 && (
+              <ul class="mini-list error-list">
+                {healthData.recentErrors.slice(0, 5).map((e) => (
+                  <li>{e.message}</li>
+                ))}
+              </ul>
+            )}
+            {healthData.recentErrors.length === 0 && (
+              <p class="placeholder-note">No recent errors logged.</p>
+            )}
+          </>
+        )}
       </div>
 
       <div class="card">
@@ -75,6 +141,37 @@ if (!user) {
     border-radius: 12px;
     padding: 1.5rem;
     text-align: left;
+  }
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #F0EDF7;
+    margin: 0;
+  }
+  .stat-label {
+    margin: 0 0 0.75rem;
+    font-size: 0.85rem;
+    color: #8A7FA8;
+  }
+  .status-line {
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+  }
+  .status-online {
+    color: #22C55E;
+  }
+  .status-offline {
+    color: #EF4444;
+  }
+  .mini-list {
+    margin: 0.5rem 0 0;
+    padding-left: 1.25rem;
+    color: #F0EDF7;
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+  .error-list li {
+    color: #F0A5A5;
   }
   .placeholder-note {
     margin: 0;

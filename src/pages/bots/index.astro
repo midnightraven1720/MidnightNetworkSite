@@ -1,0 +1,90 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const bots = [
+  { name: "Midnight Tickets", slug: "midnight-tickets", description: "Ticket system, age verification, and staff applications across the network.", status: "Live" },
+  { name: "Midnight Network", slug: "midnight-network", description: "Alerts, events, partnerships, and community suggestions across the network.", status: "Planned" },
+  { name: "Midnight Council", slug: "midnight-council", description: "Staff operations — directory, moderation, blacklist, member stats, staff wellness.", status: "Planned" },
+  { name: "Midnight Ascend", slug: "midnight-ascend", description: "Leveling and economy — server-level and network-level, no role rewards.", status: "Planned" },
+  { name: "Midnight Roles", slug: "midnight-roles", description: "Self-role menus, auto-role, and join welcome messages.", status: "Planned" },
+  { name: "Midnight Bonds", slug: "midnight-bonds", description: "Owner/Handler relationships, romantic relationships, family bonds, and consent system.", status: "Planned" },
+  { name: "Midnight Collar", slug: "midnight-collar", description: "Interactive gag/bind/leash dynamics for NSFW/verified servers.", status: "Planned" },
+  { name: "Midnight Profiles", slug: "midnight-profiles", description: "Public profile posts across 9 types, each with tags and engagement fields.", status: "Planned" },
+  { name: "Midnight Watch", slug: "midnight-watch", description: "Cross-server activity logging, Dyno-style.", status: "Planned" },
+  { name: "Midnight Blueprint", slug: "midnight-blueprint", description: "Server structure management — snapshots, templates, and quick-build tools.", status: "Planned" },
+  { name: "Midnight Bot (Roleplay)", slug: "midnight-bot-roleplay", description: "Character management and scene tracking for roleplay projects.", status: "Planned" },
+  { name: "Midnight Advertising", slug: "midnight-advertising", description: "Ad quality control, spam/scam protection, and cleanup for the Advertising Lounge.", status: "Planned" },
+];
+---
+<Layout title="Bots">
+  <section class="section">
+    <h2>In-House Bots</h2>
+    <p class="intro">Custom Discord bots built exclusively for the Midnight Network — not available anywhere else.</p>
+    <div class="card-grid">
+      {bots.map(bot => (
+        <a href={`/bots/${bot.slug}`} class="card">
+          <span class={`badge ${bot.status === "Live" ? "badge-live" : "badge-planned"}`}>{bot.status}</span>
+          <h3>{bot.name}</h3>
+          <p>{bot.description}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+</Layout>
+<style>
+  .intro {
+    max-width: 600px;
+    margin: 1rem auto 0;
+    color: #B8AED0;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    max-width: 1100px;
+    margin: 2rem auto 0;
+    padding: 0 1rem;
+  }
+  .card {
+    position: relative;
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: #F0EDF7;
+    transition: transform 0.2s, border-color 0.2s;
+    text-align: left;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: #8A5CF6;
+  }
+  .card h3 {
+    color: #C4B5FD;
+    margin: 0.5rem 0 0.5rem;
+    font-size: 1.1rem;
+  }
+  .card p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #B8AED0;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+  }
+  .badge-live {
+    background-color: #22C55E;
+    color: #08130C;
+  }
+  .badge-planned {
+    background-color: #2A2145;
+    color: #B8AED0;
+  }
+</style>

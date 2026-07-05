@@ -1,0 +1,74 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const commands = [
+  "/rolemenu create, add-role, remove-role, post, edit — self-role menus",
+  "/rolemenu import — semi-automatic import of existing reaction-role menus",
+  "/setup-autorole — auto-role on join",
+  "/setup-join-welcome-channel, message, banner — join welcome system",
+];
+---
+<Layout title="Midnight Roles">
+  <section class="section">
+    <span class="badge badge-planned">Planned</span>
+    <h2>Midnight Roles</h2>
+    <p class="intro">Self-role menus, auto-role, and join welcome messages.</p>
+  </section>
+
+  <section class="section">
+    <h3>Commands</h3>
+    <ul class="info-list">
+      {commands.map(cmd => <li>{cmd}</li>)}
+    </ul>
+  </section>
+
+  <section class="section">
+    <a href="/bots" class="back-link">&larr; Back to Bots</a>
+  </section>
+</Layout>
+<style>
+  .intro {
+    max-width: 600px;
+    margin: 1rem auto 0;
+    color: #B8AED0;
+  }
+  h3 {
+    font-size: 1.4rem;
+    color: #C4B5FD;
+    margin-bottom: 1rem;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    margin-bottom: 0.75rem;
+  }
+  .badge-live {
+    background-color: #22C55E;
+    color: #08130C;
+  }
+  .badge-planned {
+    background-color: #2A2145;
+    color: #B8AED0;
+  }
+  .info-list {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: left;
+    color: #F0EDF7;
+    line-height: 1.8;
+    padding-left: 1.5rem;
+  }
+  .back-link {
+    color: #8A5CF6;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .back-link:hover {
+    color: #C4B5FD;
+  }
+</style>

@@ -1,0 +1,77 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const commands = [
+  "/blueprint create, list, delete, load — structure backup/restore",
+  "/blueprint create-role, create-channel, create-category, create-multi — quick creation",
+  "/blueprint content save, post — reusable content templates",
+  "/blueprint permission save, apply — permission presets",
+  "/blueprint emoji-pack save, apply — emoji/sticker packs",
+  "/blueprint bot-checklist — step-by-step setup reminder",
+  "/blueprint webhook save, apply — webhook presets",
+];
+---
+<Layout title="Midnight Blueprint">
+  <section class="section">
+    <span class="badge badge-planned">Planned</span>
+    <h2>Midnight Blueprint</h2>
+    <p class="intro">Server structure management — snapshots, templates, and quick-build tools, Xenon-style, in-house only.</p>
+  </section>
+
+  <section class="section">
+    <h3>Commands</h3>
+    <ul class="info-list">
+      {commands.map(cmd => <li>{cmd}</li>)}
+    </ul>
+  </section>
+
+  <section class="section">
+    <a href="/bots" class="back-link">&larr; Back to Bots</a>
+  </section>
+</Layout>
+<style>
+  .intro {
+    max-width: 600px;
+    margin: 1rem auto 0;
+    color: #B8AED0;
+  }
+  h3 {
+    font-size: 1.4rem;
+    color: #C4B5FD;
+    margin-bottom: 1rem;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    margin-bottom: 0.75rem;
+  }
+  .badge-live {
+    background-color: #22C55E;
+    color: #08130C;
+  }
+  .badge-planned {
+    background-color: #2A2145;
+    color: #B8AED0;
+  }
+  .info-list {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: left;
+    color: #F0EDF7;
+    line-height: 1.8;
+    padding-left: 1.5rem;
+  }
+  .back-link {
+    color: #8A5CF6;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .back-link:hover {
+    color: #C4B5FD;
+  }
+</style>

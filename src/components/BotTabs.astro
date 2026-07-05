@@ -1,0 +1,129 @@
+---
+const { summary, details, commands } = Astro.props;
+---
+<div class="bot-tabs">
+  <input type="radio" name="bottab" id="tab-overview" class="tab-radio" checked />
+  <input type="radio" name="bottab" id="tab-details" class="tab-radio" />
+  <input type="radio" name="bottab" id="tab-commands" class="tab-radio" />
+
+  <div class="tab-buttons">
+    <label for="tab-overview" class="tab-btn">Overview</label>
+    <label for="tab-details" class="tab-btn">Details</label>
+    <label for="tab-commands" class="tab-btn">Commands</label>
+  </div>
+
+  <div class="tab-panel panel-overview">
+    <p class="summary-text">{summary}</p>
+  </div>
+
+  <div class="tab-panel panel-details">
+    {details.map((section) => (
+      <div class="detail-section">
+        <h3>{section.title}</h3>
+        <p class="detail-text">{section.description}</p>
+      </div>
+    ))}
+  </div>
+
+  <div class="tab-panel panel-commands">
+    {commands.map((cmd) => (
+      <div class="command-entry">
+        <code class="command-name">{cmd.command}</code>
+        <p class="command-desc">{cmd.description}</p>
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .bot-tabs {
+    max-width: 700px;
+    margin: 2rem auto 0;
+    padding: 0 1rem;
+    text-align: left;
+  }
+  .tab-radio {
+    display: none;
+  }
+  .tab-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    cursor: pointer;
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    color: #B8AED0;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .tab-btn:hover {
+    color: #F0EDF7;
+  }
+  .tab-panel {
+    display: none;
+  }
+  #tab-overview:checked ~ .panel-overview {
+    display: block;
+    text-align: center;
+  }
+  #tab-details:checked ~ .panel-details {
+    display: block;
+  }
+  #tab-commands:checked ~ .panel-commands {
+    display: block;
+  }
+  #tab-overview:checked ~ .tab-buttons label[for="tab-overview"],
+  #tab-details:checked ~ .tab-buttons label[for="tab-details"],
+  #tab-commands:checked ~ .tab-buttons label[for="tab-commands"] {
+    background-color: #8A5CF6;
+    color: #F0EDF7;
+  }
+  .summary-text {
+    color: #B8AED0;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  .detail-section {
+    margin-bottom: 2rem;
+  }
+  .detail-section h3 {
+    font-size: 1.15rem;
+    color: #C4B5FD;
+    margin: 0 0 0.5rem;
+  }
+  .detail-text {
+    color: #F0EDF7;
+    line-height: 1.7;
+    margin: 0;
+  }
+  .command-entry {
+    margin-bottom: 1.25rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid #2A2145;
+  }
+  .command-entry:last-child {
+    border-bottom: none;
+  }
+  .command-name {
+    display: inline-block;
+    background-color: #1A1430;
+    color: #C4B5FD;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+  }
+  .command-desc {
+    margin: 0;
+    color: #B8AED0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+</style>
