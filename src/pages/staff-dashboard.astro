@@ -58,95 +58,141 @@ const filteredApplications = selectedGuildId === 'all'
     <p class="intro-note">Note: this isn't restricted to staff yet — that check gets added once we connect it to your bots.</p>
   </section>
 
-  <div class="dashboard-layout">
-    <aside class="server-nav">
-      {useDropdown ? (
-        <form method="get" class="server-dropdown-form">
-          <select name="server" class="server-dropdown" onchange="this.form.submit()">
-            <option value="all" selected={selectedGuildId === 'all'}>All Servers</option>
-            {servers.map((s) => (
-              <option value={s.id} selected={selectedGuildId === s.id}>{s.name}</option>
-            ))}
-          </select>
-        </form>
-      ) : (
-        <ul class="server-list">
-          <li>
-            <a href="/staff-dashboard?server=all" class={selectedGuildId === 'all' ? 'active' : ''}>All Servers</a>
-          </li>
-          {servers.map((s) => (
-            <li>
-              <a href={`/staff-dashboard?server=${s.id}`} class={selectedGuildId === s.id ? 'active' : ''}>{s.name}</a>
-            </li>
-          ))}
-        </ul>
-      )}
-    </aside>
+  <div class="top-tabs">
+    <input type="radio" name="topTab" id="top-servers" class="tab-radio" checked />
+    <input type="radio" name="topTab" id="top-bots" class="tab-radio" />
 
-    <div class="dashboard-content">
-      <div class="card-grid">
-        <div class="card">
-          <h3>Tickets</h3>
-          {ticketsData ? (
-            <>
-              <p class="stat-number">{filteredTickets.length}</p>
-              <p class="stat-label">open right now</p>
-              {filteredTickets.length > 0 && (
-                <ul class="mini-list">
-                  {filteredTickets.slice(0, 8).map((t) => (
-                    <li>{t.username} — {t.typeKey} {selectedGuildId === 'all' && `(${t.guildName})`}</li>
-                  ))}
-                </ul>
-              )}
-            </>
+    <div class="top-tab-buttons">
+      <label for="top-servers" class="top-tab-btn">Servers</label>
+      <label for="top-bots" class="top-tab-btn">Bots</label>
+    </div>
+
+    <div class="top-panel panel-servers">
+      <div class="dashboard-layout">
+        <aside class="server-nav">
+          {useDropdown ? (
+            <form method="get" class="server-dropdown-form">
+              <select name="server" class="server-dropdown" onchange="this.form.submit()">
+                <option value="all" selected={selectedGuildId === 'all'}>All Servers</option>
+                {servers.map((s) => (
+                  <option value={s.id} selected={selectedGuildId === s.id}>{s.name}</option>
+                ))}
+              </select>
+            </form>
           ) : (
-            <p class="placeholder-note">Couldn't reach the bot right now.</p>
+            <ul class="server-list">
+              <li>
+                <a href="/staff-dashboard?server=all" class={selectedGuildId === 'all' ? 'active' : ''}>All Servers</a>
+              </li>
+              {servers.map((s) => (
+                <li>
+                  <a href={`/staff-dashboard?server=${s.id}`} class={selectedGuildId === s.id ? 'active' : ''}>{s.name}</a>
+                </li>
+              ))}
+            </ul>
           )}
-        </div>
+        </aside>
 
-        <div class="card">
-          <h3>Staff Applications</h3>
-          {applicationsData ? (
-            <>
-              <p class="stat-number">{filteredApplications.length}</p>
-              <p class="stat-label">awaiting review</p>
-              {filteredApplications.length > 0 && (
-                <ul class="mini-list">
-                  {filteredApplications.slice(0, 8).map((a) => (
-                    <li>{a.username} {selectedGuildId === 'all' && `(${a.guildName})`}</li>
-                  ))}
-                </ul>
+        <div class="dashboard-content">
+          <div class="cat-tabs">
+            <input type="radio" name="catTab" id="cat-tickets" class="tab-radio" checked />
+            <input type="radio" name="catTab" id="cat-applications" class="tab-radio" />
+            <input type="radio" name="catTab" id="cat-moderation" class="tab-radio" />
+
+            <div class="cat-tab-buttons">
+              <label for="cat-tickets" class="cat-tab-btn">
+                <span class="cat-name">Tickets</span>
+                <span class="cat-count">{ticketsData ? filteredTickets.length : '—'}</span>
+              </label>
+              <label for="cat-applications" class="cat-tab-btn">
+                <span class="cat-name">Applications</span>
+                <span class="cat-count">{applicationsData ? filteredApplications.length : '—'}</span>
+              </label>
+              <label for="cat-moderation" class="cat-tab-btn">
+                <span class="cat-name">Moderation &amp; Blacklist</span>
+                <span class="cat-count">—</span>
+              </label>
+            </div>
+
+            <div class="cat-panel panel-tickets">
+              {ticketsData ? (
+                filteredTickets.length > 0 ? (
+                  <ul class="detail-list">
+                    {filteredTickets.map((t) => (
+                      <li>
+                        <span class="detail-primary">{t.username}</span>
+                        <span class="detail-secondary">{t.typeKey} {selectedGuildId === 'all' && `· ${t.guildName}`} · opened {new Date(t.openedAt).toLocaleDateString()}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p class="placeholder-note">No open tickets right now.</p>
+                )
+              ) : (
+                <p class="placeholder-note">Couldn't reach the bot right now.</p>
               )}
-            </>
-          ) : (
-            <p class="placeholder-note">Couldn't reach the bot right now.</p>
-          )}
-        </div>
+            </div>
 
-        <div class="card">
-          <h3>Bot Health</h3>
-          <p class={`status-line ${botOnline ? 'status-online' : 'status-offline'}`}>
-            {botOnline ? '● Online' : '● Offline / Unreachable'}
-          </p>
-          {healthData && (
+            <div class="cat-panel panel-applications">
+              {applicationsData ? (
+                filteredApplications.length > 0 ? (
+                  <ul class="detail-list">
+                    {filteredApplications.map((a) => (
+                      <li>
+                        <span class="detail-primary">{a.username}</span>
+                        <span class="detail-secondary">{selectedGuildId === 'all' && `${a.guildName} · `}status: {a.status}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p class="placeholder-note">No applications awaiting review.</p>
+                )
+              ) : (
+                <p class="placeholder-note">Couldn't reach the bot right now.</p>
+              )}
+            </div>
+
+            <div class="cat-panel panel-moderation">
+              <p class="placeholder-note">Coming soon — recent warnings, notes, and blacklist entries from Midnight Council.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="top-panel panel-bots">
+      <div class="bot-status-list">
+        <div class="bot-status-card">
+          <div class="bot-status-header">
+            <h3>Midnight Tickets</h3>
+            <span class={`status-line ${botOnline ? 'status-online' : 'status-offline'}`}>
+              {botOnline ? '● Online' : '● Offline / Unreachable'}
+            </span>
+          </div>
+          {healthData ? (
             <>
               <p class="stat-label">Uptime: {Math.floor(healthData.uptimeSeconds / 60)} minutes</p>
               {healthData.recentErrors.length > 0 ? (
                 <ul class="mini-list error-list">
-                  {healthData.recentErrors.slice(0, 5).map((e) => (
-                    <li>{e.message}</li>
+                  {healthData.recentErrors.slice(0, 8).map((e) => (
+                    <li>{e.message} <span class="error-time">({new Date(e.timestamp).toLocaleString()})</span></li>
                   ))}
                 </ul>
               ) : (
                 <p class="placeholder-note">No recent errors logged.</p>
               )}
             </>
+          ) : (
+            <p class="placeholder-note">Couldn't reach this bot right now.</p>
           )}
         </div>
 
-        <div class="card">
-          <h3>Moderation &amp; Blacklist</h3>
-          <p class="placeholder-note">Coming soon — recent warnings, notes, and blacklist entries from Midnight Council.</p>
+        <div class="bot-status-card">
+          <div class="bot-status-header">
+            <h3>Other Bots</h3>
+            <span class="status-line status-planned">— Not built yet</span>
+          </div>
+          <p class="placeholder-note">Health monitoring for the rest of the network's bots will appear here once they're built and connected.</p>
         </div>
       </div>
     </div>
@@ -163,11 +209,55 @@ const filteredApplications = selectedGuildId === 'all'
     color: #8A7FA8;
     font-size: 0.9rem;
   }
+
+  .tab-radio {
+    display: none;
+  }
+
+  /* Top-level tabs: Servers / Bots */
+  .top-tab-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 1.5rem auto;
+    max-width: 1200px;
+    padding: 0 1.5rem;
+  }
+  .top-tab-btn {
+    cursor: pointer;
+    padding: 0.6rem 1.5rem;
+    border-radius: 8px;
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    color: #B8AED0;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .top-tab-btn:hover {
+    color: #F0EDF7;
+  }
+  .top-panel {
+    display: none;
+  }
+  #top-servers:checked ~ .panel-servers {
+    display: block;
+  }
+  #top-bots:checked ~ .panel-bots {
+    display: block;
+  }
+  #top-servers:checked ~ .top-tab-buttons label[for="top-servers"],
+  #top-bots:checked ~ .top-tab-buttons label[for="top-bots"] {
+    background-color: #8A5CF6;
+    color: #F0EDF7;
+  }
+
+  /* Servers layout */
   .dashboard-layout {
     display: flex;
     gap: 2rem;
     max-width: 1200px;
-    margin: 2rem auto 0;
+    margin: 0 auto;
     padding: 0 1.5rem;
     align-items: flex-start;
   }
@@ -217,43 +307,132 @@ const filteredApplications = selectedGuildId === 'all'
     flex: 1;
     min-width: 0;
   }
-  h3 {
-    font-size: 1.15rem;
-    color: #C4B5FD;
-    margin: 0 0 0.5rem;
+
+  /* Category tabs: Tickets / Applications / Moderation */
+  .cat-tab-buttons {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
   }
-  .card-grid {
+  .cat-tab-btn {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.85rem 1.25rem;
+    border-radius: 10px;
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    min-width: 140px;
+    transition: border-color 0.2s;
+  }
+  .cat-tab-btn:hover {
+    border-color: #8A5CF6;
+  }
+  .cat-name {
+    font-size: 0.8rem;
+    color: #B8AED0;
+    font-weight: 600;
+  }
+  .cat-count {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #F0EDF7;
+  }
+  .cat-panel {
+    display: none;
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  #cat-tickets:checked ~ .cat-tab-buttons label[for="cat-tickets"],
+  #cat-applications:checked ~ .cat-tab-buttons label[for="cat-applications"],
+  #cat-moderation:checked ~ .cat-tab-buttons label[for="cat-moderation"] {
+    border-color: #8A5CF6;
+    background-color: #241B3D;
+  }
+  #cat-tickets:checked ~ .panel-tickets {
+    display: block;
+  }
+  #cat-applications:checked ~ .panel-applications {
+    display: block;
+  }
+  #cat-moderation:checked ~ .panel-moderation {
+    display: block;
+  }
+
+  .detail-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .detail-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #2A2145;
+  }
+  .detail-list li:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .detail-primary {
+    color: #F0EDF7;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .detail-secondary {
+    color: #8A7FA8;
+    font-size: 0.8rem;
+  }
+
+  /* Bots tab */
+  .bot-status-list {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 1.5rem;
   }
-  .card {
+  .bot-status-card {
     background-color: #1A1430;
     border: 1px solid #2A2145;
     border-radius: 12px;
     padding: 1.5rem;
     text-align: left;
   }
-  .stat-number {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #F0EDF7;
-    margin: 0;
+  .bot-status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
-  .stat-label {
-    margin: 0 0 0.75rem;
-    font-size: 0.85rem;
-    color: #8A7FA8;
+  .bot-status-header h3 {
+    font-size: 1.1rem;
+    color: #C4B5FD;
+    margin: 0;
   }
   .status-line {
     font-weight: 600;
-    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
   }
   .status-online {
     color: #22C55E;
   }
   .status-offline {
     color: #EF4444;
+  }
+  .status-planned {
+    color: #8A7FA8;
   }
   .mini-list {
     margin: 0.5rem 0 0;
@@ -265,13 +444,24 @@ const filteredApplications = selectedGuildId === 'all'
   .error-list li {
     color: #F0A5A5;
   }
+  .error-time {
+    color: #8A7FA8;
+    font-size: 0.75rem;
+  }
+  .stat-label {
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+    color: #8A7FA8;
+  }
   .placeholder-note {
     margin: 0;
     font-size: 0.9rem;
     color: #8A7FA8;
     line-height: 1.5;
   }
+
   .staff-link {
+    display: block;
     color: #8A5CF6;
     font-weight: 600;
     text-decoration: none;
@@ -279,6 +469,7 @@ const filteredApplications = selectedGuildId === 'all'
   .staff-link:hover {
     color: #C4B5FD;
   }
+
   @media (max-width: 640px) {
     .dashboard-layout {
       flex-direction: column;
