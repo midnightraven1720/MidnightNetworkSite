@@ -1,42 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-const departments = [
-  {
-    name: "Leadership",
-    members: [
-      { name: "Staff Member", role: "Owner", bio: "Placeholder bio." },
-      { name: "Staff Member", role: "Co-Owner", bio: "Placeholder bio." },
-    ]
-  },
-  {
-    name: "Moderation",
-    members: [
-      { name: "Staff Member", role: "Admin", bio: "Placeholder bio." },
-      { name: "Staff Member", role: "Mod", bio: "Placeholder bio." },
-      { name: "Staff Member", role: "Helper", bio: "Placeholder bio." },
-    ]
-  },
-  {
-    name: "Partnerships",
-    members: [
-      { name: "Staff Member", role: "Partnership Manager", bio: "Placeholder bio." },
-    ]
-  },
-  {
-    name: "Events",
-    members: [
-      { name: "Staff Member", role: "Event Manager", bio: "Placeholder bio." },
-    ]
-  },
-  {
-    name: "Health Department",
-    members: [
-      { name: "Staff Member", role: "Health Department", bio: "Placeholder bio." },
-    ]
-  },
-];
-
 const serverRules = [
   { name: "Den of Desire", slug: "server-1", summary: "Placeholder rule summary." },
   { name: "Underground Gamer Lounge", slug: "server-2", summary: "Placeholder rule summary." },
@@ -46,6 +10,105 @@ const serverRules = [
   { name: "Advertising Lounge", slug: "server-6", summary: "Placeholder rule summary." },
   { name: "Server 7", slug: "server-7", summary: "Placeholder rule summary." },
 ];
+
+const departments = [
+  {
+    name: "Leadership",
+    blurb: "Leadership sets the overall direction for Midnight Network — from server structure and staff oversight to partnership decisions and community growth. This department is led by the Owner and Co-Owner, who together hold final authority over the network.",
+    roles: [
+      {
+        id: "owner",
+        title: "Owner",
+        short: "The Owner holds final authority over Midnight Network as a whole. This is the role responsible for the biggest decisions affecting the community — server structure, staff appointments, partnership approvals, and the overall direction the network grows in. Day to day, this looks like overseeing the wider staff team, working closely with the Co-Owner to keep operations running smoothly across every server in the network, and staying actively involved in server security and overall integrity. Every decision made at this level is meant to reflect the community's best interests. Because of the scope of this role, availability can vary and replies aren't always instant — for most day-to-day matters, the ticket system is the right way to reach out, with direct messages reserved for genuine emergencies.",
+        detailed: "The Owner holds final authority over Midnight Network as a whole. This is the role responsible for the biggest decisions affecting the community — server structure, staff appointments, partnership approvals, and the overall direction the network grows in. Nothing at a network-wide level happens without the Owner's awareness and approval. Day to day, this looks like overseeing the wider staff team, conducting performance reviews, and working closely with the Co-Owner to keep operations running smoothly across every server in the network. The Owner stays actively involved in partnerships, community growth, and server security rather than stepping back from the details. This role touches every part of the network — moderation, partnerships, events, and community culture — even when the day-to-day work is being carried out by other staff. Every decision made at this level is meant to reflect the community's best interests. Not every call will please everyone — running a growing network means making decisions that require balancing many different needs — but each one is made with genuine care for the people who make up the community. Because of the scope of this role, availability can vary and replies aren't always instant. For most day-to-day matters, the ticket system is the right way to reach out, with direct messages reserved for genuine emergencies. This isn't about creating distance — it's about making sure the role remains sustainable given the volume of responsibility it carries. Above all, the Owner role represents continuity and accountability — making sure that as Midnight Network continues to grow, it stays true to the values and culture the community was built on."
+      },
+      {
+        id: "co-owner",
+        title: "Co-Owner",
+        short: "The Co-Owner works alongside the Owner as a genuine equal partner in running Midnight Network, holding full authority in the Owner's absence. Decisions made at this level carry the same weight as those made by the Owner. Day to day, this includes overseeing the performance of the wider staff team, managing daily server operations, and handling escalated situations that other staff aren't able to resolve on their own. The Co-Owner also plays an active role in partnership management, working alongside the Owner to assess potential partner communities and support the wider staff team.",
+        detailed: "The Co-Owner works alongside the Owner as a genuine equal partner in running Midnight Network, holding full authority in the Owner's absence. This isn't a subordinate role — decisions made at this level carry the same weight as those made by the Owner, and the community is expected to treat them as final unless the Owner specifically overrules them. Day to day, this includes overseeing the performance of the wider staff team, managing daily server operations, and handling escalated situations that other staff aren't able to resolve on their own. A significant part of this role involves supporting and guiding the wider staff team — helping newer staff find their footing, stepping in when a more experienced hand is needed, and making sure the standards set for the community are being upheld consistently across every part of the network. The Co-Owner also plays an active role in partnership management, working alongside the Owner to assess potential partner communities and monitor the broader health of existing partnerships. As with the Owner role, the community is asked to use the correct channels for day-to-day questions, and to save direct messages for genuinely urgent matters. Ultimately, the Co-Owner role reflects a genuine, equal partnership in building and maintaining Midnight Network."
+      },
+    ]
+  },
+  {
+    name: "Moderation",
+    blurb: "Moderation keeps Midnight Network safe and welcoming day-to-day — handling reports, enforcing rules fairly, and being an approachable presence for the community. This department includes Admins, Moderators, and a range of specialist Helper roles covering text, voice, and image content.",
+    roles: [
+      {
+        id: "admin",
+        title: "Admin",
+        short: "Admins sit between Moderators and Leadership, carrying more authority than a Mod while still reporting up to the Co-Owner and Owner. This role exists to handle situations that require a firmer hand than day-to-day moderation, and to support the wider Mod and Helper teams. Day to day, Admins handle escalated reports, oversee the performance of Mods and Helpers, and step in on more serious rule violations when needed.",
+        detailed: "Admins sit between Moderators and Leadership, carrying more authority than a Mod while still reporting up to the Co-Owner and Owner. This role exists to handle situations that require a firmer hand than day-to-day moderation, and to provide oversight and support to the wider Mod and Helper teams. Day to day, Admins handle escalated reports that Moderators aren't authorized to resolve alone, oversee the performance and conduct of Mods and Helpers, and step in on more serious rule violations. Admins are also often involved in supporting newer staff as they settle into their roles. A key part of this role is consistency at a higher level — Admins are expected to model the standard the rest of the moderation team should be working toward, and to provide guidance when Mods or Helpers are unsure how to handle a situation. Admins also play a role in the staff pipeline, helping assess whether newer staff are ready to progress, and flagging any concerns about staff conduct to the Co-Owner or Owner. Ultimately, the Admin role is about reliability — being someone both the community and the wider staff team can depend on when a situation needs more than standard moderation to resolve properly."
+      },
+      {
+        id: "moderator",
+        title: "Moderator",
+        short: "Moderators are the people who keep Midnight Network running smoothly on a day-to-day basis. They handle member reports, enforce rules consistently and fairly, and are often the first point of contact when something goes wrong. Members interact with Moderators more than almost any other part of the staff team, which means their conduct genuinely shapes how the community experiences the server. Fairness and consistency are at the core of the role.",
+        detailed: "Moderators are the people who keep Midnight Network running smoothly on a day-to-day basis. If Leadership sets the direction for the community, Moderation is what makes sure that direction actually holds up in practice — rule by rule, interaction by interaction, every single day. The core of the Mod role is consistency. Members interact with Moderators more than almost any other part of the staff team, whether that's through a report being handled, a rule being enforced, or simply having someone active and present in the channels they spend time in. Day to day, Moderators handle member reports through the ticket system, keep an eye on channels for anything that needs addressing, and take action when server rules aren't being followed. Fairness is at the center of all of it; rules are enforced the same way for everyone, regardless of who's involved. Beyond enforcement, Moderators are also there to support members directly — answering questions, offering guidance, and generally being an approachable presence in the community. Moderators work closely with the wider staff team, including Helpers who support them across different areas of the server, and report up to Admin and ownership on anything that needs a higher level of authority to resolve. The role does come with real responsibility. Members trust that when they raise a concern, it will be handled seriously and fairly, and that trust is something every Moderator is expected to protect."
+      },
+      {
+        id: "general-helper",
+        title: "General Helper",
+        short: "General Helpers are volunteer community supporters — not moderators, but a genuinely valuable part of keeping Midnight Network welcoming. They're often the first point of contact new members have with the staff team. Unlike Text, Voice, and Image Helpers, General Helpers support across all areas of the server rather than specializing in one place, with coverage available around the clock — welcoming new members, answering questions, and flagging concerns to Mods when needed.",
+        detailed: "General Helpers are volunteer community supporters — not moderators, but a genuinely valuable part of keeping Midnight Network welcoming and well cared for. They're often the first point of contact new members have with the staff team, which makes the role far more important than its lack of moderation authority might suggest. Unlike Text, Voice, and Image Helpers, who each focus on a specific area of the server, General Helpers support across all channels and areas. Because General Helpers are able to be active around the clock, this all-rounder coverage helps make sure the server always has someone present, regardless of time zone or time of day. Day to day, General Helpers welcome new members and help them find their footing, answer general questions about channels, roles, and server features, and flag anything concerning to Mods or Admins promptly. They also provide light moderation support, though the bulk of their role is about presence and support rather than enforcement. What sets General Helpers apart from Moderators is exactly that distinction: their role is community support — making the server feel warm and approachable, and flagging issues for the moderation team to take action on when something needs a firmer response. Because they're often a new member's first interaction with staff, and because that presence is available at any hour, the way a General Helper welcomes someone can genuinely shape that person's entire experience of the community."
+      },
+      {
+        id: "text-helper",
+        title: "Text Helper",
+        short: "Text Helpers are specialist volunteer supporters with a specific focus on text channel health and activity across Midnight Network — monitoring conversations, keeping channels on-topic, and flagging anything that needs a closer look. Where General Helpers cover a bit of everything, Text Helpers develop a deeper familiarity with text-based channels specifically, from general chat to more specialized areas.",
+        detailed: "Text Helpers are specialist volunteer supporters with a specific focus on text channel health, activity, and content across Midnight Network. While General Helpers cover a bit of everything, Text Helpers develop a deeper familiarity with text-based channels specifically — from general chat to interest channels — and provide more focused oversight of the written side of the community. Day to day, Text Helpers actively monitor text channels for rule violations and inappropriate content, removing messages that break server rules promptly. They help keep channels on-topic, well organized, and appropriately used, while also encouraging positive conversation and welcoming members into ongoing discussions. A key part of the role is knowing when something needs to go further than a simple message removal. Serious violations are always flagged to Mods or Admins immediately rather than handled independently. Text Helpers also play a role in spotting patterns — recurring issues or anything that suggests a bigger problem forming. This role requires genuine attentiveness. Text channel health depends on consistent observation — the kind of steady, ongoing presence that catches small issues before they grow into bigger ones. Neutrality matters too — content is removed based on the rules, not personal preference."
+      },
+      {
+        id: "voice-helper",
+        title: "Voice Helper",
+        short: "Voice Helpers are specialist volunteer supporters focused on voice channel activity across Midnight Network — keeping voice spaces welcoming, well managed, and free of behavior that breaks server rules. This role also supports community events, helping manage voice channels during game nights, watch parties, and other voice-based activities.",
+        detailed: "Voice Helpers are specialist volunteer supporters with a specific focus on voice channel activity and behavior across Midnight Network. Where Text Helpers oversee written content, Voice Helpers provide that same kind of attentive presence in voice channels — making sure they stay welcoming, well managed, and free of behavior that breaks server rules. Day to day, Voice Helpers monitor active voice channels, stepping in when conduct crosses a line — whether that's disruptive behavior, harassment, or anything else that goes against server rules. They help manage the flow of voice channels during busy periods, especially during events or high-traffic times. Voice Helpers also play a supporting role during community events, working alongside Event Managers to provide voice channel support and helping things run smoothly when a lot of members are active in voice at once. Because voice interactions happen in real time, this role requires a level of attentiveness and quick judgment that's a little different from text-based moderation — there's no message log to review after the fact, which makes being actively present and engaged especially important. Voice Helpers contribute to making voice channels feel like a comfortable space for members to hang out, game, or socialize together, which is often where some of the strongest connections in a community actually form."
+      },
+      {
+        id: "image-helper",
+        title: "Image Helper",
+        short: "Image Helpers are specialist volunteer supporters focused on monitoring image and visual content across Midnight Network, including both SFW gallery channels and NSFW member content areas. Given the sensitivity of this role, professionalism and discretion are essential — content shared in trust is treated with the highest level of care.",
+        detailed: "Image Helpers are specialist volunteer supporters with a specific and important focus on monitoring image and visual content across Midnight Network — including both SFW gallery channels and NSFW member content areas. This is one of the more sensitive Helper roles, given the nature of what it involves overseeing. Day to day, Image Helpers monitor image and gallery channels for content that violates server rules, removing anything inappropriate promptly. They also oversee NSFW member content channels, making sure content is posted in the correct channels and flagging anything that raises concerns. The most serious responsibility of this role is recognizing and immediately escalating anything involving illegal content, particularly anything that could involve minors. This is never something an Image Helper is expected to handle alone. Because this role involves access to sensitive, personal content that members share in trust, professionalism and discretion are absolutely central to doing it well. Image Helpers are expected to treat everything they view strictly as part of their moderation duties — never saving, sharing, or discussing member content outside of that context. The NSFW and image content areas are some of the most sensitive spaces in the server, and members share content there because they trust it will be handled responsibly. Image Helpers are, in a very real sense, the guardians of that trust."
+      },
+    ]
+  },
+  {
+    name: "Events",
+    blurb: "The Events team plans and runs community activities across Midnight Network — game nights, watch parties, book clubs, writing challenges, and seasonal celebrations that bring the community together.",
+    roles: [
+      {
+        id: "event-manager",
+        title: "Event Manager",
+        short: "Event Managers plan and run community activities across Midnight Network — game nights, watch parties, book clubs, and seasonal celebrations that bring the community together. This role involves both planning ahead of time and being present to run events live, adapting when things don't go exactly to plan.",
+        detailed: "Event Managers are the people responsible for the community life of Midnight Network — the moments that bring members together beyond everyday conversation. If the server is a place people visit, events are what make people want to stick around and actually be part of something. The role covers a genuinely wide range of activities. Event Managers plan and run everything from gaming tournaments and game nights to watch parties, book club discussions, writing challenges, and seasonal celebrations tied to holidays or community milestones. Planning is only half the job — Event Managers are also the ones running events in real time, which means being present, energetic, and ready to adapt when things don't go exactly to plan. Event Managers work closely with other parts of the staff team to pull events off successfully, coordinating with Helpers for both voice-based and text-based event support. They're also responsible for keeping the community informed — posting event announcements and building anticipation ahead of time. Feedback is a core part of how the role works. After events, Event Managers gather input from the community about what worked and what didn't, and use that to shape future events. At its heart, this role is about connection. Events give members a reason to show up and feel like they're part of something bigger than just another Discord server."
+      },
+    ]
+  },
+  {
+    name: "Partnerships",
+    blurb: "The Partnerships team reviews and manages relationships with other 18+ communities — assessing potential partners, maintaining existing partnerships, and representing Midnight Network professionally to the outside world.",
+    roles: [
+      {
+        id: "partnership-manager",
+        title: "Partnership Manager",
+        short: "Partnership Managers review and manage relationships with other 18+ Discord communities, assessing potential partners and representing Midnight Network professionally to the outside world. This role involves evaluating whether a partnership genuinely benefits both communities, not just exchanging advertisements.",
+        detailed: "Partnership Managers are responsible for building and maintaining Midnight Network's relationships with other communities. In many ways, this role is the outward-facing side of the network — when another server first interacts with Midnight Network, there's a good chance a Partnership Manager is the one representing it. The core of the role involves reviewing partnership requests that come in from other 18+ communities, assessing whether a potential partnership makes sense for both sides, and presenting well-considered recommendations to ownership for final approval. Assessing a potential partner involves looking at more than just surface-level details — whether a server is genuinely active, whether its community values align with Midnight Network's own standards, and whether there's a track record that suggests the partnership would be a safe, positive fit. Once a partnership is in place, the role doesn't stop there. Partnership Managers maintain those relationships over time, keeping communication open with partner servers and periodically checking that things are still a good fit. Professionalism is essential to this role, since Partnership Managers represent Midnight Network to people outside the community. Ultimately, the partnerships this role helps build shape how Midnight Network is perceived by the wider community of similar servers."
+      },
+    ]
+  },
+  {
+    name: "Health Department",
+    blurb: "The Health Department provides peer wellness support and check-ins for the community, alongside educational resources. This is peer support, not a substitute for professional mental health care — the team can help point members toward appropriate resources when needed.",
+    roles: [
+      {
+        id: "health-dept",
+        title: "Health Department",
+        short: "The Health Department provides peer wellness support and check-ins for the community, alongside educational resources on mental health and general wellbeing. This is peer support, not professional therapy — the team helps point members toward appropriate resources when a situation needs more than peer support can offer.",
+        detailed: "The Health Department is one of the newest additions to the Midnight Network staff structure, created in response to a simple but important idea: a community is only as strong as the wellbeing of the people in it. This team exists to provide peer support and wellness check-ins for members of the community, alongside educational resources on topics related to mental health and general wellbeing. The role is rooted in genuine care — creating a space where members feel comfortable reaching out if they're struggling. It's important to be clear about what this role is, and just as important to be clear about what it isn't. Health Department volunteers are not licensed mental health professionals, and this team isn't a substitute for professional therapy or crisis support. Instead, the role is about peer connection — being someone members can talk to, and helping point people toward appropriate professional resources when a situation calls for more support than peer check-ins can offer. Educational resources are another part of what this department offers, helping raise awareness within the community about mental health and wellbeing topics in a way that's approachable and non-clinical. Because this role touches on sensitive territory, it requires a particular kind of person — someone genuinely empathetic, a good listener, and someone who understands their own limits. As a brand-new department, the Health Department is still finding its shape within Midnight Network, but its purpose is already clear: to make sure that as the community grows, it grows as a place that genuinely looks out for its members."
+      },
+    ]
+  },
+];
 ---
 <Layout title="About Us">
   <div class="page-banner" style="background-image: url('/banners/about-us.jpg');">
@@ -53,38 +116,94 @@ const serverRules = [
   </div>
 
   <section class="section">
-    <p class="intro">Placeholder description of the Midnight Network, its mission, and its community.</p>
-  </section>
+    <input type="radio" name="main-tabs" id="main-about" class="main-tab-radio" checked />
+    <input type="radio" name="main-tabs" id="main-departments" class="main-tab-radio" />
+    <input type="radio" name="main-tabs" id="main-bios" class="main-tab-radio" />
+    <input type="radio" name="main-tabs" id="main-rules" class="main-tab-radio" />
 
-  <section class="section">
-    <h3>Our Staff</h3>
-    {departments.map(dept => (
-      <div class="department-block">
-        <h4>{dept.name}</h4>
-        <div class="card-grid">
-          {dept.members.map(member => (
-            <div class="card">
-              <h4 class="member-name">{member.name}</h4>
-              <p class="role">{member.role}</p>
-              <p>{member.bio}</p>
-            </div>
-          ))}
+    <div class="main-tab-buttons">
+      <label for="main-about" class="main-tab-btn">About Us</label>
+      <label for="main-departments" class="main-tab-btn">Staff Departments</label>
+      <label for="main-bios" class="main-tab-btn">Staff Bio</label>
+      <label for="main-rules" class="main-tab-btn">Server Rules</label>
+    </div>
+
+    <!-- ABOUT US TAB -->
+    <div class="main-tab-content about-content">
+      <div class="intro-container">
+        <input type="radio" name="intro-tabs" id="tab-simple" class="tab-radio" checked />
+        <input type="radio" name="intro-tabs" id="tab-detailed" class="tab-radio" />
+
+        <div class="tab-buttons">
+          <label for="tab-simple" class="tab-btn">Simple</label>
+          <label for="tab-detailed" class="tab-btn">Detailed</label>
+        </div>
+
+        <div class="tab-content simple-content">
+          <p class="intro">Midnight Network is a collection of 18+ Discord communities, connected under one network rather than existing as separate, unrelated servers. Each server has its own identity and focus — from gaming and roleplay to books and adult-oriented spaces — giving members the freedom to find the community that actually fits what they're into, rather than trying to force everyone into a single one-size-fits-all space.</p>
+          <p class="intro">Being part of the network means more than just membership in one server. It means access to a wider community, shared events, and the ability to explore other servers within the network if your interests shift or grow over time.</p>
+          <p class="intro">Behind the scenes, the network is run by a dedicated team of staff and volunteers across several departments, all working to keep every server safe, well-organized, and genuinely enjoyable to be part of.</p>
+        </div>
+
+        <div class="tab-content detailed-content">
+          <p class="intro">Midnight Network is a collection of 18+ Discord communities, connected under one network rather than existing as separate, unrelated servers. The idea behind the network is simple: instead of trying to be everything to everyone in a single server, Midnight Network brings together multiple distinct communities, each with its own identity, focus, and culture, so members can find the space that actually fits who they are and what they're interested in.</p>
+          <p class="intro">Some servers within the network lean toward gaming and community hangouts. Others are built around roleplay, books, or adult-oriented spaces for members looking for that kind of community. Rather than forcing every interest into one server, the network approach means each community can develop its own character, its own inside jokes, and its own way of doing things — while still being part of something bigger.</p>
+          <p class="intro">Being part of Midnight Network means more than membership in a single server. Members are free to explore other servers within the network if their interests shift, grow, or expand over time. A shared identity connects the network together — through cross-server events, a consistent standard of moderation and safety, and features like the network website, which gives every member and every server a presence beyond just Discord itself.</p>
+          <p class="intro">The network is entirely 18+, and that's intentional. It allows for honest, adult conversations and content in the spaces built for that, while still maintaining the kind of structure, safety standards, and moderation members expect from any well-run community.</p>
+          <p class="intro">Behind the scenes, Midnight Network is run by a dedicated team of staff and volunteers spread across several departments — Leadership, Moderation, Events, Partnerships, and Health, among others. Each department plays a different role in keeping the network running smoothly, safely, and in a way that genuinely reflects the community's values.</p>
+          <p class="intro">Midnight Network is still growing, with new servers, features, and systems being added over time. The goal has never been to grow for the sake of growing, but to build something members genuinely want to be part of — a network where finding "your" community doesn't mean giving up on being part of something larger.</p>
         </div>
       </div>
-    ))}
-  </section>
+    </div>
 
-  <section class="section">
-    <h3>Server Rules</h3>
-    <p class="intro">Each server has its own full rule set. Quick summaries below, with links to the complete rules.</p>
-    <div class="card-grid">
-      {serverRules.map(server => (
-        <a href={`/servers/${server.slug}`} class="card">
-          <h4>{server.name}</h4>
-          <p>{server.summary}</p>
-          <span class="view-rules">View full rules &rarr;</span>
-        </a>
-      ))}
+    <!-- STAFF DEPARTMENTS TAB -->
+    <div class="main-tab-content departments-content">
+      <div class="doc-container">
+        {departments.map(dept => (
+          <div class="dept-block">
+            <h3>{dept.name}</h3>
+            <p class="intro">{dept.blurb}</p>
+            {dept.roles.map(role => (
+              <div class="role-block">
+                <h4>{role.title}</h4>
+                <input type="radio" name={`role-${role.id}`} id={`${role.id}-short`} class="tab-radio short-radio" checked />
+                <input type="radio" name={`role-${role.id}`} id={`${role.id}-detailed`} class="tab-radio detailed-radio" />
+                <div class="small-tabs">
+                  <label for={`${role.id}-short`} class="small-btn short-label">Short</label>
+                  <label for={`${role.id}-detailed`} class="small-btn detailed-label">Detailed</label>
+                </div>
+                <div class="role-content short-content">
+                  <p class="intro">{role.short}</p>
+                </div>
+                <div class="role-content detailed-content-role">
+                  <p class="intro">{role.detailed}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- STAFF BIO TAB -->
+    <div class="main-tab-content bios-content">
+      <div class="doc-container">
+        <p class="intro placeholder-note">Staff bios are being collected and will appear here soon.</p>
+      </div>
+    </div>
+
+    <!-- SERVER RULES TAB -->
+    <div class="main-tab-content rules-content">
+      <p class="intro">Each server has its own full rule set. Quick summaries below, with links to the complete rules.</p>
+      <div class="card-grid">
+        {serverRules.map(server => (
+          <a href={`/servers/${server.slug}`} class="card">
+            <h4>{server.name}</h4>
+            <p>{server.summary}</p>
+            <span class="view-rules">View full rules &rarr;</span>
+          </a>
+        ))}
+      </div>
     </div>
   </section>
 </Layout>
@@ -105,33 +224,168 @@ const serverRules = [
     margin: 0;
   }
   .intro {
-    max-width: 600px;
-    margin: 0 auto;
     color: #B8AED0;
+    line-height: 1.7;
+    margin-bottom: 1rem;
   }
   h3 {
     font-size: 1.5rem;
     color: #C4B5FD;
-    text-align: center;
-    margin-top: 2.5rem;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
   }
-  .department-block {
-    max-width: 1000px;
-    margin: 0 auto 2rem;
-    padding: 0 1rem;
-  }
-  .department-block h4:first-child {
-    text-align: center;
-    color: #8A5CF6;
+  h4 {
     font-size: 1.1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 1rem;
+    color: #F0EDF7;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
   }
+
+  /* Main top-level tabs */
+  .main-tab-radio {
+    display: none;
+  }
+  .main-tab-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+  .main-tab-btn {
+    padding: 0.6rem 1.4rem;
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 8px;
+    color: #B8AED0;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .main-tab-btn:hover {
+    background-color: #2A2145;
+    color: #F0EDF7;
+  }
+  .main-tab-content {
+    display: none;
+  }
+  #main-about:checked ~ .about-content { display: block; }
+  #main-departments:checked ~ .departments-content { display: block; }
+  #main-bios:checked ~ .bios-content { display: block; }
+  #main-rules:checked ~ .rules-content { display: block; }
+
+  #main-about:checked ~ .main-tab-buttons label[for="main-about"],
+  #main-departments:checked ~ .main-tab-buttons label[for="main-departments"],
+  #main-bios:checked ~ .main-tab-buttons label[for="main-bios"],
+  #main-rules:checked ~ .main-tab-buttons label[for="main-rules"] {
+    background-color: #8A5CF6;
+    color: #F0EDF7;
+  }
+
+  /* About Us sub-tabs (Simple/Detailed) */
+  .intro-container {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: left;
+  }
+  .tab-radio {
+    display: none;
+  }
+  .tab-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    justify-content: center;
+  }
+  .tab-btn {
+    padding: 0.5rem 1.25rem;
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 8px;
+    color: #B8AED0;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .tab-btn:hover {
+    background-color: #2A2145;
+    color: #F0EDF7;
+  }
+  .tab-content {
+    display: none;
+  }
+  #tab-simple:checked ~ .simple-content { display: block; }
+  #tab-detailed:checked ~ .detailed-content { display: block; }
+  #tab-simple:checked ~ .tab-buttons label[for="tab-simple"],
+  #tab-detailed:checked ~ .tab-buttons label[for="tab-detailed"] {
+    background-color: #8A5CF6;
+    color: #F0EDF7;
+  }
+
+  /* Doc-style container for Departments/Bios tabs */
+  .doc-container {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: left;
+  }
+  .placeholder-note {
+    text-align: center;
+    font-style: italic;
+  }
+  .dept-block {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #2A2145;
+  }
+  .dept-block:last-child {
+    border-bottom: none;
+  }
+  .role-block {
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 2px solid #2A2145;
+  }
+
+  /* Per-role short/detailed toggle */
+  .small-tabs {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+  }
+  .small-btn {
+    padding: 0.3rem 0.9rem;
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 6px;
+    color: #B8AED0;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .small-btn:hover {
+    background-color: #2A2145;
+    color: #F0EDF7;
+  }
+  .role-content {
+    display: none;
+  }
+  input.short-radio:checked ~ .role-content.short-content { display: block; }
+  input.detailed-radio:checked ~ .role-content.detailed-content-role { display: block; }
+  input.short-radio:checked ~ .small-tabs .short-label,
+  input.detailed-radio:checked ~ .small-tabs .detailed-label {
+    background-color: #8A5CF6;
+    color: #F0EDF7;
+  }
+
+  /* Server Rules card grid */
   .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1.5rem;
+    max-width: 1000px;
     margin: 0 auto;
   }
   .card {
@@ -147,18 +401,6 @@ const serverRules = [
     transform: translateY(-4px);
     border-color: #8A5CF6;
   }
-  .member-name {
-    color: #C4B5FD;
-    margin: 0 0 0.25rem;
-  }
-  .card .role {
-    color: #8A5CF6;
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin: 0 0 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
   .card p {
     margin: 0;
     font-size: 0.9rem;
@@ -170,5 +412,12 @@ const serverRules = [
     font-size: 0.85rem;
     color: #8A5CF6;
     font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    .main-tab-buttons {
+      flex-direction: column;
+      align-items: stretch;
+    }
   }
 </style>

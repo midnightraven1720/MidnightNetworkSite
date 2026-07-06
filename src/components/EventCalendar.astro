@@ -1,0 +1,522 @@
+---
+const { events = [] } = Astro.props;
+---
+<div class="event-calendar-layout">
+  <div class="legend-sidebar">
+    <h5 class="legend-title">Event Types</h5>
+    <div class="legend-item">
+      <span class="dot gaming"></span>
+      <div>
+        <p class="legend-name">Gaming</p>
+        <p class="legend-desc">Tournaments, game nights, and looking-for-group sessions.</p>
+      </div>
+    </div>
+    <div class="legend-item">
+      <span class="dot watch-party"></span>
+      <div>
+        <p class="legend-name">Watch Party</p>
+        <p class="legend-desc">Anime, movies, and TV nights together.</p>
+      </div>
+    </div>
+    <div class="legend-item">
+      <span class="dot book-club"></span>
+      <div>
+        <p class="legend-name">Book Club</p>
+        <p class="legend-desc">Monthly reads, discussions, and buddy reads.</p>
+      </div>
+    </div>
+    <div class="legend-item">
+      <span class="dot writing"></span>
+      <div>
+        <p class="legend-name">Writing</p>
+        <p class="legend-desc">Prompt challenges, word sprints, and writing goals.</p>
+      </div>
+    </div>
+    <div class="legend-item">
+      <span class="dot seasonal"></span>
+      <div>
+        <p class="legend-name">Seasonal</p>
+        <p class="legend-desc">Holiday and themed community celebrations.</p>
+      </div>
+    </div>
+    <div class="legend-item">
+      <span class="dot nsfw"></span>
+      <div>
+        <p class="legend-name">NSFW</p>
+        <p class="legend-desc">Adult-themed events for verified members.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="event-calendar">
+    <div class="event-list" id="event-list"></div>
+  </div>
+
+  <div class="upcoming-sidebar">
+    <div class="view-toggle">
+      <button class="view-btn active" id="view-month">Month</button>
+      <button class="view-btn" id="view-week">Week</button>
+    </div>
+
+    <div class="calendar-header">
+      <button class="cal-nav" id="cal-prev" aria-label="Previous">&larr;</button>
+      <h4 id="cal-month-label"></h4>
+      <button class="cal-nav" id="cal-next" aria-label="Next">&rarr;</button>
+    </div>
+
+    <div class="mini-calendar" id="mini-grid">
+      <div class="mini-weekday">S</div>
+      <div class="mini-weekday">M</div>
+      <div class="mini-weekday">T</div>
+      <div class="mini-weekday">W</div>
+      <div class="mini-weekday">T</div>
+      <div class="mini-weekday">F</div>
+      <div class="mini-weekday">S</div>
+    </div>
+
+    <h5 class="legend-title upcoming-heading">Upcoming Events</h5>
+    <div id="upcoming-list"></div>
+  </div>
+</div>
+
+<style is:global>
+  .event-calendar-layout {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 1.5rem;
+    max-width: 1300px;
+    margin: 0 auto;
+    align-items: start;
+  }
+  .event-calendar {
+    width: 100%;
+  }
+  .legend-sidebar,
+  .upcoming-sidebar {
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+  .legend-title {
+    color: #C4B5FD;
+    font-size: 0.95rem;
+    margin: 0 0 1rem;
+  }
+  .legend-sidebar .legend-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+  .legend-sidebar .legend-item:last-child {
+    margin-bottom: 0;
+  }
+  .legend-sidebar .dot {
+    margin-top: 0.35rem;
+    flex-shrink: 0;
+  }
+  .legend-name {
+    color: #F0EDF7;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin: 0 0 0.15rem;
+  }
+  .legend-desc {
+    color: #8A7FA8;
+    font-size: 0.75rem;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .upcoming-event {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+  }
+  .upcoming-event:last-child {
+    margin-bottom: 0;
+  }
+  .upcoming-event .dot {
+    margin-top: 0.35rem;
+    flex-shrink: 0;
+  }
+  .upcoming-date {
+    color: #8A5CF6;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin: 0 0 0.15rem;
+  }
+  .upcoming-title {
+    color: #F0EDF7;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  .no-upcoming {
+    color: #8A7FA8;
+    font-size: 0.85rem;
+    margin: 0;
+  }
+
+  @media (max-width: 900px) {
+    .event-calendar-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .view-toggle {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+  .view-btn {
+    padding: 0.4rem 1rem;
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 6px;
+    color: #B8AED0;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .view-btn:hover {
+    background-color: #2A2145;
+  }
+  .view-btn.active {
+    background-color: #8A5CF6;
+    color: #F0EDF7;
+  }
+  .calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .calendar-header h4 {
+    color: #F0EDF7;
+    font-size: 1.2rem;
+    margin: 0;
+    min-width: 160px;
+    text-align: center;
+  }
+  .cal-nav {
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    color: #F0EDF7;
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  .cal-nav:hover {
+    background-color: #2A2145;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .dot.gaming { background-color: #5865F2; }
+  .dot.watch-party { background-color: #F76E11; }
+  .dot.book-club { background-color: #34D399; }
+  .dot.writing { background-color: #FBBF24; }
+  .dot.seasonal { background-color: #F472B6; }
+  .dot.nsfw { background-color: #EF4444; }
+
+  /* Mini calendar — compact, dots only */
+  .mini-calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    margin: 0 auto 1.5rem;
+  }
+  .upcoming-heading {
+    margin-top: 0.5rem;
+  }
+  .mini-weekday {
+    text-align: center;
+    font-size: 0.7rem;
+    color: #8A7FA8;
+    font-weight: 600;
+    padding-bottom: 0.35rem;
+  }
+  .mini-day {
+    aspect-ratio: 1;
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    color: #B8AED0;
+    gap: 2px;
+  }
+  .mini-day.empty {
+    background-color: transparent;
+    border: none;
+  }
+  .mini-day.today {
+    border-color: #8A5CF6;
+  }
+  .mini-day-dots {
+    display: flex;
+    gap: 2px;
+  }
+
+  /* Full event list */
+  .event-list {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  .event-card {
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .event-card:last-child {
+    margin-bottom: 0;
+  }
+  .event-card-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #0F0B1E;
+  }
+  .event-card-badge.gaming { background-color: #5865F2; color: #F0EDF7; }
+  .event-card-badge.watch-party { background-color: #F76E11; }
+  .event-card-badge.book-club { background-color: #34D399; }
+  .event-card-badge.writing { background-color: #FBBF24; }
+  .event-card-badge.seasonal { background-color: #F472B6; }
+  .event-card-badge.nsfw { background-color: #EF4444; color: #F0EDF7; }
+  .event-card h5 {
+    color: #F0EDF7;
+    margin: 0.5rem 0 0.25rem;
+  }
+  .event-card-time {
+    color: #8A7FA8;
+    font-size: 0.85rem;
+    margin: 0 0 0.5rem;
+  }
+  .event-card-desc {
+    color: #B8AED0;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+  .no-events-message {
+    text-align: center;
+    color: #8A7FA8;
+    font-size: 0.9rem;
+    padding: 2rem 0;
+  }
+</style>
+
+<script define:vars={{ events }}>
+  const monthLabel = document.getElementById('cal-month-label');
+  const miniGrid = document.getElementById('mini-grid');
+  const eventList = document.getElementById('event-list');
+  const prevBtn = document.getElementById('cal-prev');
+  const nextBtn = document.getElementById('cal-next');
+  const viewMonthBtn = document.getElementById('view-month');
+  const viewWeekBtn = document.getElementById('view-week');
+
+  let current = new Date();
+  let currentView = 'month';
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function dateStr(d) {
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  }
+
+  function renderEventList(periodEvents) {
+    eventList.innerHTML = '';
+    if (periodEvents.length === 0) {
+      eventList.innerHTML = '<p class="no-events-message">No events scheduled for this period.</p>';
+      return;
+    }
+    periodEvents
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .forEach(ev => {
+        const card = document.createElement('div');
+        card.className = 'event-card';
+        const dateLabel = new Date(ev.date + 'T00:00:00').toLocaleDateString('default', { weekday: 'long', month: 'short', day: 'numeric' });
+        card.innerHTML = `
+          <span class="event-card-badge ${ev.type}">${ev.type.replace('-', ' ')}</span>
+          <h5>${ev.title}</h5>
+          <p class="event-card-time">${dateLabel}${ev.time ? ' — ' + ev.time : ''}</p>
+          <p class="event-card-desc">${ev.description || ''}</p>
+        `;
+        eventList.appendChild(card);
+      });
+  }
+
+  function renderMonth() {
+    document.querySelectorAll('.mini-day').forEach(el => el.remove());
+
+    const year = current.getFullYear();
+    const month = current.getMonth();
+    monthLabel.textContent = current.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = dateStr(new Date());
+
+    for (let i = 0; i < firstDay; i++) {
+      const empty = document.createElement('div');
+      empty.className = 'mini-day empty';
+      miniGrid.appendChild(empty);
+    }
+
+    const monthEvents = [];
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const thisDateStr = `${year}-${pad(month + 1)}-${pad(day)}`;
+      const dayEvents = events.filter(e => e.date === thisDateStr);
+      if (dayEvents.length) monthEvents.push(...dayEvents);
+
+      const cell = document.createElement('div');
+      cell.className = 'mini-day' + (thisDateStr === today ? ' today' : '');
+      cell.innerHTML = `${day}`;
+
+      if (dayEvents.length) {
+        const dots = document.createElement('div');
+        dots.className = 'mini-day-dots';
+        dayEvents.slice(0, 3).forEach(ev => {
+          const dot = document.createElement('span');
+          dot.className = 'dot ' + ev.type;
+          dots.appendChild(dot);
+        });
+        cell.appendChild(dots);
+      }
+
+      miniGrid.appendChild(cell);
+    }
+
+    renderEventList(monthEvents);
+  }
+
+  function renderWeek() {
+    document.querySelectorAll('.mini-day').forEach(el => el.remove());
+
+    const startOfWeek = new Date(current);
+    startOfWeek.setDate(current.getDate() - current.getDay());
+    const weekEnd = new Date(startOfWeek);
+    weekEnd.setDate(startOfWeek.getDate() + 6);
+    monthLabel.textContent = `${startOfWeek.toLocaleString('default', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleString('default', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+
+    const today = dateStr(new Date());
+    const weekEvents = [];
+
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(startOfWeek);
+      day.setDate(startOfWeek.getDate() + i);
+      const thisDateStr = dateStr(day);
+      const dayEvents = events.filter(e => e.date === thisDateStr);
+      if (dayEvents.length) weekEvents.push(...dayEvents);
+
+      const cell = document.createElement('div');
+      cell.className = 'mini-day' + (thisDateStr === today ? ' today' : '');
+      cell.innerHTML = `${day.getDate()}`;
+
+      if (dayEvents.length) {
+        const dots = document.createElement('div');
+        dots.className = 'mini-day-dots';
+        dayEvents.slice(0, 3).forEach(ev => {
+          const dot = document.createElement('span');
+          dot.className = 'dot ' + ev.type;
+          dots.appendChild(dot);
+        });
+        cell.appendChild(dots);
+      }
+
+      miniGrid.appendChild(cell);
+    }
+
+    renderEventList(weekEvents);
+  }
+
+  function switchView(view) {
+    currentView = view;
+    if (view === 'month') {
+      viewMonthBtn.classList.add('active');
+      viewWeekBtn.classList.remove('active');
+      renderMonth();
+    } else {
+      viewWeekBtn.classList.add('active');
+      viewMonthBtn.classList.remove('active');
+      renderWeek();
+    }
+  }
+
+  viewMonthBtn.addEventListener('click', () => switchView('month'));
+  viewWeekBtn.addEventListener('click', () => switchView('week'));
+
+  prevBtn.addEventListener('click', () => {
+    if (currentView === 'month') {
+      current.setMonth(current.getMonth() - 1);
+      renderMonth();
+    } else {
+      current.setDate(current.getDate() - 7);
+      renderWeek();
+    }
+  });
+  nextBtn.addEventListener('click', () => {
+    if (currentView === 'month') {
+      current.setMonth(current.getMonth() + 1);
+      renderMonth();
+    } else {
+      current.setDate(current.getDate() + 7);
+      renderWeek();
+    }
+  });
+
+  function renderUpcoming() {
+    const upcomingList = document.getElementById('upcoming-list');
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const upcoming = events
+      .map(e => ({ ...e, dateObj: new Date(e.date + 'T00:00:00') }))
+      .filter(e => e.dateObj >= today)
+      .sort((a, b) => a.dateObj - b.dateObj)
+      .slice(0, 5);
+
+    if (upcoming.length === 0) {
+      upcomingList.innerHTML = '<p class="no-upcoming">No upcoming events scheduled.</p>';
+      return;
+    }
+
+    upcomingList.innerHTML = '';
+    upcoming.forEach(ev => {
+      const item = document.createElement('div');
+      item.className = 'upcoming-event';
+      const dateLabel = ev.dateObj.toLocaleDateString('default', { month: 'short', day: 'numeric' });
+      item.innerHTML = `
+        <span class="dot ${ev.type}"></span>
+        <div>
+          <p class="upcoming-date">${dateLabel}</p>
+          <p class="upcoming-title">${ev.title}</p>
+        </div>
+      `;
+      upcomingList.appendChild(item);
+    });
+  }
+
+  renderMonth();
+  renderUpcoming();
+</script>

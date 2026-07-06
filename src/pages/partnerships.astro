@@ -1,5 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+const requirements = [
+  { title: "18+ Community", detail: "Your server must be a genuine adult (18+) community, in line with our own network." },
+  { title: "Minimum 50 Members", detail: "We're looking for servers with at least 50 members — an established, active base rather than a brand new server." },
+  { title: "Active & Engaged", detail: "Activity matters more than size. We look for servers where members are genuinely active and engaged, not quiet or inactive spaces." },
+  { title: "Aligned Rules & Values", detail: "Your server's rules and community values should be broadly compatible with ours, to keep the partnership a good fit for both member bases." },
+];
 ---
 <Layout title="Partnerships">
   <div class="page-banner" style="background-image: url('/banners/partnerships.jpg');">
@@ -7,7 +14,25 @@ import Layout from '../layouts/Layout.astro';
   </div>
 
   <section class="section">
-    <p class="intro">Coming soon — information on partnering with the Midnight Network, including how to apply and what we look for.</p>
+    <div class="two-col">
+      <div class="info-col">
+        <h3>About Partnering</h3>
+        <p>Midnight Network partners with other 18+ Discord communities to cross-promote and grow together. If you run a server that fits what we're looking for, we'd love to hear from you.</p>
+        <h3>Partnership Types</h3>
+        <p><strong>Server Partnership</strong> — a direct partnership between your server and one specific Midnight Network server. Terms are discussed and agreed individually, based on what fits both communities.</p>
+        <p><strong>Network Partnership</strong> — a partnership with Midnight Network as a whole, including full cross-promotion and collaboration across all of our servers.</p>
+        <h3>How to Apply</h3>
+        <p>Open a <strong>Partnership Request</strong> ticket via the Midnight Tickets bot in the Midnight Network Discord server, and let us know which type of partnership you're interested in. All requests go through a review process before approval, including a trial period for new partnerships.</p>
+      </div>
+      <div class="req-col">
+        <h3>What We Look For</h3>
+        <ul class="doc-list">
+          {requirements.map(req => (
+            <li><strong>{req.title}</strong> — {req.detail}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
   </section>
 </Layout>
 <style>
@@ -26,9 +51,47 @@ import Layout from '../layouts/Layout.astro';
     text-shadow: 0 2px 12px rgba(0,0,0,0.8);
     margin: 0;
   }
-  .intro {
-    max-width: 600px;
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    max-width: 1000px;
     margin: 0 auto;
-    color: #B8AED0;
+    padding: 0 1.5rem;
+    text-align: left;
+  }
+  .info-col h3,
+  .req-col h3 {
+    font-size: 1.3rem;
+    color: #C4B5FD;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .info-col h3:first-child {
+    margin-top: 0;
+  }
+  .info-col p {
+    color: #F0EDF7;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+  .doc-list {
+    color: #F0EDF7;
+    line-height: 1.8;
+    padding-left: 1.5rem;
+    margin: 0;
+  }
+  .doc-list li {
+    margin-bottom: 0.75rem;
+  }
+  .doc-list strong {
+    color: #C4B5FD;
+  }
+
+  @media (max-width: 768px) {
+    .two-col {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
   }
 </style>
