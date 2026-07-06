@@ -65,6 +65,11 @@ if (sessionCookie) {
     <slot />
     <footer>
       <p>&copy; Midnight Network</p>
+      <div class="footer-links">
+        <a href="/terms-of-use">Terms of Use</a>
+        <span class="footer-dot">•</span>
+        <a href="/privacy-policy">Privacy Policy</a>
+      </div>
     </footer>
   </body>
 </html>
@@ -210,6 +215,20 @@ if (sessionCookie) {
     padding: 2rem;
     color: #8A7FA8;
     font-size: 0.9rem;
+  }
+  .footer-links {
+    margin-top: 0.5rem;
+  }
+  .footer-links a {
+    color: #8A7FA8;
+    text-decoration: none;
+  }
+  .footer-links a:hover {
+    color: #C4B5FD;
+  }
+  .footer-dot {
+    margin: 0 0.5rem;
+    color: #8A7FA8;
   }
   .section {
     padding: 4rem 2rem;
