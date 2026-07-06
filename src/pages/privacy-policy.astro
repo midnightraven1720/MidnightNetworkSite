@@ -1,0 +1,176 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Privacy Policy">
+  <div class="page-banner" style="background-image: url('/banners/about-us.jpg');">
+    <h2>Privacy Policy</h2>
+  </div>
+
+  <section class="section legal-section">
+    <div class="legal-container">
+      <p class="last-updated">Last Updated: 6th July 2026</p>
+
+      <h3>1. Introduction</h3>
+      <p>This Privacy Policy explains how Midnight Network ("we," "us," "our") collects, uses, and protects information when you use our website (the "Site") and related Discord bot services. Midnight Network is operated by an individual community administrator as an informal community project, not a registered business.</p>
+      <p>This policy is written with reference to UK data protection law (UK GDPR and the Data Protection Act 2018), as we operate under UK jurisdiction.</p>
+
+      <h3>2. Information We Collect</h3>
+      <h4>2.1 Information from Discord OAuth</h4>
+      <p>When you log in to the Site using Discord, we receive the following information from Discord, based on the permissions you grant:</p>
+      <ul>
+        <li>Your Discord user ID</li>
+        <li>Your Discord username and discriminator/tag</li>
+        <li>Your avatar image URL</li>
+        <li>Your email address associated with Discord (if requested by the OAuth scope)</li>
+        <li>The Discord servers (guilds) you share with Midnight Network, where relevant to role verification</li>
+      </ul>
+      <p>We do <strong>not</strong> receive your Discord password. Authentication is handled entirely by Discord.</p>
+
+      <h4>2.2 Information from Bot Usage</h4>
+      <p>If you interact with Midnight Tickets or other Midnight Network bots, we may collect and store:</p>
+      <ul>
+        <li>Ticket content and conversation history</li>
+        <li>Staff application responses</li>
+        <li>Verification status and associated role assignments</li>
+        <li>Timestamps of actions (ticket creation, replies, closures)</li>
+      </ul>
+
+      <h4>2.3 Automatically Collected Information</h4>
+      <p>Our hosting provider (Railway) and standard web infrastructure may log technical information such as IP addresses, browser type, and access timestamps for security and diagnostic purposes.</p>
+
+      <h3>3. How We Use Your Information</h3>
+      <p>We use the information collected to:</p>
+      <ul>
+        <li>Authenticate you and maintain your login session;</li>
+        <li>Display your dashboard, ticket history, and role-based permissions;</li>
+        <li>Operate the ticket system, staff applications, and verification systems;</li>
+        <li>Enforce our Terms of Use and community rules;</li>
+        <li>Maintain security logs and prevent abuse of the Site or bots;</li>
+        <li>Improve and maintain the Site and bot functionality.</li>
+      </ul>
+      <p>We do <strong>not</strong> sell your personal information to third parties, and we do not use your information for advertising or marketing purposes.</p>
+
+      <h3>4. Where Your Data Is Stored</h3>
+      <p>Data is stored using:</p>
+      <ul>
+        <li><strong>Railway</strong> (our hosting provider), which hosts both the website and bot, including persistent volume storage for ticket, verification, and configuration data;</li>
+        <li><strong>Discord</strong>, which handles authentication and stores the underlying account data you have with Discord directly, governed by Discord's own Privacy Policy.</li>
+      </ul>
+      <p>We take reasonable steps to secure data in transit and at rest, but no system can be guaranteed 100% secure.</p>
+
+      <h3>5. Data Sharing</h3>
+      <p>We do not share your personal data with third parties except:</p>
+      <ul>
+        <li>Where required by law or legal process;</li>
+        <li>Between our own website and bot services (e.g., the website communicating with the bot's internal API to display your ticket or dashboard data) — this stays within Midnight Network's own infrastructure and is not shared externally;</li>
+        <li>With staff members who require access to specific data (such as ticket content) in order to perform moderation or support duties.</li>
+      </ul>
+
+      <h3>6. Data Retention</h3>
+      <p>We retain data for as long as necessary to fulfil the purposes described in this policy, including:</p>
+      <ul>
+        <li>Ticket transcripts, which are retained for record-keeping and moderation purposes;</li>
+        <li>Verification and role data, retained while you remain part of Midnight Network;</li>
+        <li>Staff application responses, retained for as long as relevant to staffing decisions.</li>
+      </ul>
+      <p>You may request deletion of your data at any time (see Section 8).</p>
+
+      <h3>7. Your Rights (UK GDPR)</h3>
+      <p>If you are located in the UK or another jurisdiction with similar data protection laws, you have the right to:</p>
+      <ul>
+        <li><strong>Access</strong> the personal data we hold about you;</li>
+        <li><strong>Rectify</strong> inaccurate data;</li>
+        <li><strong>Erase</strong> your data ("right to be forgotten"), subject to any legal or legitimate operational reasons we may need to retain certain records (e.g., moderation logs for safety purposes);</li>
+        <li><strong>Restrict or object to</strong> certain processing of your data;</li>
+        <li><strong>Data portability</strong>, where technically feasible.</li>
+      </ul>
+      <p>To exercise any of these rights, see Section 8 for how to contact us.</p>
+
+      <h3>8. How to Contact Us About Your Data</h3>
+      <p>The primary way to reach us about privacy matters is to open a <strong>General Support</strong> ticket via the Midnight Tickets bot in the Midnight Network Discord server, and specify that your request relates to your personal data.</p>
+      <p>If you are no longer able to access our Discord server (for example, because you left or were removed), you can instead contact us at <a href="mailto:contact.midnightnetwork@proton.me">contact.midnightnetwork@proton.me</a>. We will do our best to respond to verified requests within a reasonable timeframe.</p>
+
+      <h3>9. Children's Privacy</h3>
+      <p>Midnight Network is strictly for users aged 18 and over. We do not knowingly collect data from anyone under 18. If we become aware that we have collected data from a minor, we will delete it as soon as reasonably possible and revoke the associated account's access.</p>
+
+      <h3>10. Cookies</h3>
+      <p>The Site may use essential cookies required to maintain your login session (e.g., OAuth session tokens). We do not currently use tracking or advertising cookies.</p>
+
+      <h3>11. Changes to This Policy</h3>
+      <p>We may update this Privacy Policy from time to time. Material changes will be reflected by updating the "Last Updated" date above. Continued use of the Site after changes are posted constitutes acceptance of the revised policy.</p>
+
+      <h3>12. Governing Law</h3>
+      <p>This Privacy Policy is governed by the laws of the United Kingdom.</p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-banner {
+    background-size: cover;
+    background-position: center;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .page-banner h2 {
+    font-size: 2.5rem;
+    color: #F0EDF7;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.8);
+    margin: 0;
+  }
+  .legal-section {
+    padding-top: 3rem;
+    padding-bottom: 4rem;
+  }
+  .legal-container {
+    max-width: 780px;
+    margin: 0 auto;
+    text-align: left;
+  }
+  .last-updated {
+    color: #8A7FA8;
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+  }
+  .legal-container h3 {
+    color: #C4B5FD;
+    font-size: 1.3rem;
+    text-align: left;
+    margin-top: 2.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .legal-container h4 {
+    color: #C4B5FD;
+    font-size: 1.05rem;
+    text-align: left;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .legal-container p {
+    color: #F0EDF7;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+  .legal-container ul {
+    color: #F0EDF7;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+  }
+  .legal-container li {
+    margin-bottom: 0.4rem;
+  }
+  .legal-container a {
+    color: #8A5CF6;
+    text-decoration: underline;
+  }
+  .legal-container a:hover {
+    color: #C4B5FD;
+  }
+  .legal-container strong {
+    color: #F0EDF7;
+  }
+</style>
