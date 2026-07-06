@@ -34,6 +34,7 @@ const serversData = await fetchFromBot('/api/servers');
 const ticketsData = await fetchFromBot('/api/tickets');
 const applicationsData = await fetchFromBot('/api/applications');
 const healthData = await fetchFromBot('/api/health');
+const botConfigData = await fetchFromBot('/api/bot-config');
 
 const botOnline = healthData !== null;
 const servers = serversData ? serversData.servers : [];
@@ -51,6 +52,15 @@ const filteredTickets = selectedGuildId === 'all'
 const filteredApplications = selectedGuildId === 'all'
   ? allApplications
   : allApplications.filter(a => a.guildId === selectedGuildId);
+
+const allConfigs = botConfigData ? botConfigData.configs : [];
+const selectedConfig = selectedGuildId === 'all'
+  ? null
+  : allConfigs.find(c => c.guildId === selectedGuildId);
+
+function serverLink(guildId) {
+  return `/staff-dashboard?server=${guildId}`;
+}
 ---
 <Layout title="Staff Dashboard">
   <section class="section">
@@ -58,16 +68,17 @@ const filteredApplications = selectedGuildId === 'all'
     <p class="intro-note">Note: this isn't restricted to staff yet — that check gets added once we connect it to your bots.</p>
   </section>
 
-  <div class="top-tabs">
-    <input type="radio" name="topTab" id="top-servers" class="tab-radio" checked />
-    <input type="radio" name="topTab" id="top-bots" class="tab-radio" />
+  <div class="main-tabs">
+    <input type="radio" name="mainTab" id="main-staff" class="tab-radio" checked />
+    <input type="radio" name="mainTab" id="main-bot" class="tab-radio" />
 
-    <div class="top-tab-buttons">
-      <label for="top-servers" class="top-tab-btn">Servers</label>
-      <label for="top-bots" class="top-tab-btn">Bots</label>
+    <div class="main-tab-buttons">
+      <label for="main-staff" class="main-tab-btn">Staff Dashboard</label>
+      <label for="main-bot" class="main-tab-btn">Bot Dashboard</label>
     </div>
 
-    <div class="top-panel panel-servers">
+    <!-- ============ STAFF DASHBOARD TAB ============ -->
+    <div class="main-panel panel-main-staff">
       <div class="dashboard-layout">
         <aside class="server-nav">
           {useDropdown ? (
@@ -81,19 +92,20 @@ const filteredApplications = selectedGuildId === 'all'
             </form>
           ) : (
             <ul class="server-list">
-              <li>
-                <a href="/staff-dashboard?server=all" class={selectedGuildId === 'all' ? 'active' : ''}>All Servers</a>
-              </li>
+              <li><a href="/staff-dashboard?server=all" class={selectedGuildId === 'all' ? 'active' : ''}>All Servers</a></li>
               {servers.map((s) => (
-                <li>
-                  <a href={`/staff-dashboard?server=${s.id}`} class={selectedGuildId === s.id ? 'active' : ''}>{s.name}</a>
-                </li>
+                <li><a href={serverLink(s.id)} class={selectedGuildId === s.id ? 'active' : ''}>{s.name}</a></li>
               ))}
             </ul>
           )}
         </aside>
 
         <div class="dashboard-content">
+          <div class="staff-bio-card">
+            <h3>Staff Info</h3>
+            <p class="placeholder-note">Coming soon — staff bios, ranks, and roles for this server, once Midnight Council is live.</p>
+          </div>
+
           <div class="cat-tabs">
             <input type="radio" name="catTab" id="cat-tickets" class="tab-radio" checked />
             <input type="radio" name="catTab" id="cat-applications" class="tab-radio" />
@@ -160,39 +172,95 @@ const filteredApplications = selectedGuildId === 'all'
       </div>
     </div>
 
-    <div class="top-panel panel-bots">
-      <div class="bot-status-list">
-        <div class="bot-status-card">
-          <div class="bot-status-header">
-            <h3>Midnight Tickets</h3>
-            <span class={`status-line ${botOnline ? 'status-online' : 'status-offline'}`}>
-              {botOnline ? '● Online' : '● Offline / Unreachable'}
-            </span>
-          </div>
-          {healthData ? (
-            <>
-              <p class="stat-label">Uptime: {Math.floor(healthData.uptimeSeconds / 60)} minutes</p>
-              {healthData.recentErrors.length > 0 ? (
-                <ul class="mini-list error-list">
-                  {healthData.recentErrors.slice(0, 8).map((e) => (
-                    <li>{e.message} <span class="error-time">({new Date(e.timestamp).toLocaleString()})</span></li>
-                  ))}
-                </ul>
-              ) : (
-                <p class="placeholder-note">No recent errors logged.</p>
-              )}
-            </>
+    <!-- ============ BOT DASHBOARD TAB ============ -->
+    <div class="main-panel panel-main-bot">
+      <div class="dashboard-layout">
+        <aside class="server-nav">
+          {useDropdown ? (
+            <form method="get" class="server-dropdown-form">
+              <select name="server" class="server-dropdown" onchange="this.form.submit()">
+                <option value="all" selected={selectedGuildId === 'all'}>All Servers</option>
+                {servers.map((s) => (
+                  <option value={s.id} selected={selectedGuildId === s.id}>{s.name}</option>
+                ))}
+              </select>
+            </form>
           ) : (
-            <p class="placeholder-note">Couldn't reach this bot right now.</p>
+            <ul class="server-list">
+              <li><a href="/staff-dashboard?server=all" class={selectedGuildId === 'all' ? 'active' : ''}>All Servers</a></li>
+              {servers.map((s) => (
+                <li><a href={serverLink(s.id)} class={selectedGuildId === s.id ? 'active' : ''}>{s.name}</a></li>
+              ))}
+            </ul>
           )}
-        </div>
+        </aside>
 
-        <div class="bot-status-card">
-          <div class="bot-status-header">
-            <h3>Other Bots</h3>
-            <span class="status-line status-planned">— Not built yet</span>
+        <div class="dashboard-content">
+          <div class="bot-config-card">
+            <h3>Midnight Tickets — Configuration</h3>
+            {selectedGuildId === 'all' ? (
+              <p class="placeholder-note">Select a specific server from the list to view its bot configuration.</p>
+            ) : botConfigData && selectedConfig ? (
+              <div class="config-grid">
+                <div>
+                  <h4>Roles</h4>
+                  <ul class="config-list">
+                    <li><span class="config-key">Ticket Staff:</span> {selectedConfig.roles.ticketStaff ? selectedConfig.roles.ticketStaff.name : 'Not set'}</li>
+                    <li><span class="config-key">Owner:</span> {selectedConfig.roles.owner ? selectedConfig.roles.owner.name : 'Not set'}</li>
+                    <li><span class="config-key">Co-Owner:</span> {selectedConfig.roles.coOwner ? selectedConfig.roles.coOwner.name : 'Not set'}</li>
+                    <li><span class="config-key">Partnership Manager:</span> {selectedConfig.roles.partnershipManager ? selectedConfig.roles.partnershipManager.name : 'Not set'}</li>
+                    <li><span class="config-key">ID Verified Staff:</span> {selectedConfig.roles.idVerifiedStaff ? selectedConfig.roles.idVerifiedStaff.name : 'Not set'}</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4>Categories</h4>
+                  <ul class="config-list">
+                    <li><span class="config-key">Support/Report/Partnership:</span> {selectedConfig.categories.support ? selectedConfig.categories.support.name : 'Not set'}</li>
+                    <li><span class="config-key">Staff Reports:</span> {selectedConfig.categories.staffReport ? selectedConfig.categories.staffReport.name : 'Not set'}</li>
+                    <li><span class="config-key">Verification:</span> {selectedConfig.categories.verification ? selectedConfig.categories.verification.name : 'Not set'}</li>
+                  </ul>
+                </div>
+              </div>
+            ) : (
+              <p class="placeholder-note">Couldn't reach the bot right now.</p>
+            )}
+            <p class="edit-note">This view is read-only for now — editing these values directly from the dashboard is planned for later.</p>
           </div>
-          <p class="placeholder-note">Health monitoring for the rest of the network's bots will appear here once they're built and connected.</p>
+
+          <div class="bot-status-list">
+            <div class="bot-status-card">
+              <div class="bot-status-header">
+                <h3>Midnight Tickets</h3>
+                <span class={`status-line ${botOnline ? 'status-online' : 'status-offline'}`}>
+                  {botOnline ? '● Online' : '● Offline / Unreachable'}
+                </span>
+              </div>
+              {healthData ? (
+                <>
+                  <p class="stat-label">Uptime: {Math.floor(healthData.uptimeSeconds / 60)} minutes</p>
+                  {healthData.recentErrors.length > 0 ? (
+                    <ul class="mini-list error-list">
+                      {healthData.recentErrors.slice(0, 8).map((e) => (
+                        <li>{e.message} <span class="error-time">({new Date(e.timestamp).toLocaleString()})</span></li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p class="placeholder-note">No recent errors logged.</p>
+                  )}
+                </>
+              ) : (
+                <p class="placeholder-note">Couldn't reach this bot right now.</p>
+              )}
+            </div>
+
+            <div class="bot-status-card">
+              <div class="bot-status-header">
+                <h3>Other Bots</h3>
+                <span class="status-line status-planned">— Not built yet</span>
+              </div>
+              <p class="placeholder-note">Health monitoring for the rest of the network's bots will appear here once they're built and connected.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -209,13 +277,12 @@ const filteredApplications = selectedGuildId === 'all'
     color: #8A7FA8;
     font-size: 0.9rem;
   }
-
   .tab-radio {
     display: none;
   }
 
-  /* Top-level tabs: Servers / Bots */
-  .top-tab-buttons {
+  /* Main tabs: Staff Dashboard / Bot Dashboard */
+  .main-tab-buttons {
     display: flex;
     justify-content: center;
     gap: 0.5rem;
@@ -223,7 +290,7 @@ const filteredApplications = selectedGuildId === 'all'
     max-width: 1200px;
     padding: 0 1.5rem;
   }
-  .top-tab-btn {
+  .main-tab-btn {
     cursor: pointer;
     padding: 0.6rem 1.5rem;
     border-radius: 8px;
@@ -234,31 +301,31 @@ const filteredApplications = selectedGuildId === 'all'
     font-size: 0.95rem;
     transition: background-color 0.2s, color 0.2s;
   }
-  .top-tab-btn:hover {
+  .main-tab-btn:hover {
     color: #F0EDF7;
   }
-  .top-panel {
+  .main-panel {
     display: none;
   }
-  #top-servers:checked ~ .panel-servers {
+  #main-staff:checked ~ .panel-main-staff {
     display: block;
   }
-  #top-bots:checked ~ .panel-bots {
+  #main-bot:checked ~ .panel-main-bot {
     display: block;
   }
-  #top-servers:checked ~ .top-tab-buttons label[for="top-servers"],
-  #top-bots:checked ~ .top-tab-buttons label[for="top-bots"] {
+  #main-staff:checked ~ .main-tab-buttons label[for="main-staff"],
+  #main-bot:checked ~ .main-tab-buttons label[for="main-bot"] {
     background-color: #8A5CF6;
     color: #F0EDF7;
   }
 
-  /* Servers layout */
+  /* Shared layout */
   .dashboard-layout {
     display: flex;
     gap: 2rem;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 0 1.5rem 2rem;
     align-items: flex-start;
   }
   .server-nav {
@@ -306,6 +373,55 @@ const filteredApplications = selectedGuildId === 'all'
   .dashboard-content {
     flex: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    color: #C4B5FD;
+    margin: 0 0 0.5rem;
+  }
+  h4 {
+    font-size: 0.9rem;
+    color: #B8AED0;
+    margin: 0 0 0.5rem;
+  }
+
+  .staff-bio-card,
+  .bot-config-card {
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: left;
+  }
+
+  .config-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .config-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: #F0EDF7;
+  }
+  .config-key {
+    color: #8A7FA8;
+  }
+  .edit-note {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #8A7FA8;
+    font-style: italic;
   }
 
   /* Category tabs: Tickets / Applications / Moderation */
@@ -392,13 +508,10 @@ const filteredApplications = selectedGuildId === 'all'
     font-size: 0.8rem;
   }
 
-  /* Bots tab */
+  /* Bot status cards */
   .bot-status-list {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 1.5rem;
   }
   .bot-status-card {
@@ -417,8 +530,6 @@ const filteredApplications = selectedGuildId === 'all'
     gap: 0.5rem;
   }
   .bot-status-header h3 {
-    font-size: 1.1rem;
-    color: #C4B5FD;
     margin: 0;
   }
   .status-line {
@@ -465,6 +576,8 @@ const filteredApplications = selectedGuildId === 'all'
     color: #8A5CF6;
     font-weight: 600;
     text-decoration: none;
+    text-align: center;
+    margin-top: 1rem;
   }
   .staff-link:hover {
     color: #C4B5FD;
