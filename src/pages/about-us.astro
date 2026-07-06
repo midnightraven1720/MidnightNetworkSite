@@ -1,20 +1,49 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-const staff = [
-  { name: "Staff Member", role: "Owner", bio: "Placeholder bio." },
-  { name: "Staff Member", role: "Co-Owner", bio: "Placeholder bio." },
-  { name: "Staff Member", role: "Admin", bio: "Placeholder bio." },
-  { name: "Staff Member", role: "Partnership Manager", bio: "Placeholder bio." },
+const departments = [
+  {
+    name: "Leadership",
+    members: [
+      { name: "Staff Member", role: "Owner", bio: "Placeholder bio." },
+      { name: "Staff Member", role: "Co-Owner", bio: "Placeholder bio." },
+    ]
+  },
+  {
+    name: "Moderation",
+    members: [
+      { name: "Staff Member", role: "Admin", bio: "Placeholder bio." },
+      { name: "Staff Member", role: "Mod", bio: "Placeholder bio." },
+      { name: "Staff Member", role: "Helper", bio: "Placeholder bio." },
+    ]
+  },
+  {
+    name: "Partnerships",
+    members: [
+      { name: "Staff Member", role: "Partnership Manager", bio: "Placeholder bio." },
+    ]
+  },
+  {
+    name: "Events",
+    members: [
+      { name: "Staff Member", role: "Event Manager", bio: "Placeholder bio." },
+    ]
+  },
+  {
+    name: "Health Department",
+    members: [
+      { name: "Staff Member", role: "Health Department", bio: "Placeholder bio." },
+    ]
+  },
 ];
 
 const serverRules = [
-  { name: "Server 1", slug: "server-1", summary: "Placeholder rule summary." },
-  { name: "Server 2", slug: "server-2", summary: "Placeholder rule summary." },
-  { name: "Server 3", slug: "server-3", summary: "Placeholder rule summary." },
-  { name: "Server 4", slug: "server-4", summary: "Placeholder rule summary." },
-  { name: "Server 5", slug: "server-5", summary: "Placeholder rule summary." },
-  { name: "Server 6", slug: "server-6", summary: "Placeholder rule summary." },
+  { name: "Den of Desire", slug: "server-1", summary: "Placeholder rule summary." },
+  { name: "Underground Gamer Lounge", slug: "server-2", summary: "Placeholder rule summary." },
+  { name: "Chaos Midnight House", slug: "server-3", summary: "Placeholder rule summary." },
+  { name: "Smutty Library Cafe", slug: "server-4", summary: "Placeholder rule summary." },
+  { name: "Velvet Cosy Collars", slug: "server-5", summary: "Placeholder rule summary." },
+  { name: "Advertising Lounge", slug: "server-6", summary: "Placeholder rule summary." },
   { name: "Server 7", slug: "server-7", summary: "Placeholder rule summary." },
 ];
 ---
@@ -26,15 +55,20 @@ const serverRules = [
 
   <section class="section">
     <h3>Our Staff</h3>
-    <div class="card-grid">
-      {staff.map(member => (
-        <div class="card">
-          <h4>{member.name}</h4>
-          <p class="role">{member.role}</p>
-          <p>{member.bio}</p>
+    {departments.map(dept => (
+      <div class="department-block">
+        <h4>{dept.name}</h4>
+        <div class="card-grid">
+          {dept.members.map(member => (
+            <div class="card">
+              <h4 class="member-name">{member.name}</h4>
+              <p class="role">{member.role}</p>
+              <p>{member.bio}</p>
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
+      </div>
+    ))}
   </section>
 
   <section class="section">
@@ -61,14 +95,26 @@ const serverRules = [
     font-size: 1.5rem;
     color: #C4B5FD;
     text-align: center;
+    margin-top: 2.5rem;
+  }
+  .department-block {
+    max-width: 1000px;
+    margin: 0 auto 2rem;
+    padding: 0 1rem;
+  }
+  .department-block h4:first-child {
+    text-align: center;
+    color: #8A5CF6;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
   }
   .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1.5rem;
-    max-width: 1000px;
-    margin: 2rem auto 0;
-    padding: 0 1rem;
+    margin: 0 auto;
   }
   .card {
     background-color: #1A1430;
@@ -83,7 +129,7 @@ const serverRules = [
     transform: translateY(-4px);
     border-color: #8A5CF6;
   }
-  .card h4 {
+  .member-name {
     color: #C4B5FD;
     margin: 0 0 0.25rem;
   }

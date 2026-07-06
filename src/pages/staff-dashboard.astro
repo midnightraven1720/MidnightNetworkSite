@@ -36,6 +36,42 @@ const applicationsData = await fetchFromBot('/api/applications');
 const healthData = await fetchFromBot('/api/health');
 const botConfigData = await fetchFromBot('/api/bot-config');
 
+const departments = [
+  {
+    name: "Leadership",
+    members: [
+      { name: "Staff Member", role: "Owner" },
+      { name: "Staff Member", role: "Co-Owner" },
+    ]
+  },
+  {
+    name: "Moderation",
+    members: [
+      { name: "Staff Member", role: "Admin" },
+      { name: "Staff Member", role: "Mod" },
+      { name: "Staff Member", role: "Helper" },
+    ]
+  },
+  {
+    name: "Partnerships",
+    members: [
+      { name: "Staff Member", role: "Partnership Manager" },
+    ]
+  },
+  {
+    name: "Events",
+    members: [
+      { name: "Staff Member", role: "Event Manager" },
+    ]
+  },
+  {
+    name: "Health Department",
+    members: [
+      { name: "Staff Member", role: "Health Department" },
+    ]
+  },
+];
+
 const botOnline = healthData !== null;
 const servers = serversData ? serversData.servers : [];
 const useDropdown = servers.length >= 8;
@@ -102,8 +138,18 @@ function serverLink(guildId) {
 
         <div class="dashboard-content">
           <div class="staff-bio-card">
-            <h3>Staff Info</h3>
-            <p class="placeholder-note">Coming soon — staff bios, ranks, and roles for this server, once Midnight Council is live.</p>
+            <h3>Staff Directory</h3>
+            <p class="placeholder-note-small">Network-wide directory below. Per-server bios/ranks are coming once Midnight Council is live.</p>
+            <div class="department-grid">
+              {departments.map(dept => (
+                <div class="department-mini">
+                  <h4>{dept.name}</h4>
+                  <ul class="mini-list">
+                    {dept.members.map(m => <li>{m.name} — {m.role}</li>)}
+                  </ul>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div class="cat-tabs">
@@ -281,7 +327,6 @@ function serverLink(guildId) {
     display: none;
   }
 
-  /* Main tabs: Staff Dashboard / Bot Dashboard */
   .main-tab-buttons {
     display: flex;
     justify-content: center;
@@ -319,7 +364,6 @@ function serverLink(guildId) {
     color: #F0EDF7;
   }
 
-  /* Shared layout */
   .dashboard-layout {
     display: flex;
     gap: 2rem;
@@ -398,6 +442,24 @@ function serverLink(guildId) {
     text-align: left;
   }
 
+  .placeholder-note-small {
+    margin: 0 0 1rem;
+    font-size: 0.8rem;
+    color: #8A7FA8;
+  }
+  .department-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.25rem;
+  }
+  .department-mini h4 {
+    color: #8A5CF6;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0 0 0.5rem;
+  }
+
   .config-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -424,7 +486,6 @@ function serverLink(guildId) {
     font-style: italic;
   }
 
-  /* Category tabs: Tickets / Applications / Moderation */
   .cat-tab-buttons {
     display: flex;
     gap: 0.75rem;
@@ -508,7 +569,6 @@ function serverLink(guildId) {
     font-size: 0.8rem;
   }
 
-  /* Bot status cards */
   .bot-status-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
