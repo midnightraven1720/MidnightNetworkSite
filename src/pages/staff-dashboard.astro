@@ -15,6 +15,11 @@ if (!user) {
   return Astro.redirect('/login');
 }
 
+const STAFF_TIERS = ['owner', 'coOwner', 'staff'];
+if (!STAFF_TIERS.includes(user.rank)) {
+  return Astro.redirect('/account');
+}
+
 const API_BASE = 'http://midnight-tickets.railway.internal:3001';
 const API_KEY = import.meta.env.DASHBOARD_API_KEY;
 
@@ -107,7 +112,6 @@ function serverLink(guildId) {
 <Layout title="Staff Dashboard">
   <section class="section">
     <h2>Staff Dashboard</h2>
-    <p class="intro-note">Note: this isn't restricted to staff yet — that check gets added once we connect it to your bots.</p>
   </section>
 
   <div class="main-tabs">
