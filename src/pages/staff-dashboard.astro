@@ -30,86 +30,129 @@ async function fetchFromBot(path) {
   }
 }
 
+const serversData = await fetchFromBot('/api/servers');
 const ticketsData = await fetchFromBot('/api/tickets');
 const applicationsData = await fetchFromBot('/api/applications');
 const healthData = await fetchFromBot('/api/health');
 
 const botOnline = healthData !== null;
+const servers = serversData ? serversData.servers : [];
+const debugInfo = `serversData: ${JSON.stringify(serversData)}`;
+const useDropdown = servers.length >= 8;
+
+const selectedGuildId = Astro.url.searchParams.get('server') || 'all';
+
+const allTickets = ticketsData ? ticketsData.tickets : [];
+const allApplications = applicationsData ? applicationsData.applications : [];
+
+const filteredTickets = selectedGuildId === 'all'
+  ? allTickets
+  : allTickets.filter(t => t.guildId === selectedGuildId);
+
+const filteredApplications = selectedGuildId === 'all'
+  ? allApplications
+  : allApplications.filter(a => a.guildId === selectedGuildId);
 ---
 <Layout title="Staff Dashboard">
   <section class="section">
     <h2>Staff Dashboard</h2>
+    <p style="color: #F0A5A5; font-size: 0.8rem;">{debugInfo}</p>
     <p class="intro-note">Note: this isn't restricted to staff yet — that check gets added once we connect it to your bots.</p>
   </section>
 
-  <section class="section">
-    <div class="card-grid">
-      <div class="card">
-        <h3>Tickets</h3>
-        {ticketsData ? (
-          <>
-            <p class="stat-number">{ticketsData.count}</p>
-            <p class="stat-label">open right now</p>
-            {ticketsData.tickets.length > 0 && (
-              <ul class="mini-list">
-                {ticketsData.tickets.slice(0, 5).map((t) => (
-                  <li>{t.username} — {t.typeKey}</li>
-                ))}
-              </ul>
-            )}
-          </>
-        ) : (
-          <p class="placeholder-note">Couldn't reach the bot right now.</p>
-        )}
-      </div>
+  <div class="dashboard-layout">
+    <aside class="server-nav">
+      {useDropdown ? (
+        <form method="get" class="server-dropdown-form">
+          <select name="server" class="server-dropdown" onchange="this.form.submit()">
+            <option value="all" selected={selectedGuildId === 'all'}>All Servers</option>
+            {servers.map((s) => (
+              <option value={s.id} selected={selectedGuildId === s.id}>{s.name}</option>
+            ))}
+          </select>
+        </form>
+      ) : (
+        <ul class="server-list">
+          <li>
+            <a href="/staff-dashboard?server=all" class={selectedGuildId === 'all' ? 'active' : ''}>All Servers</a>
+          </li>
+          {servers.map((s) => (
+            <li>
+              <a href={`/staff-dashboard?server=${s.id}`} class={selectedGuildId === s.id ? 'active' : ''}>{s.name}</a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </aside>
 
-      <div class="card">
-        <h3>Staff Applications</h3>
-        {applicationsData ? (
-          <>
-            <p class="stat-number">{applicationsData.count}</p>
-            <p class="stat-label">awaiting review</p>
-            {applicationsData.applications.length > 0 && (
-              <ul class="mini-list">
-                {applicationsData.applications.slice(0, 5).map((a) => (
-                  <li>{a.username}</li>
-                ))}
-              </ul>
-            )}
-          </>
-        ) : (
-          <p class="placeholder-note">Couldn't reach the bot right now.</p>
-        )}
-      </div>
+    <div class="dashboard-content">
+      <div class="card-grid">
+        <div class="card">
+          <h3>Tickets</h3>
+          {ticketsData ? (
+            <>
+              <p class="stat-number">{filteredTickets.length}</p>
+              <p class="stat-label">open right now</p>
+              {filteredTickets.length > 0 && (
+                <ul class="mini-list">
+                  {filteredTickets.slice(0, 8).map((t) => (
+                    <li>{t.username} — {t.typeKey} {selectedGuildId === 'all' && `(${t.guildName})`}</li>
+                  ))}
+                </ul>
+              )}
+            </>
+          ) : (
+            <p class="placeholder-note">Couldn't reach the bot right now.</p>
+          )}
+        </div>
 
-      <div class="card">
-        <h3>Bot Health</h3>
-        <p class={`status-line ${botOnline ? 'status-online' : 'status-offline'}`}>
-          {botOnline ? '● Online' : '● Offline / Unreachable'}
-        </p>
-        {healthData && (
-          <>
-            <p class="stat-label">Uptime: {Math.floor(healthData.uptimeSeconds / 60)} minutes</p>
-            {healthData.recentErrors.length > 0 && (
-              <ul class="mini-list error-list">
-                {healthData.recentErrors.slice(0, 5).map((e) => (
-                  <li>{e.message}</li>
-                ))}
-              </ul>
-            )}
-            {healthData.recentErrors.length === 0 && (
-              <p class="placeholder-note">No recent errors logged.</p>
-            )}
-          </>
-        )}
-      </div>
+        <div class="card">
+          <h3>Staff Applications</h3>
+          {applicationsData ? (
+            <>
+              <p class="stat-number">{filteredApplications.length}</p>
+              <p class="stat-label">awaiting review</p>
+              {filteredApplications.length > 0 && (
+                <ul class="mini-list">
+                  {filteredApplications.slice(0, 8).map((a) => (
+                    <li>{a.username} {selectedGuildId === 'all' && `(${a.guildName})`}</li>
+                  ))}
+                </ul>
+              )}
+            </>
+          ) : (
+            <p class="placeholder-note">Couldn't reach the bot right now.</p>
+          )}
+        </div>
 
-      <div class="card">
-        <h3>Moderation &amp; Blacklist</h3>
-        <p class="placeholder-note">Coming soon — recent warnings, notes, and blacklist entries from Midnight Council.</p>
+        <div class="card">
+          <h3>Bot Health</h3>
+          <p class={`status-line ${botOnline ? 'status-online' : 'status-offline'}`}>
+            {botOnline ? '● Online' : '● Offline / Unreachable'}
+          </p>
+          {healthData && (
+            <>
+              <p class="stat-label">Uptime: {Math.floor(healthData.uptimeSeconds / 60)} minutes</p>
+              {healthData.recentErrors.length > 0 ? (
+                <ul class="mini-list error-list">
+                  {healthData.recentErrors.slice(0, 5).map((e) => (
+                    <li>{e.message}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p class="placeholder-note">No recent errors logged.</p>
+              )}
+            </>
+          )}
+        </div>
+
+        <div class="card">
+          <h3>Moderation &amp; Blacklist</h3>
+          <p class="placeholder-note">Coming soon — recent warnings, notes, and blacklist entries from Midnight Council.</p>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
 
   <section class="section">
     <a href="/account" class="staff-link">&larr; Back to My Dashboard</a>
@@ -122,6 +165,60 @@ const botOnline = healthData !== null;
     color: #8A7FA8;
     font-size: 0.9rem;
   }
+  .dashboard-layout {
+    display: flex;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 2rem auto 0;
+    padding: 0 1.5rem;
+    align-items: flex-start;
+  }
+  .server-nav {
+    flex-shrink: 0;
+    width: 200px;
+  }
+  .server-dropdown-form {
+    width: 100%;
+  }
+  .server-dropdown {
+    width: 100%;
+    padding: 0.6rem;
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 8px;
+    color: #F0EDF7;
+    font-size: 0.9rem;
+  }
+  .server-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .server-list a {
+    display: block;
+    padding: 0.6rem 0.9rem;
+    border-radius: 8px;
+    color: #B8AED0;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .server-list a:hover {
+    background-color: #1A1430;
+    color: #F0EDF7;
+  }
+  .server-list a.active {
+    background-color: #8A5CF6;
+    color: #F0EDF7;
+    font-weight: 600;
+  }
+  .dashboard-content {
+    flex: 1;
+    min-width: 0;
+  }
   h3 {
     font-size: 1.15rem;
     color: #C4B5FD;
@@ -131,9 +228,6 @@ const botOnline = healthData !== null;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 1.5rem;
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 0 1rem;
   }
   .card {
     background-color: #1A1430;
@@ -186,5 +280,13 @@ const botOnline = healthData !== null;
   }
   .staff-link:hover {
     color: #C4B5FD;
+  }
+  @media (max-width: 640px) {
+    .dashboard-layout {
+      flex-direction: column;
+    }
+    .server-nav {
+      width: 100%;
+    }
   }
 </style>
