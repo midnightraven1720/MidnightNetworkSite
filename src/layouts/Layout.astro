@@ -25,31 +25,41 @@ if (sessionCookie) {
     <title>{title} | Midnight Network</title>
   </head>
   <body>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle-checkbox" />
     <nav class="tabs">
       <a href="/" class="site-title">Midnight Network</a>
-      <div class="tab-links">
-        <a href="/" class={`tab ${isActive('/') ? 'active' : ''}`}>Home</a>
-        <a href="/servers" class={`tab ${isActive('/servers') ? 'active' : ''}`}>Servers</a>
-        <a href="/bots" class={`tab ${isActive('/bots') ? 'active' : ''}`}>Bots</a>
-        <a href="/partnerships" class={`tab ${isActive('/partnerships') ? 'active' : ''}`}>Partnerships</a>
-        <a href="/about-us" class={`tab ${isActive('/about-us') ? 'active' : ''}`}>About Us</a>
-      </div>
-      <div class="auth-area">
-        {user ? (
-          <div class="user-badge">
-            {user.avatar && (
-              <img
-                src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=32`}
-                alt={user.username}
-                class="user-avatar"
-              />
-            )}
-            <a href="/account" class="username">{user.username}</a>
-            <a href="/logout" class="logout-link">Log out</a>
-          </div>
-        ) : (
-          <a href="/login" class="login-button">Login with Discord</a>
-        )}
+
+      <label for="nav-toggle" class="hamburger-btn" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </label>
+
+      <div class="nav-menu">
+        <div class="tab-links">
+          <a href="/" class={`tab ${isActive('/') ? 'active' : ''}`}>Home</a>
+          <a href="/servers" class={`tab ${isActive('/servers') ? 'active' : ''}`}>Servers</a>
+          <a href="/bots" class={`tab ${isActive('/bots') ? 'active' : ''}`}>Bots</a>
+          <a href="/partnerships" class={`tab ${isActive('/partnerships') ? 'active' : ''}`}>Partnerships</a>
+          <a href="/about-us" class={`tab ${isActive('/about-us') ? 'active' : ''}`}>About Us</a>
+        </div>
+        <div class="auth-area">
+          {user ? (
+            <div class="user-badge">
+              {user.avatar && (
+                <img
+                  src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=32`}
+                  alt={user.username}
+                  class="user-avatar"
+                />
+              )}
+              <a href="/account" class="username">{user.username}</a>
+              <a href="/logout" class="logout-link">Log out</a>
+            </div>
+          ) : (
+            <a href="/login" class="login-button">Login with Discord</a>
+          )}
+        </div>
       </div>
     </nav>
     <slot />
@@ -65,6 +75,9 @@ if (sessionCookie) {
     color: #F0EDF7;
     font-family: system-ui, sans-serif;
   }
+  .nav-toggle-checkbox {
+    display: none;
+  }
   .tabs {
     display: flex;
     align-items: center;
@@ -74,7 +87,7 @@ if (sessionCookie) {
     border-bottom: 1px solid #2A2145;
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 20;
     gap: 1rem;
     flex-wrap: nowrap;
   }
@@ -89,6 +102,34 @@ if (sessionCookie) {
   }
   .site-title:hover {
     color: #C4B5FD;
+  }
+
+  .hamburger-btn {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .hamburger-btn span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background-color: #F0EDF7;
+    border-radius: 2px;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+
+  .nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+    justify-content: space-between;
+    min-width: 0;
   }
   .tab-links {
     display: flex;
@@ -149,6 +190,7 @@ if (sessionCookie) {
     font-weight: 600;
     color: #C4B5FD;
     white-space: nowrap;
+    text-decoration: none;
   }
   .logout-link {
     color: #8A7FA8;
@@ -176,5 +218,52 @@ if (sessionCookie) {
   .section h2 {
     font-size: 2rem;
     color: #C4B5FD;
+  }
+
+  /* ===== Mobile nav ===== */
+  @media (max-width: 768px) {
+    .hamburger-btn {
+      display: flex;
+    }
+
+    .nav-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: #150F26;
+      border-bottom: 1px solid #2A2145;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.25s ease;
+    }
+    .tab-links {
+      flex-direction: column;
+      gap: 0;
+      padding: 0.5rem 0;
+    }
+    .tab {
+      padding: 0.9rem 1.5rem;
+      border-radius: 0;
+    }
+    .auth-area {
+      padding: 0.75rem 1.5rem 1rem;
+      border-top: 1px solid #2A2145;
+    }
+    .login-button {
+      width: 100%;
+      text-align: center;
+    }
+    .user-badge {
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .nav-toggle-checkbox:checked ~ .tabs .nav-menu {
+      max-height: 500px;
+    }
   }
 </style>
