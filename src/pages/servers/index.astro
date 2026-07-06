@@ -11,8 +11,11 @@ const servers = [
 ];
 ---
 <Layout title="Servers">
-  <section class="section">
+  <div class="page-banner" style="background-image: url('/banners/servers.jpg');">
     <h2>Our Servers</h2>
+  </div>
+
+  <section class="section">
     <div class="card-grid">
       {servers.map(server => (
         <a href={`/servers/${server.slug}`} class="card">
@@ -26,13 +29,28 @@ const servers = [
   </section>
 </Layout>
 <style>
+  .page-banner {
+    background-size: cover;
+    background-position: center;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .page-banner h2 {
+    font-size: 2.5rem;
+    color: #F0EDF7;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.8);
+    margin: 0;
+  }
   .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1.5rem;
     max-width: 1000px;
     margin: 2rem auto 0;
-    padding: 0 1rem;
+    padding: 0 1rem 2rem;
   }
   .card {
     position: relative;

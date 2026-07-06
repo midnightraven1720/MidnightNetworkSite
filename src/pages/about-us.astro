@@ -48,8 +48,11 @@ const serverRules = [
 ];
 ---
 <Layout title="About Us">
-  <section class="section">
+  <div class="page-banner" style="background-image: url('/banners/about-us.jpg');">
     <h2>About Us</h2>
+  </div>
+
+  <section class="section">
     <p class="intro">Placeholder description of the Midnight Network, its mission, and its community.</p>
   </section>
 
@@ -86,9 +89,24 @@ const serverRules = [
   </section>
 </Layout>
 <style>
+  .page-banner {
+    background-size: cover;
+    background-position: center;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .page-banner h2 {
+    font-size: 2.5rem;
+    color: #F0EDF7;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.8);
+    margin: 0;
+  }
   .intro {
     max-width: 600px;
-    margin: 1rem auto 0;
+    margin: 0 auto;
     color: #B8AED0;
   }
   h3 {

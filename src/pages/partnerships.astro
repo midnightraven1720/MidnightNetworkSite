@@ -2,15 +2,33 @@
 import Layout from '../layouts/Layout.astro';
 ---
 <Layout title="Partnerships">
-  <section class="section">
+  <div class="page-banner" style="background-image: url('/banners/partnerships.jpg');">
     <h2>Partnerships</h2>
+  </div>
+
+  <section class="section">
     <p class="intro">Coming soon — information on partnering with the Midnight Network, including how to apply and what we look for.</p>
   </section>
 </Layout>
 <style>
+  .page-banner {
+    background-size: cover;
+    background-position: center;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .page-banner h2 {
+    font-size: 2.5rem;
+    color: #F0EDF7;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.8);
+    margin: 0;
+  }
   .intro {
     max-width: 600px;
-    margin: 1rem auto 0;
+    margin: 0 auto;
     color: #B8AED0;
   }
 </style>
