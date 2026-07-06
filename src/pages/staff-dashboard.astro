@@ -94,6 +94,12 @@ const selectedConfig = selectedGuildId === 'all'
   ? null
   : allConfigs.find(c => c.guildId === selectedGuildId);
 
+const guildOptionsData = selectedGuildId !== 'all'
+  ? await fetchFromBot(`/api/guild-options?guildId=${selectedGuildId}`)
+  : null;
+
+const saved = Astro.url.searchParams.get('saved') === 'true';
+
 function serverLink(guildId) {
   return `/staff-dashboard?server=${guildId}`;
 }
@@ -244,33 +250,97 @@ function serverLink(guildId) {
         <div class="dashboard-content">
           <div class="bot-config-card">
             <h3>Midnight Tickets — Configuration</h3>
+            {saved && <p class="saved-note">✓ Settings saved.</p>}
             {selectedGuildId === 'all' ? (
-              <p class="placeholder-note">Select a specific server from the list to view its bot configuration.</p>
-            ) : botConfigData && selectedConfig ? (
-              <div class="config-grid">
-                <div>
-                  <h4>Roles</h4>
-                  <ul class="config-list">
-                    <li><span class="config-key">Ticket Staff:</span> {selectedConfig.roles.ticketStaff ? selectedConfig.roles.ticketStaff.name : 'Not set'}</li>
-                    <li><span class="config-key">Owner:</span> {selectedConfig.roles.owner ? selectedConfig.roles.owner.name : 'Not set'}</li>
-                    <li><span class="config-key">Co-Owner:</span> {selectedConfig.roles.coOwner ? selectedConfig.roles.coOwner.name : 'Not set'}</li>
-                    <li><span class="config-key">Partnership Manager:</span> {selectedConfig.roles.partnershipManager ? selectedConfig.roles.partnershipManager.name : 'Not set'}</li>
-                    <li><span class="config-key">ID Verified Staff:</span> {selectedConfig.roles.idVerifiedStaff ? selectedConfig.roles.idVerifiedStaff.name : 'Not set'}</li>
-                  </ul>
+              <p class="placeholder-note">Select a specific server from the list to edit its bot configuration.</p>
+            ) : botConfigData && selectedConfig && guildOptionsData ? (
+              <form method="post" action="/api/save-bot-config" class="config-form">
+                <input type="hidden" name="guildId" value={selectedGuildId} />
+                <div class="config-grid">
+                  <div>
+                    <h4>Roles</h4>
+                    <label class="config-field">
+                      <span>Ticket Staff</span>
+                      <select name="role_ticketStaff">
+                        <option value="">Not set</option>
+                        {guildOptionsData.roles.map(r => (
+                          <option value={r.id} selected={selectedConfig.roles.ticketStaff?.id === r.id}>{r.name}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label class="config-field">
+                      <span>Owner</span>
+                      <select name="role_owner">
+                        <option value="">Not set</option>
+                        {guildOptionsData.roles.map(r => (
+                          <option value={r.id} selected={selectedConfig.roles.owner?.id === r.id}>{r.name}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label class="config-field">
+                      <span>Co-Owner</span>
+                      <select name="role_coOwner">
+                        <option value="">Not set</option>
+                        {guildOptionsData.roles.map(r => (
+                          <option value={r.id} selected={selectedConfig.roles.coOwner?.id === r.id}>{r.name}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label class="config-field">
+                      <span>Partnership Manager</span>
+                      <select name="role_partnershipManager">
+                        <option value="">Not set</option>
+                        {guildOptionsData.roles.map(r => (
+                          <option value={r.id} selected={selectedConfig.roles.partnershipManager?.id === r.id}>{r.name}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label class="config-field">
+                      <span>ID Verified Staff</span>
+                      <select name="role_idVerifiedStaff">
+                        <option value="">Not set</option>
+                        {guildOptionsData.roles.map(r => (
+                          <option value={r.id} selected={selectedConfig.roles.idVerifiedStaff?.id === r.id}>{r.name}</option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                  <div>
+                    <h4>Categories</h4>
+                    <label class="config-field">
+                      <span>Support/Report/Partnership</span>
+                      <select name="category_support">
+                        <option value="">Not set</option>
+                        {guildOptionsData.categories.map(c => (
+                          <option value={c.id} selected={selectedConfig.categories.support?.id === c.id}>{c.name}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label class="config-field">
+                      <span>Staff Reports</span>
+                      <select name="category_staffReport">
+                        <option value="">Not set</option>
+                        {guildOptionsData.categories.map(c => (
+                          <option value={c.id} selected={selectedConfig.categories.staffReport?.id === c.id}>{c.name}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label class="config-field">
+                      <span>Verification</span>
+                      <select name="category_verification">
+                        <option value="">Not set</option>
+                        {guildOptionsData.categories.map(c => (
+                          <option value={c.id} selected={selectedConfig.categories.verification?.id === c.id}>{c.name}</option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
                 </div>
-                <div>
-                  <h4>Categories</h4>
-                  <ul class="config-list">
-                    <li><span class="config-key">Support/Report/Partnership:</span> {selectedConfig.categories.support ? selectedConfig.categories.support.name : 'Not set'}</li>
-                    <li><span class="config-key">Staff Reports:</span> {selectedConfig.categories.staffReport ? selectedConfig.categories.staffReport.name : 'Not set'}</li>
-                    <li><span class="config-key">Verification:</span> {selectedConfig.categories.verification ? selectedConfig.categories.verification.name : 'Not set'}</li>
-                  </ul>
-                </div>
-              </div>
+                <button type="submit" class="save-btn">Save Changes</button>
+              </form>
             ) : (
               <p class="placeholder-note">Couldn't reach the bot right now.</p>
             )}
-            <p class="edit-note">This view is read-only for now — editing these values directly from the dashboard is planned for later.</p>
           </div>
 
           <div class="bot-status-list">
@@ -484,6 +554,43 @@ function serverLink(guildId) {
     font-size: 0.75rem;
     color: #8A7FA8;
     font-style: italic;
+  }
+  .config-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-bottom: 0.85rem;
+    font-size: 0.8rem;
+    color: #B8AED0;
+  }
+  .config-field select {
+    padding: 0.5rem;
+    background-color: #0F0B1E;
+    border: 1px solid #2A2145;
+    border-radius: 6px;
+    color: #F0EDF7;
+    font-size: 0.85rem;
+  }
+  .save-btn {
+    margin-top: 0.5rem;
+    padding: 0.6rem 1.5rem;
+    background-color: #8A5CF6;
+    color: #F0EDF7;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .save-btn:hover {
+    background-color: #7C4FE0;
+  }
+  .saved-note {
+    color: #22C55E;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin: 0 0 1rem;
   }
 
   .cat-tab-buttons {
