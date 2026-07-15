@@ -120,7 +120,7 @@ const botData = [
   },
   {
     name: 'Midnight Watch', status: 'Planned',
-    highlights: ['Messages, roles, channels, and voice activity', 'Joins/leaves with invite-source tracking', 'Staff action logging', 'Logged locally per server, mirrored centrally to one hub in Midnight Staff'],
+    highlights: ['Messages, roles, channels, and voice activity', 'Joins/leaves with invite-source tracking', 'Staff action logging'],
     commands: [
       { name: '/logs setup', description: 'Map local log channels' },
       { name: '/logs toggle', description: 'Enable/disable log categories per server' },
@@ -128,7 +128,7 @@ const botData = [
   },
   {
     name: 'Midnight Blueprint', status: 'Planned',
-    highlights: ['Full structure snapshots and templates', 'Quick single-item creation: roles, channels, categories', 'Reusable content templates', 'Permission and emoji presets', 'Setup checklist for onboarding new servers'],
+    highlights: ['Copies server structure over to another server: roles, channels, categories', 'Reusable templates and presets'],
     commands: [
       { name: '/blueprint create', description: 'Save a structure snapshot/template' },
       { name: '/blueprint load', description: 'Restore from a saved template' },
@@ -240,9 +240,13 @@ const serverList = [
 
         <div id="view-commands" style="display: none;">
           <h3>Commands List</h3>
-          {botData.filter((bot) => bot.commands.length > 0).map((bot) => (
-            <div class="command-group">
-              <h4>{bot.name}</h4>
+          <select id="command-bot-select" class="command-select" onchange="showCommandBot(this.value)">
+            {botData.filter((bot) => bot.commands.length > 0).map((bot) => (
+              <option value={bot.name}>{bot.name}</option>
+            ))}
+          </select>
+          {botData.filter((bot) => bot.commands.length > 0).map((bot, i) => (
+            <div class="command-group" data-bot={bot.name} style={i === 0 ? '' : 'display: none;'}>
               <table class="log-table">
                 <thead><tr><th>Command</th><th>Description</th></tr></thead>
                 <tbody>
@@ -353,6 +357,12 @@ const serverList = [
       document.getElementById('sub-page-title').innerText = "Midnight " + name;
     }
 
+    function showCommandBot(name) {
+      document.querySelectorAll('.command-group').forEach((el) => {
+        el.style.display = el.getAttribute('data-bot') === name ? 'block' : 'none';
+      });
+    }
+
     function backToOverview() {
       document.getElementById('bot-selection-grid').style.display = 'grid';
       document.getElementById('bot-sub-page').style.display = 'none';
@@ -420,9 +430,16 @@ const serverList = [
   .module-card-header h4 { font-size: 0.8rem; margin: 0; color: #C4B5FD; }
   .mini-list { margin: 0; padding-left: 1.1rem; color: #B8AED0; font-size: 0.72rem; line-height: 1.6; }
 
+  .command-select {
+    margin-top: 0.75rem;
+    padding: 0.4rem 0.6rem;
+    background: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 6px;
+    color: #F0EDF7;
+    font-size: 0.8rem;
+  }
   .command-group { margin-top: 0.75rem; }
-  .command-group h4 { font-size: 0.8rem; color: #C4B5FD; margin: 0 0 0.4rem; }
-  .command-group:first-of-type { margin-top: 0.5rem; }
 
   .detail-list { list-style: none; margin: 0.75rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
   .detail-list li { display: flex; flex-direction: column; gap: 0.15rem; padding-bottom: 0.5rem; border-bottom: 1px solid #2A2145; }
