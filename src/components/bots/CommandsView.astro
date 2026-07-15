@@ -1,0 +1,40 @@
+---
+import { botData } from '../../data/bots.js';
+
+const commandBots = botData.filter((bot) => bot.commands.length > 0);
+---
+<div id="view-commands" style="display: none;">
+  <h3>Commands List</h3>
+  <select id="command-bot-select" class="command-select" onchange="showCommandBot(this.value)">
+    {commandBots.map((bot) => (
+      <option value={bot.name}>{bot.name}</option>
+    ))}
+  </select>
+  {commandBots.map((bot, i) => (
+    <div class="command-group" data-bot={bot.name} style={i === 0 ? '' : 'display: none;'}>
+      <table class="log-table">
+        <thead><tr><th>Command</th><th>Description</th></tr></thead>
+        <tbody>
+          {bot.commands.map((c) => (
+            <tr><td>{c.name}</td><td>{c.description}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  ))}
+</div>
+
+<style>
+  .command-select {
+    margin-top: 0.75rem;
+    padding: 0.4rem 0.6rem;
+    background: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 6px;
+    color: #F0EDF7;
+    font-size: 0.8rem;
+  }
+  .command-group { margin-top: 0.75rem; }
+  .log-table { width: 100%; border-collapse: collapse; margin-top: 0.75rem; background: #0F0B1E; font-size: 0.8rem; }
+  .log-table th, .log-table td { padding: 0.6rem 0.75rem; border-bottom: 1px solid #2A2145; text-align: left; }
+</style>

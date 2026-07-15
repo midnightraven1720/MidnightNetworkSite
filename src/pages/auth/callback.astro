@@ -1,4 +1,6 @@
 ---
+import { fetchFromBot } from '../../lib/bot-api.js';
+
 const code = Astro.url.searchParams.get('code');
 
 if (!code) {
@@ -42,22 +44,8 @@ const discordUser = await userResponse.json();
 
 // Check their staff rank in the Staff Server
 const STAFF_SERVER_ID = '1396985703379763251';
-const API_BASE = 'http://midnight-tickets.railway.internal:3001';
-const API_KEY = import.meta.env.DASHBOARD_API_KEY;
-
-let rank = 'member';
-try {
-  const rankResponse = await fetch(
-    `${API_BASE}/api/member-rank?guildId=${STAFF_SERVER_ID}&userId=${discordUser.id}`,
-    { headers: { 'x-api-key': API_KEY } }
-  );
-  if (rankResponse.ok) {
-    const rankData = await rankResponse.json();
-    rank = rankData.rank;
-  }
-} catch (err) {
-  console.error('Failed to fetch member rank:', err);
-}
+const rankData = await fetchFromBot(`/api/member-rank?guildId=${STAFF_SERVER_ID}&userId=${discordUser.id}`);
+const rank = rankData?.rank || 'member';
 
 Astro.cookies.set('midnight_session', JSON.stringify({
   id: discordUser.id,

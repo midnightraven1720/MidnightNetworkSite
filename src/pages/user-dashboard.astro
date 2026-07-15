@@ -1,20 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Sidebar from '../components/Sidebar.astro';
+import DashboardCard from '../components/DashboardCard.astro';
+import { requireAuth } from '../lib/session.js';
 
-const sessionCookie = Astro.cookies.get('midnight_session');
-let user = null;
-if (sessionCookie) {
-  try {
-    user = JSON.parse(sessionCookie.value);
-  } catch {
-    user = null;
-  }
-}
-
-if (!user) {
-  return Astro.redirect('/login');
-}
+const { user, redirect } = requireAuth(Astro);
+if (redirect) return redirect;
 
 const avatarUrl = user.avatar
   ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128`
@@ -34,25 +25,21 @@ const avatarUrl = user.avatar
       </div>
 
       <div class="card-grid">
-        <div class="card"><h3>Active Tickets</h3><p>1 open ticket.</p></div>
-        <div class="card"><h3>Current Bonds</h3><p>Bound</p></div>
-        <div class="card"><h3>RP Status</h3><p>Active Scene</p></div>
-        <div class="card">
-          <h3>Level &amp; Currency</h3>
+        <DashboardCard title="Active Tickets"><p>1 open ticket.</p></DashboardCard>
+        <DashboardCard title="Current Bonds"><p>Bound</p></DashboardCard>
+        <DashboardCard title="RP Status"><p>Active Scene</p></DashboardCard>
+        <DashboardCard title="Level & Currency">
           <p class="placeholder-note">Coming soon — this will show your Server and Network XP, level, and currency wallets once Midnight Ascend is live.</p>
-        </div>
-        <div class="card">
-          <h3>Warnings</h3>
+        </DashboardCard>
+        <DashboardCard title="Warnings">
           <p class="placeholder-note">Coming soon — you'll be able to see your own warning count here once Midnight Council is live.</p>
-        </div>
-        <div class="card">
-          <h3>My Profiles</h3>
+        </DashboardCard>
+        <DashboardCard title="My Profiles">
           <p class="placeholder-note">Coming soon — quick links to your Kink, Gamer, Anime &amp; Manga, and Books profiles once Midnight Profiles is live.</p>
-        </div>
-        <div class="card">
-          <h3>Server Memberships</h3>
+        </DashboardCard>
+        <DashboardCard title="Server Memberships">
           <p class="placeholder-note">Coming soon — a list of which Midnight Network servers you're a member of.</p>
-        </div>
+        </DashboardCard>
       </div>
 
       {user.rank !== 'member' && (
@@ -63,8 +50,8 @@ const avatarUrl = user.avatar
 </Layout>
 
 <style>
-  .dashboard-wrapper { display: flex; min-height: 100vh; background: #0A0714; color: white; }
-  .content { padding: 1.5rem; flex: 1; overflow: hidden; }
+  .dashboard-wrapper { display: flex; background: #0F0B1E; color: white; }
+  .content { padding: 1.5rem; flex: 1; min-width: 0; }
   .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
   .profile-info { display: flex; align-items: center; gap: 1rem; }
   .profile-avatar {
@@ -76,14 +63,6 @@ const avatarUrl = user.avatar
   .safeword-btn { background: #FF0033; color: white; border: none; padding: 0.4rem 1rem; font-weight: bold; cursor: pointer; border-radius: 4px; text-transform: uppercase; }
 
   .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
-  .card { background: #1A1430; padding: 1rem; border-radius: 8px; border: 1px solid #2A2145; }
-  .card h3 { font-size: 1.15rem; color: #C4B5FD; margin: 0 0 0.5rem; }
-  .placeholder-note {
-    margin: 0;
-    font-size: 0.9rem;
-    color: #8A7FA8;
-    line-height: 1.5;
-  }
   .staff-link {
     display: block;
     margin-top: 1.5rem;

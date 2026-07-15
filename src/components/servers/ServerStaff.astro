@@ -1,0 +1,26 @@
+---
+const { staff, serverName } = Astro.props;
+---
+{staff.length > 0 ? (
+  <div class="doc-container">
+    <p class="intro">Staff assigned to {serverName}:</p>
+    <ul class="staff-list">
+      {staff.map((member) => (
+        <li><strong>{member.name}</strong> — {member.role}{member.nickname && ` (${member.nickname})`}</li>
+      ))}
+    </ul>
+    <p class="intro"><a href="/about-us">See full role descriptions on the About Us page &rarr;</a></p>
+  </div>
+) : (
+  <p class="placeholder-note">No staff have been assigned to this server yet.</p>
+)}
+
+<style>
+  .doc-container { max-width: 700px; margin: 0 auto; text-align: left; }
+  .intro { color: #B8AED0; line-height: 1.7; margin-bottom: 1rem; }
+  .intro a { color: #8A5CF6; text-decoration: underline; }
+  .intro a:hover { color: #C4B5FD; }
+  .staff-list { color: #F0EDF7; line-height: 1.8; padding-left: 1.5rem; margin-bottom: 1rem; }
+  .staff-list strong { color: #C4B5FD; }
+  .placeholder-note { margin: 0; font-size: 0.9rem; color: #8A7FA8; line-height: 1.5; text-align: center; }
+</style>

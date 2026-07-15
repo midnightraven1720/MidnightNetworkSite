@@ -1,21 +1,15 @@
 ---
+import { getUser } from '../lib/session.js';
+
 const { title } = Astro.props;
 const path = Astro.url.pathname;
 
-const isActive = (href) => {
+const isActive = (href: string) => {
   if (href === '/') return path === '/';
   return path.startsWith(href);
 };
 
-const sessionCookie = Astro.cookies.get('midnight_session');
-let user = null;
-if (sessionCookie) {
-  try {
-    user = JSON.parse(sessionCookie.value);
-  } catch {
-    user = null;
-  }
-}
+const user = getUser(Astro);
 ---
 <html lang="en">
   <head>

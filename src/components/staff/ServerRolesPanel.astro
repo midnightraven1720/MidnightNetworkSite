@@ -1,0 +1,27 @@
+---
+const { guildOptionsData } = Astro.props;
+---
+<div class="panel">
+  <h3>Server Roles &amp; Categories</h3>
+  <div class="role-cols">
+    <div>
+      <h4>Roles</h4>
+      <ul class="mini-list">
+        {(guildOptionsData.roles || []).map((r) => <li>{r.name}</li>)}
+      </ul>
+    </div>
+    <div>
+      <h4>Categories</h4>
+      <ul class="mini-list">
+        {(guildOptionsData.categories || []).map((c) => <li>{c.name}</li>)}
+      </ul>
+    </div>
+  </div>
+</div>
+
+<style>
+  .panel { background: #1A1430; border: 1px solid #2A2145; border-radius: 12px; padding: 1.5rem; }
+  .panel h3 { margin: 0 0 1rem; font-size: 1.1rem; color: #C4B5FD; }
+  .role-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .mini-list { margin: 0; padding-left: 1.1rem; color: #F0EDF7; font-size: 0.85rem; line-height: 1.6; }
+</style>

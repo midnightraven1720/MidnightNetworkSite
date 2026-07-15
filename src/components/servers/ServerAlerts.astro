@@ -1,0 +1,31 @@
+---
+const { alerts } = Astro.props;
+---
+{alerts.length > 0 ? (
+  <div class="doc-container">
+    {alerts.map((alert) => (
+      <div class="alert-card">
+        <h4>{alert.title}</h4>
+        <p class="event-date">{alert.date}</p>
+        <p>{alert.message}</p>
+      </div>
+    ))}
+  </div>
+) : (
+  <p class="placeholder-note">No alerts right now.</p>
+)}
+
+<style>
+  .doc-container { max-width: 700px; margin: 0 auto; text-align: left; }
+  .alert-card {
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    color: #F0EDF7;
+  }
+  .alert-card h4 { color: #C4B5FD; margin: 0 0 0.25rem; }
+  .event-date { color: #8A5CF6; font-size: 0.85rem; font-weight: 600; margin: 0 0 0.5rem; }
+  .placeholder-note { margin: 0; font-size: 0.9rem; color: #8A7FA8; line-height: 1.5; text-align: center; }
+</style>

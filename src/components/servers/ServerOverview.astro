@@ -1,0 +1,67 @@
+---
+const { server } = Astro.props;
+---
+<div class="doc-container">
+  {server.about.length > 0 ? (
+    <>
+      {server.about.map((p) => <p class="server-desc">{p}</p>)}
+      {server.contentNotice && <p class="content-notice">{server.contentNotice}</p>}
+
+      {server.whatWeOffer.length > 0 && (
+        <>
+          <h4>✦ What We Offer ✦</h4>
+          <ul class="offer-list">
+            {server.whatWeOffer.map((item) => (
+              <li>{item.emoji} <strong>{item.title}</strong> — {item.text}</li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      {server.standards.length > 0 && (
+        <>
+          <h4>✦ Our Standards ✦</h4>
+          <ul class="offer-list">
+            {server.standards.map((s) => <li>✅ {s}</li>)}
+          </ul>
+        </>
+      )}
+
+      {server.closingLines.map((line) => (
+        <p class="server-desc closing-line">{line}</p>
+      ))}
+    </>
+  ) : (
+    <p class="placeholder-note">Description coming soon.</p>
+  )}
+
+  <div class="invite-wrap">
+    <a href="#" class="invite-button">Join Server</a>
+  </div>
+</div>
+
+<style>
+  .doc-container { max-width: 650px; margin: 0 auto; text-align: left; }
+  .server-desc { color: #F0EDF7; line-height: 1.7; margin-bottom: 1rem; }
+  .server-desc.closing-line { text-align: center; font-style: italic; }
+  .server-desc.closing-line:last-child { font-weight: 700; font-style: normal; }
+  h4 { color: #C4B5FD; font-size: 1.1rem; text-align: center; margin-top: 2rem; margin-bottom: 1rem; }
+  .offer-list { list-style: none; padding: 0; margin: 0 0 1.5rem; }
+  .offer-list li { color: #B8AED0; line-height: 1.6; margin-bottom: 0.75rem; }
+  .offer-list strong { color: #F0EDF7; }
+  .content-notice { color: #C4B5FD; font-size: 0.9rem; max-width: 600px; margin: 0 auto 1rem; }
+  .invite-wrap { text-align: center; margin-top: 1.5rem; }
+  .invite-button {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.75rem 2rem;
+    background-color: #8A5CF6;
+    color: #F0EDF7;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
+  .invite-button:hover { background-color: #7440E0; }
+  .placeholder-note { margin: 0 0 1.5rem; font-size: 0.9rem; color: #8A7FA8; line-height: 1.5; text-align: center; }
+</style>

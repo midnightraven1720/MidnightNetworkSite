@@ -3,7 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import ServerTabs from '../../components/servers/ServerTabs.astro';
 import { getServer } from '../../data/servers.js';
 
-const server = getServer('server-7')!;
+const server = getServer('advertising-lounge')!;
 ---
 <Layout title={server.name}>
   <ServerTabs server={server} />

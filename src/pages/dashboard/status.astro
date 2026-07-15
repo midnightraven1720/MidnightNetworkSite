@@ -1,18 +1,24 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Sidebar from '../../components/Sidebar.astro';
+import { requireAuth } from '../../lib/session.js';
+
+const { redirect } = requireAuth(Astro);
+if (redirect) return redirect;
 ---
 
 <Layout title="RP Scenes & Turns">
   <div class="dashboard-wrapper">
     <Sidebar />
     <main class="content">
-      <h1>RP Scenes & Turns</h1>
+      <h1>RP Scenes &amp; Turns</h1>
+      <p class="placeholder-note">Coming soon — your active roleplay scenes and turn order will appear here once Midnight Roleplay is live.</p>
     </main>
   </div>
 </Layout>
 
 <style>
-  .dashboard-wrapper { display: flex; min-height: 100vh; background: #0A0714; color: white; }
-  .content { padding: 1.5rem; flex: 1; }
+  .dashboard-wrapper { display: flex; background: #0F0B1E; color: white; }
+  .content { padding: 1.5rem; flex: 1; min-width: 0; }
+  .placeholder-note { margin: 0.5rem 0 0; font-size: 0.9rem; color: #8A7FA8; line-height: 1.5; max-width: 500px; }
 </style>

@@ -1,14 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-const servers = [
-  { name: "Den of Desire", slug: "server-1", icon: "den-of-desire.jpg", description: "Placeholder description.", partner: true },
-  { name: "Underground Gamer Lounge", slug: "server-2", icon: "underground-gamer-lounge.png", description: "Placeholder description.", partner: true },
-  { name: "Chaos Midnight House", slug: "server-3", icon: "chaos-midnight-house.jpg", description: "Placeholder description.", partner: false },
-  { name: "Smutty Library Cafe", slug: "server-4", icon: "smutty-library-cafe.jpg", description: "Placeholder description.", partner: false },
-  { name: "Velvet Cosy Collars", slug: "server-5", icon: "velvet-cosy-collars.jpg", description: "Placeholder description.", partner: false },
-  { name: "Advertising Lounge", slug: "server-6", icon: "advertising-lounge.png", description: "Placeholder description.", partner: false },
-  { name: "Server 7", slug: "server-7", icon: "server-7.png", description: "Placeholder description.", partner: false },
-];
+import { servers } from '../../data/servers.js';
 ---
 <Layout title="Servers">
   <div class="page-banner" style="background-image: url('/banners/servers.jpg');">
@@ -22,7 +14,7 @@ const servers = [
           {server.partner && <span class="badge">Partner Server</span>}
           <img src={`/icons/${server.icon}`} alt={`${server.name} icon`} class="server-icon" />
           <h3>{server.name}</h3>
-          <p>{server.description}</p>
+          <p>{server.description || 'Description coming soon.'}</p>
         </a>
       ))}
     </div>

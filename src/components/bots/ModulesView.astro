@@ -1,0 +1,77 @@
+---
+import { botData } from '../../data/bots.js';
+import BackButton from '../BackButton.astro';
+import TicketConfigForm from './TicketConfigForm.astro';
+
+const { selectedGuildId, configSaved, ticketServers, ticketGuildOptions, selectedTicketConfig } = Astro.props;
+---
+<div id="view-modules" style="display: none;">
+  <h3>Modules Manager</h3>
+  <div id="module-selection-grid" class="card-grid">
+    {botData.map((bot) => (
+      <div class="bot-card" onclick={`openModuleSubPage('${bot.name}')`}>
+        <h4>{bot.name}</h4>
+      </div>
+    ))}
+  </div>
+
+  {botData.map((bot) => (
+    <div class="module-sub-page" data-bot={bot.name} style="display: none;">
+      <BackButton onclick="backToModuleGrid()" />
+      <div class="module-sub-header">
+        <h3>{bot.name}</h3>
+        <span class={`status-text active ${bot.status === 'Live' ? 'process' : 'planned'}`}>{bot.status.toUpperCase()}</span>
+      </div>
+      {bot.moduleDetails.map((m) => (
+        <div class="module-detail">
+          <h4>{m.title}</h4>
+          <p class="module-explain">{m.explanation}</p>
+          <p class="module-example"><strong>Example:</strong> {m.example}</p>
+        </div>
+      ))}
+
+      <div class="module-setup">
+        <h4>Setup</h4>
+        {bot.configurable ? (
+          <TicketConfigForm
+            botName={bot.name}
+            selectedGuildId={selectedGuildId}
+            ticketServers={ticketServers}
+            ticketGuildOptions={ticketGuildOptions}
+            selectedTicketConfig={selectedTicketConfig}
+            configSaved={configSaved}
+          />
+        ) : (
+          <p class="placeholder-note">Setup will be available here once {bot.name} is live.</p>
+        )}
+      </div>
+
+      <div class="sub-page-footer">
+        <BackButton onclick="backToModuleGrid()" />
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .card-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem; margin-top: 0.75rem; }
+  .bot-card { background: #0F0B1E; border: 1px solid #2A2145; padding: 0.7rem; cursor: pointer; border-radius: 4px; transition: 0.3s; text-align: center; }
+  .bot-card h4 { font-size: 0.7rem; margin: 0; }
+  .bot-card:hover { border-color: #8A5CF6; background: #1A1430; }
+
+  .module-sub-header { display: flex; justify-content: space-between; align-items: center; margin: 0.75rem 0; }
+  .module-sub-header h3 { margin: 0; }
+  .status-text { font-size: 0.45rem; color: #5A5270; background: #1A1430; padding: 1px 4px; border: 1px solid #2A2145; border-radius: 3px; text-transform: uppercase; font-weight: bold; }
+  .status-text.active.process { color: #22D3EE; border-color: #22D3EE; }
+  .status-text.active.planned { color: #A0A0A0; border-color: #A0A0A0; }
+  .module-detail { background: #0F0B1E; border: 1px solid #2A2145; border-radius: 6px; padding: 0.65rem 0.85rem; margin-bottom: 0.6rem; }
+  .module-detail h4 { font-size: 0.78rem; color: #C4B5FD; margin: 0 0 0.35rem; }
+  .module-explain { margin: 0 0 0.4rem; font-size: 0.75rem; color: #B8AED0; line-height: 1.5; }
+  .module-example { margin: 0; font-size: 0.72rem; color: #8A7FA8; line-height: 1.5; }
+  .module-example strong { color: #8A5CF6; }
+
+  .module-setup { margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid #2A2145; }
+  .module-setup h4 { font-size: 0.85rem; color: #C4B5FD; margin: 0 0 0.5rem; }
+  .placeholder-note { margin: 0; font-size: 0.9rem; color: #8A7FA8; line-height: 1.5; }
+  .sub-page-footer { margin-top: 1.25rem; padding-top: 0.85rem; border-top: 1px solid #2A2145; }
+</style>

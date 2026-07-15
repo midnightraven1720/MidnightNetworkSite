@@ -1,0 +1,45 @@
+---
+import { botData } from '../../data/bots.js';
+
+const NETWORK_TOTALS = { members: 13, staff: 2 };
+---
+<div id="view-dashboard">
+  <div class="overview-grid">
+    <div class="overview-section">
+      <h4>ACTIVE BOTS</h4>
+      {botData.map((bot) => (
+        <div class="data-item">
+          <span>{bot.name}</span>
+          <div class="status-row">
+            {bot.status === 'Live' ? (
+              <span class="status-text active process">PROCESS</span>
+            ) : (
+              <span class="status-text active planned">PLANNED</span>
+            )}
+            <span class="status-text">UPDATE</span>
+            <span class="status-text">OFFLINE</span>
+            <span class="status-text">ERROR</span>
+            <span class="status-text">ONLINE</span>
+          </div>
+        </div>
+      ))}
+    </div>
+    <div class="divider-vertical"></div>
+    <div class="overview-section">
+      <h4>NETWORK TOTALS</h4>
+      <div class="data-item"><span>Total Members</span> <span>{NETWORK_TOTALS.members}</span></div>
+      <div class="data-item"><span>Total Staff</span> <span>{NETWORK_TOTALS.staff}</span></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .overview-grid { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 1rem; }
+  .overview-section h4 { font-size: 0.65rem; letter-spacing: 0.04em; color: #8A7FA8; margin: 0 0 0.4rem; }
+  .data-item { display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0.65rem; background: #0F0B1E; border: 1px solid #2A2145; border-radius: 6px; margin-bottom: 0.3rem; font-size: 0.75rem; }
+  .status-row { display: flex; gap: 5px; }
+  .status-text { font-size: 0.45rem; color: #5A5270; background: #1A1430; padding: 1px 4px; border: 1px solid #2A2145; border-radius: 3px; text-transform: uppercase; font-weight: bold; }
+  .status-text.active.process { color: #22D3EE; border-color: #22D3EE; }
+  .status-text.active.planned { color: #A0A0A0; border-color: #A0A0A0; }
+  .divider-vertical { background: #2A2145; }
+</style>

@@ -1,0 +1,33 @@
+---
+interface Props {
+  href?: string;
+  onclick?: string;
+  label?: string;
+}
+const { href, onclick, label = '← Back' } = Astro.props;
+---
+{href ? (
+  <a href={href} class="back-button">{label}</a>
+) : (
+  <button type="button" class="back-button" onclick={onclick}>{label}</button>
+)}
+
+<style>
+  .back-button {
+    display: inline-block;
+    background: none;
+    border: 1px solid #8A5CF6;
+    color: #8A5CF6;
+    padding: 0.4rem 0.85rem;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .back-button:hover {
+    background: #8A5CF6;
+    color: #F0EDF7;
+  }
+</style>

@@ -1,0 +1,131 @@
+---
+const { botName, selectedGuildId, ticketServers, ticketGuildOptions, selectedTicketConfig, configSaved } = Astro.props;
+---
+{configSaved && selectedGuildId !== 'all' && <p class="saved-note">✓ Settings saved.</p>}
+<form method="get" class="server-picker-form">
+  <input type="hidden" name="view" value="modules" />
+  <input type="hidden" name="bot" value={botName} />
+  <select name="server" class="command-select" onchange="this.form.submit()">
+    <option value="all" selected={selectedGuildId === 'all'}>Select a server…</option>
+    {ticketServers.map((s) => (
+      <option value={s.id} selected={selectedGuildId === s.id}>{s.name}</option>
+    ))}
+  </select>
+</form>
+
+{selectedGuildId === 'all' ? (
+  <p class="placeholder-note">Select a server above to edit its ticket bot configuration.</p>
+) : ticketGuildOptions ? (
+  <form method="post" action="/api/save-bot-config" class="config-form">
+    <input type="hidden" name="guildId" value={selectedGuildId} />
+    <div class="config-grid">
+      <div>
+        <h5>Roles</h5>
+        <label class="config-field">
+          <span>Ticket Staff</span>
+          <select name="role_ticketStaff">
+            <option value="">Not set</option>
+            {(ticketGuildOptions.roles || []).map((r) => (
+              <option value={r.id} selected={selectedTicketConfig?.roles?.ticketStaff?.id === r.id}>{r.name}</option>
+            ))}
+          </select>
+        </label>
+        <label class="config-field">
+          <span>Owner</span>
+          <select name="role_owner">
+            <option value="">Not set</option>
+            {(ticketGuildOptions.roles || []).map((r) => (
+              <option value={r.id} selected={selectedTicketConfig?.roles?.owner?.id === r.id}>{r.name}</option>
+            ))}
+          </select>
+        </label>
+        <label class="config-field">
+          <span>Co-Owner</span>
+          <select name="role_coOwner">
+            <option value="">Not set</option>
+            {(ticketGuildOptions.roles || []).map((r) => (
+              <option value={r.id} selected={selectedTicketConfig?.roles?.coOwner?.id === r.id}>{r.name}</option>
+            ))}
+          </select>
+        </label>
+        <label class="config-field">
+          <span>Partnership Manager</span>
+          <select name="role_partnershipManager">
+            <option value="">Not set</option>
+            {(ticketGuildOptions.roles || []).map((r) => (
+              <option value={r.id} selected={selectedTicketConfig?.roles?.partnershipManager?.id === r.id}>{r.name}</option>
+            ))}
+          </select>
+        </label>
+        <label class="config-field">
+          <span>ID Verified Staff</span>
+          <select name="role_idVerifiedStaff">
+            <option value="">Not set</option>
+            {(ticketGuildOptions.roles || []).map((r) => (
+              <option value={r.id} selected={selectedTicketConfig?.roles?.idVerifiedStaff?.id === r.id}>{r.name}</option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <div>
+        <h5>Categories</h5>
+        <label class="config-field">
+          <span>Support/Report/Partnership</span>
+          <select name="category_support">
+            <option value="">Not set</option>
+            {(ticketGuildOptions.categories || []).map((c) => (
+              <option value={c.id} selected={selectedTicketConfig?.categories?.support?.id === c.id}>{c.name}</option>
+            ))}
+          </select>
+        </label>
+        <label class="config-field">
+          <span>Staff Reports</span>
+          <select name="category_staffReport">
+            <option value="">Not set</option>
+            {(ticketGuildOptions.categories || []).map((c) => (
+              <option value={c.id} selected={selectedTicketConfig?.categories?.staffReport?.id === c.id}>{c.name}</option>
+            ))}
+          </select>
+        </label>
+        <label class="config-field">
+          <span>Verification</span>
+          <select name="category_verification">
+            <option value="">Not set</option>
+            {(ticketGuildOptions.categories || []).map((c) => (
+              <option value={c.id} selected={selectedTicketConfig?.categories?.verification?.id === c.id}>{c.name}</option>
+            ))}
+          </select>
+        </label>
+      </div>
+    </div>
+    <button type="submit" class="save-btn">Save Changes</button>
+  </form>
+) : (
+  <p class="placeholder-note">Couldn't reach the bot right now.</p>
+)}
+
+<style>
+  .server-picker-form { margin-bottom: 0.75rem; }
+  .saved-note { color: #22C55E; font-weight: 600; font-size: 0.75rem; margin: 0 0 0.75rem; }
+  .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin-bottom: 0.75rem; }
+  .config-grid h5 { font-size: 0.75rem; color: #B8AED0; margin: 0 0 0.5rem; }
+  .config-field { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 0.65rem; font-size: 0.72rem; color: #B8AED0; }
+  .config-field select { padding: 0.4rem; background: #1A1430; border: 1px solid #2A2145; border-radius: 6px; color: #F0EDF7; font-size: 0.75rem; }
+  .save-btn { margin-top: 0.25rem; padding: 0.5rem 1.25rem; background: #8A5CF6; color: #F0EDF7; border: none; border-radius: 8px; font-weight: 600; font-size: 0.8rem; cursor: pointer; }
+  .save-btn:hover { background: #7C4FE0; }
+  .command-select {
+    margin-top: 0.75rem;
+    padding: 0.4rem 0.6rem;
+    background: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 6px;
+    color: #F0EDF7;
+    font-size: 0.8rem;
+  }
+  .placeholder-note {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #8A7FA8;
+    line-height: 1.5;
+  }
+</style>

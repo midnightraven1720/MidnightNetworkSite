@@ -1,3 +1,5 @@
+import { postToBot } from '../../lib/bot-api.js';
+
 export async function POST({ request, redirect }) {
   const formData = await request.formData();
   const guildId = formData.get('guildId');
@@ -16,21 +18,7 @@ export async function POST({ request, redirect }) {
     verification: formData.get('category_verification') || null,
   };
 
-  const API_BASE = 'http://midnight-tickets.railway.internal:3001';
-  const API_KEY = import.meta.env.DASHBOARD_API_KEY;
-
-  try {
-    await fetch(`${API_BASE}/api/update-config`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': API_KEY,
-      },
-      body: JSON.stringify({ guildId, roleUpdates, categoryUpdates }),
-    });
-  } catch (err) {
-    console.error('Failed to save bot config:', err);
-  }
+  await postToBot('/api/update-config', { guildId, roleUpdates, categoryUpdates });
 
   return redirect(`/bots?server=${guildId}&saved=true&view=modules&bot=${encodeURIComponent('Midnight Tickets')}`);
 }

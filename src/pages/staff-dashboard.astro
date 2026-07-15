@@ -1,33 +1,18 @@
 ---
 // src/pages/staff-dashboard.astro
 import Layout from '../layouts/Layout.astro';
-import { getStaffData } from '../lib/staff-logic';
+import BackButton from '../components/BackButton.astro';
+import TicketsPanel from '../components/staff/TicketsPanel.astro';
+import ApplicationsPanel from '../components/staff/ApplicationsPanel.astro';
+import ServerRolesPanel from '../components/staff/ServerRolesPanel.astro';
+import { requireStaff } from '../lib/session.js';
+import { getStaffData } from '../lib/staff-logic.js';
 
-const sessionCookie = Astro.cookies.get('midnight_session');
-let user = null;
-if (sessionCookie) {
-  try {
-    user = JSON.parse(sessionCookie.value);
-  } catch {
-    user = null;
-  }
-}
+const { redirect } = requireStaff(Astro);
+if (redirect) return redirect;
 
-if (!user) {
-  return Astro.redirect('/login');
-}
-
-const STAFF_TIERS = ['owner', 'coOwner', 'staff'];
-if (!STAFF_TIERS.includes(user.rank)) {
-  return Astro.redirect('/user-dashboard');
-}
-
-const API_BASE = 'http://midnight-tickets.railway.internal:3001';
-const API_KEY = import.meta.env.DASHBOARD_API_KEY;
 const selectedGuildId = Astro.url.searchParams.get('server') || 'all';
-
-// Call the logic file
-const data = await getStaffData(API_BASE, API_KEY, selectedGuildId);
+const data = await getStaffData(selectedGuildId);
 
 const selectedServer = data.servers.find((s) => s.id === selectedGuildId);
 const guildName = selectedGuildId === 'all' ? 'All Servers' : (selectedServer?.name || 'Selected Server');
@@ -36,8 +21,8 @@ const guildName = selectedGuildId === 'all' ? 'All Servers' : (selectedServer?.n
 <Layout title="Staff Dashboard">
   <div class="dashboard-wrapper">
     <aside class="server-nav">
-      <nav style="padding: 1rem; border-bottom: 1px solid #2A2145;">
-        <a href="/user-dashboard" style="color: #8A5CF6; font-weight: bold; text-decoration: none;">&larr; User Dashboard</a>
+      <nav class="back-nav">
+        <BackButton href="/user-dashboard" label="← User Dashboard" />
       </nav>
 
       <ul class="server-list">
@@ -52,65 +37,15 @@ const guildName = selectedGuildId === 'all' ? 'All Servers' : (selectedServer?.n
       <h1>Dashboard for {guildName}</h1>
 
       <div class="panel-grid">
-        <div class="panel">
-          <h3>Tickets <span class="count">{data.filteredTickets.length}</span></h3>
-          {data.ticketsAvailable ? (
-            data.filteredTickets.length > 0 ? (
-              <ul class="detail-list">
-                {data.filteredTickets.map((t) => (
-                  <li>
-                    <span class="detail-primary">{t.username}</span>
-                    <span class="detail-secondary">{t.typeKey}{selectedGuildId === 'all' && ` · ${t.guildName}`} · opened {new Date(t.openedAt).toLocaleDateString()}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p class="placeholder-note">No open tickets right now.</p>
-            )
-          ) : (
-            <p class="placeholder-note">Couldn't reach the bot right now.</p>
-          )}
-        </div>
-
-        <div class="panel">
-          <h3>Applications <span class="count">{data.filteredApps.length}</span></h3>
-          {data.applicationsAvailable ? (
-            data.filteredApps.length > 0 ? (
-              <ul class="detail-list">
-                {data.filteredApps.map((a) => (
-                  <li>
-                    <span class="detail-primary">{a.username}</span>
-                    <span class="detail-secondary">{selectedGuildId === 'all' && `${a.guildName} · `}status: {a.status}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p class="placeholder-note">No applications awaiting review.</p>
-            )
-          ) : (
-            <p class="placeholder-note">Couldn't reach the bot right now.</p>
-          )}
-        </div>
-
+        <TicketsPanel tickets={data.filteredTickets} ticketsAvailable={data.ticketsAvailable} selectedGuildId={selectedGuildId} />
+        <ApplicationsPanel apps={data.filteredApps} applicationsAvailable={data.applicationsAvailable} selectedGuildId={selectedGuildId} />
         {selectedGuildId !== 'all' && data.guildOptionsData && (
-          <div class="panel">
-            <h3>Server Roles &amp; Categories</h3>
-            <div class="role-cols">
-              <div>
-                <h4>Roles</h4>
-                <ul class="mini-list">
-                  {(data.guildOptionsData.roles || []).map((r) => <li>{r.name}</li>)}
-                </ul>
-              </div>
-              <div>
-                <h4>Categories</h4>
-                <ul class="mini-list">
-                  {(data.guildOptionsData.categories || []).map((c) => <li>{c.name}</li>)}
-                </ul>
-              </div>
-            </div>
-          </div>
+          <ServerRolesPanel guildOptionsData={data.guildOptionsData} />
         )}
+      </div>
+
+      <div class="page-footer">
+        <BackButton href="/user-dashboard" label="← User Dashboard" />
       </div>
     </main>
   </div>
@@ -119,12 +54,21 @@ const guildName = selectedGuildId === 'all' ? 'All Servers' : (selectedServer?.n
 <style>
   .dashboard-wrapper {
     display: flex;
-    min-height: 100vh;
   }
   .server-nav {
     width: 250px;
+    flex-shrink: 0;
     background: #0F0B1E;
     border-right: 1px solid #2A2145;
+    align-self: flex-start;
+    position: sticky;
+    top: 0;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  .back-nav {
+    padding: 1rem;
+    border-bottom: 1px solid #2A2145;
   }
   .server-list {
     list-style: none;
@@ -144,6 +88,7 @@ const guildName = selectedGuildId === 'all' ? 'All Servers' : (selectedServer?.n
   .content {
     padding: 2rem;
     flex: 1;
+    min-width: 0;
   }
   .panel-grid {
     display: grid;
@@ -151,71 +96,9 @@ const guildName = selectedGuildId === 'all' ? 'All Servers' : (selectedServer?.n
     gap: 1.5rem;
     margin-top: 1.5rem;
   }
-  .panel {
-    background: #1A1430;
-    border: 1px solid #2A2145;
-    border-radius: 12px;
-    padding: 1.5rem;
-  }
-  .panel h3 {
-    margin: 0 0 1rem;
-    font-size: 1.1rem;
-    color: #C4B5FD;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .count {
-    font-size: 0.8rem;
-    background: #2A2145;
-    color: #F0EDF7;
-    border-radius: 999px;
-    padding: 0.1rem 0.6rem;
-  }
-  .detail-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  .detail-list li {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid #2A2145;
-  }
-  .detail-list li:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-  }
-  .detail-primary {
-    color: #F0EDF7;
-    font-weight: 600;
-    font-size: 0.95rem;
-  }
-  .detail-secondary {
-    color: #8A7FA8;
-    font-size: 0.8rem;
-  }
-  .role-cols {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-  .mini-list {
-    margin: 0;
-    padding-left: 1.1rem;
-    color: #F0EDF7;
-    font-size: 0.85rem;
-    line-height: 1.6;
-  }
-  .placeholder-note {
-    margin: 0;
-    font-size: 0.9rem;
-    color: #8A7FA8;
-    line-height: 1.5;
+  .page-footer {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #2A2145;
   }
 </style>

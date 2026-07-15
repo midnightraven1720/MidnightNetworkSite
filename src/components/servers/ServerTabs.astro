@@ -1,0 +1,115 @@
+---
+import BackButton from '../BackButton.astro';
+import ServerOverview from './ServerOverview.astro';
+import ServerStaff from './ServerStaff.astro';
+import ServerRules from './ServerRules.astro';
+import ServerEvents from './ServerEvents.astro';
+import ServerAlerts from './ServerAlerts.astro';
+
+const { server } = Astro.props;
+---
+<section class="section">
+  <div class="page-header">
+    <BackButton href="/servers" label="← All Servers" />
+  </div>
+
+  {server.partner && <span class="badge">Partner Server</span>}
+  <img src={`/icons/${server.icon}`} alt={`${server.name} icon`} class="server-icon" />
+  <h2>{server.name}</h2>
+
+  <input type="radio" name="server-tabs" id="tab-overview" class="tab-radio" checked />
+  <input type="radio" name="server-tabs" id="tab-staff" class="tab-radio" />
+  <input type="radio" name="server-tabs" id="tab-rules" class="tab-radio" />
+  <input type="radio" name="server-tabs" id="tab-events" class="tab-radio" />
+  <input type="radio" name="server-tabs" id="tab-alerts" class="tab-radio" />
+
+  <div class="tab-buttons">
+    <label for="tab-overview" class="tab-btn">Overview</label>
+    <label for="tab-staff" class="tab-btn">Staff</label>
+    <label for="tab-rules" class="tab-btn">Rules</label>
+    <label for="tab-events" class="tab-btn">Events</label>
+    <label for="tab-alerts" class="tab-btn">Alerts</label>
+  </div>
+
+  <div class="tab-content overview-content">
+    <ServerOverview server={server} />
+  </div>
+  <div class="tab-content staff-content">
+    <ServerStaff staff={server.staff} serverName={server.name} />
+  </div>
+  <div class="tab-content rules-content">
+    <ServerRules themedRules={server.themedRules} serverName={server.name} />
+  </div>
+  <div class="tab-content events-content">
+    <ServerEvents events={server.events} />
+  </div>
+  <div class="tab-content alerts-content">
+    <ServerAlerts alerts={server.alerts} />
+  </div>
+
+  <div class="page-footer">
+    <BackButton href="/servers" label="← All Servers" />
+  </div>
+</section>
+
+<style>
+  .page-header { max-width: 700px; margin: 0 auto 1rem; text-align: left; }
+  .page-footer { max-width: 700px; margin: 2rem auto 0; padding-top: 1.5rem; border-top: 1px solid #2A2145; text-align: left; }
+
+  .badge {
+    display: inline-block;
+    background-color: #8A5CF6;
+    color: #F0EDF7;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    margin-bottom: 0.75rem;
+  }
+  .server-icon {
+    display: block;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0.5rem auto 1rem;
+    border: 1px solid #2A2145;
+  }
+  h2 { margin-bottom: 1.5rem; }
+
+  .tab-radio { display: none; }
+  .tab-buttons { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem; }
+  .tab-btn {
+    padding: 0.5rem 1.25rem;
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 8px;
+    color: #B8AED0;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .tab-btn:hover { background-color: #2A2145; color: #F0EDF7; }
+  .tab-content { display: none; }
+  #tab-overview:checked ~ .overview-content { display: block; }
+  #tab-staff:checked ~ .staff-content { display: block; }
+  #tab-rules:checked ~ .rules-content { display: block; }
+  #tab-events:checked ~ .events-content { display: block; }
+  #tab-alerts:checked ~ .alerts-content { display: block; }
+
+  #tab-overview:checked ~ .tab-buttons label[for="tab-overview"],
+  #tab-staff:checked ~ .tab-buttons label[for="tab-staff"],
+  #tab-rules:checked ~ .tab-buttons label[for="tab-rules"],
+  #tab-events:checked ~ .tab-buttons label[for="tab-events"],
+  #tab-alerts:checked ~ .tab-buttons label[for="tab-alerts"] {
+    background-color: #8A5CF6;
+    color: #F0EDF7;
+  }
+
+  @media (max-width: 768px) {
+    .tab-buttons { flex-direction: column; align-items: stretch; }
+  }
+</style>

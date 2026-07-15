@@ -1,0 +1,14 @@
+---
+import EventCalendar from '../EventCalendar.astro';
+
+const { events } = Astro.props;
+---
+{events.length > 0 ? (
+  <EventCalendar events={events} />
+) : (
+  <p class="placeholder-note">No events scheduled yet — check back soon.</p>
+)}
+
+<style>
+  .placeholder-note { margin: 0; font-size: 0.9rem; color: #8A7FA8; line-height: 1.5; text-align: center; }
+</style>

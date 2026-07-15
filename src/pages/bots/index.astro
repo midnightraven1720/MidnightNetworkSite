@@ -1,240 +1,16 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { getUser, isStaff } from '../../lib/session.js';
+import { fetchFromBot } from '../../lib/bot-api.js';
+import OverviewView from '../../components/bots/OverviewView.astro';
+import ModulesView from '../../components/bots/ModulesView.astro';
+import CommandsView from '../../components/bots/CommandsView.astro';
+import ServerListingView from '../../components/bots/ServerListingView.astro';
+import BotLogsView from '../../components/bots/BotLogsView.astro';
+import ActionLogsView from '../../components/bots/ActionLogsView.astro';
 
-const sessionCookie = Astro.cookies.get('midnight_session');
-let user = null;
-if (sessionCookie) {
-  try {
-    user = JSON.parse(sessionCookie.value);
-  } catch {
-    user = null;
-  }
-}
-
-const STAFF_TIERS = ['owner', 'coOwner', 'staff'];
-const isStaff = !!user && STAFF_TIERS.includes(user.rank);
-
-const botData = [
-  {
-    name: 'Midnight Tickets', status: 'Live', configurable: true,
-    highlights: ['General support tickets', 'User and staff reports', 'Partnership requests', 'Multi-part staff application flow with branching questions based on role track'],
-    commands: [],
-    moduleDetails: [
-      { title: 'General support tickets', explanation: 'Members open a private ticket channel to ask staff for help.', example: 'A member clicks "Open Ticket" in #support, picks "General Support," and a private channel is created with them and staff.' },
-      { title: 'User and staff reports', explanation: 'A separate ticket type for reporting a member or a staff member.', example: 'A member clicks "Report" in the ticket panel, chooses "Report a Member," and describes what happened.' },
-      { title: 'Partnership requests', explanation: 'A dedicated ticket type for server owners requesting a partnership.', example: 'A server owner clicks "Partnership Request" and fills in their invite link and member count.' },
-      { title: 'Multi-part staff application flow', explanation: 'Applicants pick a role track and get different follow-up questions depending on that choice.', example: 'An applicant selects "Moderation Track" and is asked moderation-specific questions instead of the general set.' },
-    ],
-  },
-  {
-    name: 'Midnight Network', status: 'Planned',
-    highlights: ['General announcements and structural update logs', 'Partner server listings', 'Event management with RSVP tracking', 'Covers both single-server and network-wide broadcasting'],
-    commands: [
-      { name: '/announcement', description: 'General comms (scope: server / network)' },
-      { name: '/update-log', description: 'Structural change record' },
-      { name: '/partners', description: 'List partner servers' },
-      { name: '/network-servers', description: 'List official network servers' },
-      { name: '/event', description: 'Create, plan, schedule, or poll an event with RSVP buttons' },
-      { name: '/suggest', description: 'Post a suggestion for community/staff vote' },
-      { name: '/suggestions', description: 'List or resolve pending suggestions (staff)' },
-    ],
-    moduleDetails: [
-      { title: 'Announcements and update logs', explanation: 'Staff post network-wide or server-specific announcements and structural change logs.', example: '/announcement scope:network posts a message to every server\'s announcement channel.' },
-      { title: 'Partner server listings', explanation: 'Lists partner servers so members can find and join them.', example: '/partners shows the current partner server directory.' },
-      { title: 'Event management with RSVP tracking', explanation: 'Staff schedule an event and members RSVP with a button.', example: '/event create sets up an event with a date/time; members click "RSVP" to confirm.' },
-      { title: 'Single-server or network-wide broadcasting', explanation: 'Announcements and updates can target just one server or the whole network.', example: '/announcement scope:server only posts to the server it was run in.' },
-    ],
-  },
-  {
-    name: 'Midnight Council', status: 'Planned',
-    highlights: ['Staff directory with server and network-level ranks', 'Moderation tools: warnings, kicks, bans, notes', 'Network-wide blacklist system', 'Member statistics', 'Health Department: staff-led wellness check-ins on members'],
-    commands: [
-      { name: '/staff-add', description: 'Add a staff member to the directory' },
-      { name: '/staff-remove', description: 'Remove a staff member' },
-      { name: '/staff-list', description: 'List staff (server/network)' },
-      { name: '/warn', description: 'Issue a warning' },
-      { name: '/warnings', description: "View a member's warning history" },
-      { name: '/note', description: 'Add a staff note on a member' },
-      { name: '/kick', description: 'Kick a member' },
-      { name: '/timeout', description: 'Timeout a member' },
-      { name: '/ban', description: 'Ban a member (scope: server/network)' },
-      { name: '/unban', description: 'Unban a member' },
-      { name: '/blacklist', description: 'Add, remove, check, or list blacklist entries' },
-      { name: '/checkin', description: 'Staff wellness check-in' },
-      { name: '/checkin-history', description: 'View check-in history' },
-      { name: '/member-count', description: 'Member stats breakdown' },
-      { name: '/away', description: 'Set staff availability notice' },
-    ],
-    moduleDetails: [
-      { title: 'Staff directory', explanation: 'Shows staff and their rank at both the server and network level.', example: '/staff-list scope:network lists every staff member across all servers.' },
-      { title: 'Moderation tools', explanation: 'Standard moderation actions logged against a member: warnings, kicks, bans, timeouts, notes.', example: '/warn @user reason:"Spamming" logs a warning staff can review later with /warnings.' },
-      { title: 'Network-wide blacklist', explanation: 'A member flagged in one server can be blacklisted across the whole network.', example: '/blacklist add @user reason:"Scamming" flags them network-wide.' },
-      { title: 'Member statistics', explanation: 'Quick breakdowns of member counts.', example: '/member-count shows totals for the current server or the whole network.' },
-      { title: 'Health Department check-ins', explanation: 'Staff can log a wellness check-in on a member who might need support.', example: '/checkin @user records a check-in staff can review later with /checkin-history.' },
-    ],
-  },
-  {
-    name: 'Midnight Ascend', status: 'Planned',
-    highlights: ['XP from chat, voice, invites, and reactions', 'Dual-wallet currency (server + network)', 'Shop/store system', 'Themed relationship-based currencies requiring a verified Bonds relationship'],
-    commands: [
-      { name: '/rank', description: 'View level/XP (server/network)' },
-      { name: '/leaderboard', description: 'Top members (server/network)' },
-      { name: '/balance', description: 'View currency wallets' },
-      { name: '/give', description: 'Gift currency to another member' },
-      { name: '/economy-leaderboard', description: 'Top earners' },
-      { name: '/shop', description: 'View or buy shop items' },
-      { name: '/shop-setup', description: 'Add or remove shop items (staff)' },
-      { name: '/setup-xp-rates', description: 'Configure XP rates per server' },
-      { name: '/setup-currency-types', description: 'Configure currency types per server' },
-      { name: '/xp-add', description: 'Manually adjust XP (staff)' },
-      { name: '/currency-add', description: 'Manually adjust currency (staff)' },
-    ],
-    moduleDetails: [
-      { title: 'XP from activity', explanation: 'Members earn XP passively from chat, voice, invites, and reactions.', example: '/rank shows how much XP a member has earned and their current level.' },
-      { title: 'Dual-wallet currency', explanation: 'Two separate currency balances per member: one for the server, one for the network.', example: '/balance shows both the server wallet and the network wallet.' },
-      { title: 'Shop/store system', explanation: 'Staff set up items members can buy with their currency.', example: '/shop lists items; a member buys one directly from the list.' },
-      { title: 'Relationship-based currencies', explanation: 'Special currency types only usable once a Bonds relationship is verified.', example: 'A verified pair can /give each other the relationship-themed currency once Bonds confirms the connection.' },
-    ],
-  },
-  {
-    name: 'Midnight Roles', status: 'Planned',
-    highlights: ['Button/reaction-based role menus', 'Import existing role menus from other bots', 'Automatic role assignment on join', 'Welcome messages for new members'],
-    commands: [
-      { name: '/rolemenu', description: 'Create, edit, or post a self-role menu' },
-      { name: '/rolemenu import', description: 'Import an existing reaction-role menu' },
-      { name: '/setup-autorole', description: 'Configure auto-role on join' },
-      { name: '/setup-join-welcome-channel', description: 'Set the join welcome channel' },
-      { name: '/setup-join-welcome-message', description: 'Set the join welcome message' },
-      { name: '/setup-join-welcome-banner', description: 'Set the join welcome banner' },
-    ],
-    moduleDetails: [
-      { title: 'Button/reaction role menus', explanation: 'Members click a button or react to receive a role.', example: '/rolemenu create builds a menu; members click a button to get the "Gamer" role.' },
-      { title: 'Import existing role menus', explanation: 'Migrates a role menu built with another bot instead of rebuilding it from scratch.', example: '/rolemenu import pulls in an existing reaction-role message so it works through Midnight Roles.' },
-      { title: 'Automatic role assignment on join', explanation: 'New members get a role automatically the moment they join.', example: '/setup-autorole sets the role that\'s applied on join.' },
-      { title: 'Welcome messages', explanation: 'Posts a welcome message when someone joins.', example: '/setup-join-welcome-message sets the text; /setup-join-welcome-channel sets where it posts.' },
-    ],
-  },
-  {
-    name: 'Midnight Bonds', status: 'Planned',
-    highlights: ['Owner/Handler/Pet dynamics', 'Romantic relationships', 'Chosen family connections', 'Full DM/Friend Request/Voice Call consent system with routing through registered Owner/Handlers'],
-    commands: [
-      { name: '/bonds', description: 'Set, accept, decline, or list Owner/Handler registrations' },
-      { name: '/relationship', description: 'Set, remove, or view a romantic relationship' },
-      { name: '/family', description: 'Add, remove, or view chosen family bonds' },
-      { name: '/dm-status', description: 'Set your DM consent status' },
-      { name: '/friend-status', description: 'Set your friend request consent status' },
-      { name: '/voice-status', description: 'Set your voice call consent status' },
-      { name: '/ask-to-dm', description: 'Request to DM someone' },
-      { name: '/ask-to-friend', description: 'Request to friend someone' },
-      { name: '/ask-to-call', description: 'Request a voice call' },
-    ],
-    moduleDetails: [
-      { title: 'Owner/Handler/Pet dynamics', explanation: 'A formal relationship type between an Owner/Handler and their pet.', example: '/bonds request pairs two members and both must accept.' },
-      { title: 'Romantic relationships', explanation: 'A separate relationship type for partners.', example: '/relationship set @user proposes a romantic relationship; the other member confirms.' },
-      { title: 'Chosen family connections', explanation: 'Family-style bonds (siblings, parent/child, etc.) between members.', example: '/family add @user relation:"sibling" registers the connection.' },
-      { title: 'Consent routing through Owner/Handlers', explanation: 'Sensitive requests (DM, friend, voice call) can be routed through someone\'s registered Owner/Handler instead of going straight to them.', example: '/ask-to-dm @user checks their /dm-status first, and routes through their Handler if that\'s set.' },
-    ],
-  },
-  {
-    name: 'Midnight Collar', status: 'Planned',
-    highlights: ['Gag, bind, and leash mechanics', 'Requires an existing accepted Bonds relationship', 'Timed auto-expiry and manual override', 'Unconditional safeword that always works', 'Staff areas permanently exempt'],
-    commands: [
-      { name: '/collar gag', description: 'Gag/ungag a member, or check status' },
-      { name: '/collar bind', description: 'Bind/unbind a member, or check status' },
-      { name: '/collar leash', description: 'Leash/unleash a member, or check status' },
-      { name: '/collar safeword', description: 'Instantly clears all active restrictions' },
-    ],
-    moduleDetails: [
-      { title: 'Gag, bind, and leash mechanics', explanation: 'Interactive restriction commands between consenting members.', example: '/collar gag @user applies the gag state; running it again lifts it.' },
-      { title: 'Requires an accepted Bonds relationship', explanation: 'Collar can\'t be used on someone without a confirmed Bonds relationship first.', example: 'Trying /collar bind on someone with no accepted Bonds relationship is blocked.' },
-      { title: 'Timed auto-expiry and manual override', explanation: 'Restrictions can be set to expire automatically or cleared early.', example: 'A bind can be set for 30 minutes and will lift on its own, or be ended early.' },
-      { title: 'Unconditional safeword', explanation: 'One command instantly clears every active restriction, no matter what.', example: '/collar safeword immediately removes all active states.' },
-      { title: 'Staff areas permanently exempt', explanation: 'Collar mechanics never apply while in staff-only channels or areas.', example: 'Commands are blocked automatically if run in a staff-only channel.' },
-    ],
-  },
-  {
-    name: 'Midnight Profiles', status: 'Planned',
-    highlights: ['Lifestyle/dynamic-focused types: Kink, Pet, Owner', 'Interest-based types: Gamer, Anime, Books', 'General Introduction type', 'Multiple depth levels and tags per profile', 'Contextual way for others to reach out'],
-    commands: [
-      { name: '/profile-[type] post', description: 'Post your profile (versions A/B/C)' },
-      { name: '/profile-[type] edit', description: 'Edit your profile' },
-      { name: '/profile-[type] delete', description: 'Delete your profile' },
-      { name: '/setup-profile-channel', description: 'Configure profile channels per server (staff)' },
-    ],
-    moduleDetails: [
-      { title: 'Lifestyle/dynamic-focused types', explanation: 'Profile templates for lifestyle-specific info: Kink, Pet, Owner.', example: '/profile-kink post walks through the Kink profile\'s fields.' },
-      { title: 'Interest-based types', explanation: 'Profile templates for hobbies and interests: Gamer, Anime, Books.', example: '/profile-gamer post posts a profile listing platforms and favorite games.' },
-      { title: 'General Introduction type', explanation: 'A general-purpose "getting to know you" profile.', example: '/profile-intro post covers the basics: name, pronouns, interests.' },
-      { title: 'Multiple depth levels and tags', explanation: 'Profiles can be short or detailed, and tagged for searching.', example: 'Choosing the "detailed" version of /profile-gamer post adds extra optional fields and tags.' },
-      { title: 'Contextual way to reach out', explanation: 'A built-in way to contact the profile owner appropriately.', example: 'A "Reach Out" prompt on the profile respects that member\'s DM/friend consent settings.' },
-    ],
-  },
-  {
-    name: 'Midnight Watch', status: 'Planned',
-    highlights: ['Messages, roles, channels, and voice activity', 'Joins/leaves with invite-source tracking', 'Staff action logging'],
-    commands: [
-      { name: '/logs setup', description: 'Map local log channels' },
-      { name: '/logs toggle', description: 'Enable/disable log categories per server' },
-    ],
-    moduleDetails: [
-      { title: 'Messages, roles, channels, and voice activity', explanation: 'Logs edits/deletes, role changes, channel changes, and voice join/leave.', example: 'Deleting a message posts a log entry showing who deleted it and the original content.' },
-      { title: 'Joins/leaves with invite-source tracking', explanation: 'Logs who joins or leaves and which invite link they used.', example: 'A join log entry shows the member joined via the "#partnerships" invite.' },
-      { title: 'Staff action logging', explanation: 'Logs moderation actions taken by staff.', example: 'A /warn from Midnight Council also shows up in Watch\'s action log.' },
-    ],
-  },
-  {
-    name: 'Midnight Blueprint', status: 'Planned',
-    highlights: ['Copies server structure over to another server: roles, channels, categories', 'Reusable templates and presets'],
-    commands: [
-      { name: '/blueprint create', description: 'Save a structure snapshot/template' },
-      { name: '/blueprint load', description: 'Restore from a saved template' },
-      { name: '/blueprint create-role', description: 'Quick-create a role' },
-      { name: '/blueprint create-channel', description: 'Quick-create a channel' },
-      { name: '/blueprint create-category', description: 'Quick-create a category' },
-      { name: '/blueprint content', description: 'Save or post a reusable content template' },
-      { name: '/blueprint permission', description: 'Save or apply a permission preset' },
-      { name: '/blueprint emoji-pack', description: 'Save or apply an emoji pack' },
-      { name: '/blueprint bot-checklist', description: 'Setup reminder across all bots' },
-      { name: '/blueprint webhook', description: 'Save or apply a webhook preset' },
-    ],
-    moduleDetails: [
-      { title: 'Copies server structure to another server', explanation: 'Snapshots one server\'s roles, channels, and categories and applies them to another.', example: '/blueprint create saves the current server\'s structure as a template, then /blueprint load applies it elsewhere.' },
-      { title: 'Reusable templates and presets', explanation: 'Save permission sets, emoji packs, and content templates for reuse instead of rebuilding them each time.', example: '/blueprint permission saves a permission preset once, then applies it to a new channel later.' },
-    ],
-  },
-  {
-    name: 'Midnight Roleplay', status: 'Planned',
-    highlights: ['Character sheet management, one profile per character', 'Location and scene tracking', 'Turn order management', 'Session summary logging for recapping completed scenes'],
-    commands: [
-      { name: '/character create', description: 'Create a character sheet' },
-      { name: '/character view', description: 'View a character sheet' },
-      { name: '/character edit', description: 'Edit a character sheet' },
-      { name: '/character delete', description: 'Delete a character sheet' },
-      { name: '/character list', description: 'List characters by owner' },
-      { name: "/scene set-location", description: "Set a scene's location" },
-      { name: '/scene who-is-where', description: 'View who is in which location' },
-      { name: '/turn', description: 'Start, advance, skip, or check turn order' },
-      { name: '/scene archive', description: 'Archive a completed scene' },
-      { name: '/scene summarize', description: 'Summarize a scene' },
-    ],
-    moduleDetails: [
-      { title: 'Character sheet management', explanation: 'Each character gets its own sheet, separate from a member\'s other characters.', example: '/character create makes a new sheet; /character list shows every character a member owns.' },
-      { title: 'Location and scene tracking', explanation: 'Tracks which location each character is currently in.', example: '/scene who-is-where shows every character\'s current location.' },
-      { title: 'Turn order management', explanation: 'Manages whose turn it is in a scene.', example: '/turn advances to the next character in the turn order.' },
-      { title: 'Session summary logging', explanation: 'Scenes can be archived with a summary for later reference.', example: '/scene summarize generates a recap, then /scene archive closes the scene out.' },
-    ],
-  },
-];
-
-const serverList = [
-  { name: 'Den of Desire', slug: 'server-1', partner: true },
-  { name: 'Underground Gamer Lounge', slug: 'server-2', partner: true },
-  { name: 'Chaos Midnight House', slug: 'server-3', partner: false },
-  { name: 'Smutty Library Cafe', slug: 'server-4', partner: false },
-  { name: 'Velvet Cosy Collars', slug: 'server-5', partner: false },
-  { name: 'Advertising Lounge', slug: 'server-6', partner: false },
-  { name: 'Server 7', slug: 'server-7', partner: false },
-];
+const user = getUser(Astro);
+const staff = isStaff(user);
 
 const selectedGuildId = Astro.url.searchParams.get('server') || 'all';
 const configSaved = Astro.url.searchParams.get('saved') === 'true';
@@ -243,19 +19,7 @@ let ticketServers = [];
 let ticketGuildOptions = null;
 let selectedTicketConfig = null;
 
-if (isStaff) {
-  const API_BASE = 'http://midnight-tickets.railway.internal:3001';
-  const API_KEY = import.meta.env.DASHBOARD_API_KEY;
-
-  const fetchFromBot = async (path) => {
-    try {
-      const res = await fetch(`${API_BASE}${path}`, { headers: { 'x-api-key': API_KEY } });
-      return res.ok ? await res.json() : null;
-    } catch {
-      return null;
-    }
-  };
-
+if (staff) {
   const serversData = await fetchFromBot('/api/servers');
   ticketServers = serversData?.servers || [];
 
@@ -275,279 +39,34 @@ if (isStaff) {
       <div class="sidebar-header"><h3>Bot Dashboard</h3></div>
       <nav>
         <div class="nav-item active" data-view="dashboard">Overview</div>
-        {isStaff && <div class="nav-item" data-view="modules">Modules</div>}
+        {staff && <div class="nav-item" data-view="modules">Modules</div>}
         <div class="nav-item" data-view="commands">Commands</div>
         <div class="nav-item" data-view="servers">Server Listing</div>
-        {isStaff && <div class="nav-item" data-view="botlogs">Bot Logs</div>}
-        {isStaff && <div class="nav-item" data-view="actionlogs">Action Logs</div>}
+        {staff && <div class="nav-item" data-view="botlogs">Bot Logs</div>}
+        {staff && <div class="nav-item" data-view="actionlogs">Action Logs</div>}
       </nav>
     </aside>
 
     <main class="main-content">
-      <div class="page-banner" style="background-image: url('/banners/bots.jpg');"></div>
+      <div class="page-banner"></div>
 
       <div class="overview-container">
+        <OverviewView />
 
-        <div id="view-dashboard">
-          <div class="overview-grid">
-            <div class="overview-section">
-              <h4>ACTIVE BOTS</h4>
-              {["Midnight Tickets", "Midnight Council", "Midnight Network", "Midnight Ascend", "Midnight Roles", "Midnight Bonds", "Midnight Collar", "Midnight Profiles", "Midnight Watch", "Midnight Blueprint", "Midnight Roleplay"].map((name) => (
-                <div class="data-item">
-                  <span>{name}</span>
-                  <div class="status-row">
-                    {(name === "Midnight Tickets" || name === "Midnight Council") ? (
-                      <span class="status-text active process">PROCESS</span>
-                    ) : (
-                      <span class="status-text active planned">PLANNED</span>
-                    )}
-                    <span class="status-text">UPDATE</span>
-                    <span class="status-text">OFFLINE</span>
-                    <span class="status-text">ERROR</span>
-                    <span class="status-text">ONLINE</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div class="divider-vertical"></div>
-            <div class="overview-section">
-              <h4>NETWORK TOTALS</h4>
-              <div class="data-item"><span>Total Members</span> <span>13</span></div>
-              <div class="data-item"><span>Total Staff</span> <span>2</span></div>
-            </div>
-          </div>
-        </div>
-
-        {isStaff && (
-          <div id="view-modules" style="display: none;">
-            <h3>Modules Manager</h3>
-            <div id="module-selection-grid" class="card-grid">
-              {botData.map((bot) => (
-                <div class="bot-card" onclick={`openModuleSubPage('${bot.name}')`}>
-                  <h4>{bot.name}</h4>
-                </div>
-              ))}
-            </div>
-
-            {botData.map((bot) => (
-              <div class="module-sub-page" data-bot={bot.name} style="display: none;">
-                <button class="back-btn" onclick="backToModuleGrid()">← Back</button>
-                <div class="module-sub-header">
-                  <h3>{bot.name}</h3>
-                  <span class={`status-text active ${bot.status === 'Live' ? 'process' : 'planned'}`}>{bot.status.toUpperCase()}</span>
-                </div>
-                {bot.moduleDetails.map((m) => (
-                  <div class="module-detail">
-                    <h4>{m.title}</h4>
-                    <p class="module-explain">{m.explanation}</p>
-                    <p class="module-example"><strong>Example:</strong> {m.example}</p>
-                  </div>
-                ))}
-
-                <div class="module-setup">
-                  <h4>Setup</h4>
-                  {bot.configurable ? (
-                    <>
-                      {configSaved && selectedGuildId !== 'all' && <p class="saved-note">✓ Settings saved.</p>}
-                      <form method="get" class="server-picker-form">
-                        <input type="hidden" name="view" value="modules" />
-                        <input type="hidden" name="bot" value={bot.name} />
-                        <select name="server" class="command-select" onchange="this.form.submit()">
-                          <option value="all" selected={selectedGuildId === 'all'}>Select a server…</option>
-                          {ticketServers.map((s) => (
-                            <option value={s.id} selected={selectedGuildId === s.id}>{s.name}</option>
-                          ))}
-                        </select>
-                      </form>
-
-                      {selectedGuildId === 'all' ? (
-                        <p class="placeholder-note">Select a server above to edit its ticket bot configuration.</p>
-                      ) : ticketGuildOptions ? (
-                        <form method="post" action="/api/save-bot-config" class="config-form">
-                          <input type="hidden" name="guildId" value={selectedGuildId} />
-                          <div class="config-grid">
-                            <div>
-                              <h5>Roles</h5>
-                              <label class="config-field">
-                                <span>Ticket Staff</span>
-                                <select name="role_ticketStaff">
-                                  <option value="">Not set</option>
-                                  {(ticketGuildOptions.roles || []).map((r) => (
-                                    <option value={r.id} selected={selectedTicketConfig?.roles?.ticketStaff?.id === r.id}>{r.name}</option>
-                                  ))}
-                                </select>
-                              </label>
-                              <label class="config-field">
-                                <span>Owner</span>
-                                <select name="role_owner">
-                                  <option value="">Not set</option>
-                                  {(ticketGuildOptions.roles || []).map((r) => (
-                                    <option value={r.id} selected={selectedTicketConfig?.roles?.owner?.id === r.id}>{r.name}</option>
-                                  ))}
-                                </select>
-                              </label>
-                              <label class="config-field">
-                                <span>Co-Owner</span>
-                                <select name="role_coOwner">
-                                  <option value="">Not set</option>
-                                  {(ticketGuildOptions.roles || []).map((r) => (
-                                    <option value={r.id} selected={selectedTicketConfig?.roles?.coOwner?.id === r.id}>{r.name}</option>
-                                  ))}
-                                </select>
-                              </label>
-                              <label class="config-field">
-                                <span>Partnership Manager</span>
-                                <select name="role_partnershipManager">
-                                  <option value="">Not set</option>
-                                  {(ticketGuildOptions.roles || []).map((r) => (
-                                    <option value={r.id} selected={selectedTicketConfig?.roles?.partnershipManager?.id === r.id}>{r.name}</option>
-                                  ))}
-                                </select>
-                              </label>
-                              <label class="config-field">
-                                <span>ID Verified Staff</span>
-                                <select name="role_idVerifiedStaff">
-                                  <option value="">Not set</option>
-                                  {(ticketGuildOptions.roles || []).map((r) => (
-                                    <option value={r.id} selected={selectedTicketConfig?.roles?.idVerifiedStaff?.id === r.id}>{r.name}</option>
-                                  ))}
-                                </select>
-                              </label>
-                            </div>
-                            <div>
-                              <h5>Categories</h5>
-                              <label class="config-field">
-                                <span>Support/Report/Partnership</span>
-                                <select name="category_support">
-                                  <option value="">Not set</option>
-                                  {(ticketGuildOptions.categories || []).map((c) => (
-                                    <option value={c.id} selected={selectedTicketConfig?.categories?.support?.id === c.id}>{c.name}</option>
-                                  ))}
-                                </select>
-                              </label>
-                              <label class="config-field">
-                                <span>Staff Reports</span>
-                                <select name="category_staffReport">
-                                  <option value="">Not set</option>
-                                  {(ticketGuildOptions.categories || []).map((c) => (
-                                    <option value={c.id} selected={selectedTicketConfig?.categories?.staffReport?.id === c.id}>{c.name}</option>
-                                  ))}
-                                </select>
-                              </label>
-                              <label class="config-field">
-                                <span>Verification</span>
-                                <select name="category_verification">
-                                  <option value="">Not set</option>
-                                  {(ticketGuildOptions.categories || []).map((c) => (
-                                    <option value={c.id} selected={selectedTicketConfig?.categories?.verification?.id === c.id}>{c.name}</option>
-                                  ))}
-                                </select>
-                              </label>
-                            </div>
-                          </div>
-                          <button type="submit" class="save-btn">Save Changes</button>
-                        </form>
-                      ) : (
-                        <p class="placeholder-note">Couldn't reach the bot right now.</p>
-                      )}
-                    </>
-                  ) : (
-                    <p class="placeholder-note">Setup will be available here once {bot.name} is live.</p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
+        {staff && (
+          <ModulesView
+            selectedGuildId={selectedGuildId}
+            configSaved={configSaved}
+            ticketServers={ticketServers}
+            ticketGuildOptions={ticketGuildOptions}
+            selectedTicketConfig={selectedTicketConfig}
+          />
         )}
 
-        <div id="view-commands" style="display: none;">
-          <h3>Commands List</h3>
-          <select id="command-bot-select" class="command-select" onchange="showCommandBot(this.value)">
-            {botData.filter((bot) => bot.commands.length > 0).map((bot) => (
-              <option value={bot.name}>{bot.name}</option>
-            ))}
-          </select>
-          {botData.filter((bot) => bot.commands.length > 0).map((bot, i) => (
-            <div class="command-group" data-bot={bot.name} style={i === 0 ? '' : 'display: none;'}>
-              <table class="log-table">
-                <thead><tr><th>Command</th><th>Description</th></tr></thead>
-                <tbody>
-                  {bot.commands.map((c) => (
-                    <tr><td>{c.name}</td><td>{c.description}</td></tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ))}
-        </div>
-
-        <div id="view-servers" style="display: none;">
-          <h3>Server Listing</h3>
-          <ul class="detail-list">
-            {serverList.map((s) => (
-              <li>
-                <span class="detail-primary">
-                  {s.name}
-                  {s.partner && <span class="status-text active process">PARTNER</span>}
-                </span>
-                <span class="detail-secondary"><a href={`/servers/${s.slug}`}>/servers/{s.slug}</a></span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {isStaff && (
-          <div id="view-botlogs" style="display: none;">
-            <h3>Bot Diagnostic Logs</h3>
-            <div id="bot-selection-grid" class="card-grid">
-              {["Tickets", "Council", "Network", "Ascend", "Roles", "Bonds", "Collar", "Profiles", "Watch", "Blueprint", "Roleplay", "Place Holder"].map((name) => (
-                <div class="bot-card" onclick={`openBotSubPage('${name}')`}>
-                  <h4>Midnight {name}</h4>
-                </div>
-              ))}
-            </div>
-
-            <div id="bot-sub-page" style="display: none;">
-              <button class="back-btn" onclick="backToOverview()">← Back</button>
-              <h3 id="sub-page-title">Bot Name</h3>
-              <div class="sub-tabs">
-                <button class="tab-btn active" onclick="showSubTab('logs-table', this)">Logs</button>
-                <button class="tab-btn" onclick="showSubTab('logs-health', this)">Status</button>
-                <button class="tab-btn" onclick="showSubTab('logs-latency', this)">Latency</button>
-                <button class="tab-btn" onclick="showSubTab('logs-errors', this)">Errors</button>
-              </div>
-
-              <div id="logs-table"><table class="log-table"><thead><tr><th>Time</th><th>Action</th></tr></thead><tbody><tr><td>12:00</td><td>Data processed</td></tr></tbody></table></div>
-
-              <div id="logs-health" style="display: none;">
-                <div class="health-container">
-                  <h4>Uptime History</h4>
-                  <div class="status-bars" style="margin-bottom: 20px;">
-                    {Array.from({ length: 40 }).map(() => (<div class="bar" style="background:#4ADE80; width: 6px; height: 16px; border-radius: 2px;"></div>))}
-                  </div>
-                  <h4>Latency History</h4>
-                  <div class="status-bars" style="margin-bottom: 20px;">
-                    {Array.from({ length: 40 }).map(() => (<div class="bar" style="background:#FBBF24; width: 6px; height: 16px; border-radius: 2px;"></div>))}
-                  </div>
-                  <h4>Error Frequency</h4>
-                  <div class="status-bars">
-                    {Array.from({ length: 40 }).map(() => (<div class="bar" style="background:#F87171; width: 6px; height: 16px; border-radius: 2px;"></div>))}
-                  </div>
-                </div>
-              </div>
-
-              <div id="logs-latency" style="display: none;"><table class="log-table"><thead><tr><th>Time</th><th>Ping</th></tr></thead><tbody><tr><td>12:00</td><td>42ms</td></tr></tbody></table></div>
-              <div id="logs-errors" style="display: none;"><table class="log-table"><thead><tr><th>Time</th><th>Error</th></tr></thead><tbody><tr><td>None</td><td>No errors</td></tr></tbody></table></div>
-            </div>
-          </div>
-        )}
-
-        {isStaff && (
-          <div id="view-actionlogs" style="display: none;">
-            <h3>Staff Action Logs</h3>
-            <table class="log-table"><thead><tr><th>Time</th><th>Staff</th><th>Dept</th><th>Action</th></tr></thead><tbody><tr><td>12:30</td><td>@midnightraven</td><td>Leadership</td><td>Edited Form</td></tr></tbody></table>
-          </div>
-        )}
+        <CommandsView />
+        <ServerListingView />
+        {staff && <BotLogsView />}
+        {staff && <ActionLogsView />}
       </div>
     </main>
   </div>
@@ -560,23 +79,22 @@ if (isStaff) {
       commands: document.getElementById('view-commands'),
       servers: document.getElementById('view-servers'),
       botlogs: document.getElementById('view-botlogs'),
-      actionlogs: document.getElementById('view-actionlogs')
+      actionlogs: document.getElementById('view-actionlogs'),
     };
 
-    navItems.forEach(item => {
-      item.addEventListener('click', () => {
-        const target = item.getAttribute('data-view');
-        navItems.forEach(nav => nav.classList.remove('active'));
-        item.classList.add('active');
-        Object.values(views).forEach(v => { if(v) v.style.display = 'none' });
-        if(views[target]) views[target].style.display = 'block';
-      });
+    function showView(name) {
+      navItems.forEach((nav) => nav.classList.toggle('active', nav.getAttribute('data-view') === name));
+      Object.entries(views).forEach(([key, el]) => { if (el) el.style.display = key === name ? 'block' : 'none'; });
+    }
+
+    navItems.forEach((item) => {
+      item.addEventListener('click', () => showView(item.getAttribute('data-view')));
     });
 
     function openBotSubPage(name) {
       document.getElementById('bot-selection-grid').style.display = 'none';
       document.getElementById('bot-sub-page').style.display = 'block';
-      document.getElementById('sub-page-title').innerText = "Midnight " + name;
+      document.getElementById('sub-page-title').innerText = 'Midnight ' + name;
     }
 
     function openModuleSubPage(name) {
@@ -603,21 +121,17 @@ if (isStaff) {
     }
 
     function showSubTab(id, btn) {
-      ['logs-table', 'logs-health', 'logs-latency', 'logs-errors'].forEach(tabId => {
+      ['logs-table', 'logs-health', 'logs-latency', 'logs-errors'].forEach((tabId) => {
         document.getElementById(tabId).style.display = 'none';
       });
       document.getElementById(id).style.display = 'block';
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
     }
 
     const params = new URLSearchParams(window.location.search);
     if (params.get('view') === 'modules' && views.modules) {
-      navItems.forEach(nav => nav.classList.remove('active'));
-      const modulesNav = document.querySelector('.nav-item[data-view="modules"]');
-      if (modulesNav) modulesNav.classList.add('active');
-      Object.values(views).forEach(v => { if (v) v.style.display = 'none'; });
-      views.modules.style.display = 'block';
+      showView('modules');
       const botParam = params.get('bot');
       if (botParam) openModuleSubPage(botParam);
     }
@@ -625,85 +139,33 @@ if (isStaff) {
 </Layout>
 
 <style>
-  .dashboard-wrapper { display: flex; min-height: 100vh; background: #080612; color: #F0EDF7; }
-  .sidebar { width: 220px; background: #0F0B1E; border-right: 1px solid #2A2145; }
+  .dashboard-wrapper { display: flex; background: #0F0B1E; color: #F0EDF7; }
+  .sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    background: #0F0B1E;
+    border-right: 1px solid #2A2145;
+    align-self: flex-start;
+    position: sticky;
+    top: 0;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
   .sidebar-header { padding: 1rem 1.25rem; border-bottom: 1px solid #2A2145; }
   .sidebar-header h3 { font-size: 1.05rem; margin: 0; }
   .nav-item { padding: 0.65rem 1.25rem; color: #B8AED0; cursor: pointer; font-size: 0.85rem; }
   .nav-item.active { color: #8A5CF6; border-left: 2px solid #8A5CF6; background: #1A1430; }
-  .main-content { flex: 1; }
+  .main-content { flex: 1; min-width: 0; padding-bottom: 3rem; }
 
-  /* Banner Fixes */
- .page-banner {
-  width: 100%;
-  height: 250px;                 /* Adjust this to make it taller or shorter */
-  background-image: url('/banners/bots.jpg');
-  background-size: cover;        /* Fills the whole area without distorting pixels */
-  background-position: center;   /* Keeps the moon centered so it doesn't get cut off */
-  background-repeat: no-repeat;
-}
+  .page-banner {
+    width: 100%;
+    height: 250px;
+    background-image: url('/banners/bots.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
 
   .overview-container { padding: 1rem 1.25rem; margin-top: 0; font-size: 0.82rem; }
   .overview-container h3 { font-size: 0.95rem; }
-  .overview-grid { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 1rem; }
-  .overview-section h4 { font-size: 0.65rem; letter-spacing: 0.04em; color: #8A7FA8; margin: 0 0 0.4rem; }
-  .card-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem; margin-top: 0.75rem; }
-  .bot-card { background: #0F0B1E; border: 1px solid #2A2145; padding: 0.7rem; cursor: pointer; border-radius: 4px; transition: 0.3s; text-align: center; }
-  .bot-card h4 { font-size: 0.7rem; margin: 0; }
-  .bot-card:hover { border-color: #8A5CF6; background: #1A1430; }
-
-  .log-table { width: 100%; border-collapse: collapse; margin-top: 0.75rem; background: #0F0B1E; font-size: 0.8rem; }
-  .log-table th, .log-table td { padding: 0.6rem 0.75rem; border-bottom: 1px solid #2A2145; text-align: left; }
-
-  .back-btn { background: none; border: 1px solid #8A5CF6; color: #8A5CF6; padding: 0.35rem 0.7rem; cursor: pointer; border-radius: 4px; font-size: 0.75rem; }
-  .sub-tabs { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; }
-  .tab-btn { background: #1A1430; border: 1px solid #2A2145; color: #F0EDF7; padding: 0.35rem 0.7rem; cursor: pointer; border-radius: 4px; font-size: 0.75rem; }
-  .tab-btn.active { background: #8A5CF6; border: 1px solid #8A5CF6; }
-
-  .data-item { display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0.65rem; background: #0F0B1E; border: 1px solid #2A2145; border-radius: 6px; margin-bottom: 0.3rem; font-size: 0.75rem; }
-  .status-row { display: flex; gap: 5px; }
-  .status-text { font-size: 0.45rem; color: #5A5270; background: #1A1430; padding: 1px 4px; border: 1px solid #2A2145; border-radius: 3px; text-transform: uppercase; font-weight: bold; }
-  .status-text.active.process { color: #22D3EE; border-color: #22D3EE; }
-  .status-text.active.planned { color: #A0A0A0; border-color: #A0A0A0; }
-
-  .health-container { padding: 0.85rem; background: #0F0B1E; border: 1px solid #2A2145; border-radius: 6px; }
-  .status-bars { display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap; }
-
-  .module-sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
-  .module-sub-header h3 { margin: 0; }
-  .module-detail { background: #0F0B1E; border: 1px solid #2A2145; border-radius: 6px; padding: 0.65rem 0.85rem; margin-bottom: 0.6rem; }
-  .module-detail h4 { font-size: 0.78rem; color: #C4B5FD; margin: 0 0 0.35rem; }
-  .module-explain { margin: 0 0 0.4rem; font-size: 0.75rem; color: #B8AED0; line-height: 1.5; }
-  .module-example { margin: 0; font-size: 0.72rem; color: #8A7FA8; line-height: 1.5; }
-  .module-example strong { color: #8A5CF6; }
-
-  .module-setup { margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid #2A2145; }
-  .module-setup h4 { font-size: 0.85rem; color: #C4B5FD; margin: 0 0 0.5rem; }
-  .server-picker-form { margin-bottom: 0.75rem; }
-  .saved-note { color: #22C55E; font-weight: 600; font-size: 0.75rem; margin: 0 0 0.75rem; }
-  .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin-bottom: 0.75rem; }
-  .config-grid h5 { font-size: 0.75rem; color: #B8AED0; margin: 0 0 0.5rem; }
-  .config-field { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 0.65rem; font-size: 0.72rem; color: #B8AED0; }
-  .config-field select { padding: 0.4rem; background: #1A1430; border: 1px solid #2A2145; border-radius: 6px; color: #F0EDF7; font-size: 0.75rem; }
-  .save-btn { margin-top: 0.25rem; padding: 0.5rem 1.25rem; background: #8A5CF6; color: #F0EDF7; border: none; border-radius: 8px; font-weight: 600; font-size: 0.8rem; cursor: pointer; }
-  .save-btn:hover { background: #7C4FE0; }
-
-  .command-select {
-    margin-top: 0.75rem;
-    padding: 0.4rem 0.6rem;
-    background: #1A1430;
-    border: 1px solid #2A2145;
-    border-radius: 6px;
-    color: #F0EDF7;
-    font-size: 0.8rem;
-  }
-  .command-group { margin-top: 0.75rem; }
-
-  .detail-list { list-style: none; margin: 0.75rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
-  .detail-list li { display: flex; flex-direction: column; gap: 0.15rem; padding-bottom: 0.5rem; border-bottom: 1px solid #2A2145; }
-  .detail-list li:last-child { border-bottom: none; padding-bottom: 0; }
-  .detail-primary { color: #F0EDF7; font-weight: 600; font-size: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
-  .detail-secondary { color: #8A7FA8; font-size: 0.7rem; }
-  .detail-secondary a { color: #8A5CF6; text-decoration: none; }
-  .detail-secondary a:hover { color: #C4B5FD; }
 </style>

@@ -1,0 +1,96 @@
+---
+import { ruleCategories, ruleFAQ } from '../../data/network-rules.js';
+
+const { themedRules, serverName } = Astro.props;
+---
+<input type="radio" name="rules-subtabs" id="subtab-rules" class="tab-radio" checked />
+<input type="radio" name="rules-subtabs" id="subtab-faq" class="tab-radio" />
+
+<div class="sub-tab-buttons">
+  <label for="subtab-rules" class="tab-btn">Rules</label>
+  <label for="subtab-faq" class="tab-btn">FAQ</label>
+</div>
+
+<div class="sub-tab-content rules-list-content">
+  <div class="doc-container">
+    {themedRules.length > 0 ? (
+      <div class="rule-category">
+        <h4>{serverName} Rules</h4>
+        <ul class="rules-list">
+          {themedRules.map((point) => <li>{point}</li>)}
+        </ul>
+      </div>
+    ) : (
+      <p class="placeholder-note">This server hasn't added its own extra rules yet — the network-wide rules below still apply.</p>
+    )}
+
+    <h3 class="network-rules-heading">Network-Wide Rules</h3>
+    {ruleCategories.map((category) => (
+      <div class="rule-category">
+        <h4>{category.title}</h4>
+        <ul class="rules-list">
+          {category.points.map((point) => (
+            <li>{point}</li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+</div>
+
+<div class="sub-tab-content faq-list-content">
+  <div class="doc-container">
+    {ruleFAQ.map((category) => (
+      <div class="faq-category">
+        <h4>{category.title}</h4>
+        {category.qa.map((item) => (
+          <div class="faq-item">
+            <p class="faq-q">{item.q}</p>
+            <p class="faq-a">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .tab-radio { display: none; }
+  .sub-tab-buttons { display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1.5rem; }
+  .tab-btn {
+    padding: 0.5rem 1.25rem;
+    background-color: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 8px;
+    color: #B8AED0;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .tab-btn:hover { background-color: #2A2145; color: #F0EDF7; }
+  .sub-tab-content { display: none; }
+  #subtab-rules:checked ~ .rules-list-content { display: block; }
+  #subtab-faq:checked ~ .faq-list-content { display: block; }
+  #subtab-rules:checked ~ .sub-tab-buttons label[for="subtab-rules"],
+  #subtab-faq:checked ~ .sub-tab-buttons label[for="subtab-faq"] {
+    background-color: #8A5CF6;
+    color: #F0EDF7;
+  }
+  .doc-container { max-width: 700px; margin: 0 auto; text-align: left; }
+  .network-rules-heading { color: #F0EDF7; text-align: center; margin: 2rem 0 1rem; }
+  .rule-category { margin-bottom: 1.5rem; }
+  .rule-category h4 { color: #C4B5FD; margin-bottom: 0.5rem; }
+  .rules-list { color: #F0EDF7; line-height: 1.8; }
+  .rules-list li { margin-bottom: 0.5rem; }
+  .faq-category { margin-bottom: 1.5rem; }
+  .faq-category h4 { color: #C4B5FD; margin-bottom: 0.75rem; }
+  .faq-item { margin-bottom: 1.25rem; padding-left: 1rem; border-left: 2px solid #8A5CF6; }
+  .faq-q { color: #F0EDF7; font-weight: 700; font-size: 1rem; margin-bottom: 0.35rem; }
+  .faq-a { color: #B8AED0; font-size: 0.9rem; margin: 0; }
+  .placeholder-note { margin: 0 0 1.5rem; font-size: 0.9rem; color: #8A7FA8; line-height: 1.5; text-align: center; }
+
+  @media (max-width: 768px) {
+    .sub-tab-buttons { flex-direction: column; align-items: stretch; }
+  }
+</style>
