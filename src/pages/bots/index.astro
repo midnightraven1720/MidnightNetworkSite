@@ -19,6 +19,12 @@ const botData = [
     name: 'Midnight Tickets', status: 'Live',
     highlights: ['General support tickets', 'User and staff reports', 'Partnership requests', 'Multi-part staff application flow with branching questions based on role track'],
     commands: [],
+    moduleDetails: [
+      { title: 'General support tickets', explanation: 'Members open a private ticket channel to ask staff for help.', example: 'A member clicks "Open Ticket" in #support, picks "General Support," and a private channel is created with them and staff.' },
+      { title: 'User and staff reports', explanation: 'A separate ticket type for reporting a member or a staff member.', example: 'A member clicks "Report" in the ticket panel, chooses "Report a Member," and describes what happened.' },
+      { title: 'Partnership requests', explanation: 'A dedicated ticket type for server owners requesting a partnership.', example: 'A server owner clicks "Partnership Request" and fills in their invite link and member count.' },
+      { title: 'Multi-part staff application flow', explanation: 'Applicants pick a role track and get different follow-up questions depending on that choice.', example: 'An applicant selects "Moderation Track" and is asked moderation-specific questions instead of the general set.' },
+    ],
   },
   {
     name: 'Midnight Network', status: 'Planned',
@@ -31,6 +37,12 @@ const botData = [
       { name: '/event', description: 'Create, plan, schedule, or poll an event with RSVP buttons' },
       { name: '/suggest', description: 'Post a suggestion for community/staff vote' },
       { name: '/suggestions', description: 'List or resolve pending suggestions (staff)' },
+    ],
+    moduleDetails: [
+      { title: 'Announcements and update logs', explanation: 'Staff post network-wide or server-specific announcements and structural change logs.', example: '/announcement scope:network posts a message to every server\'s announcement channel.' },
+      { title: 'Partner server listings', explanation: 'Lists partner servers so members can find and join them.', example: '/partners shows the current partner server directory.' },
+      { title: 'Event management with RSVP tracking', explanation: 'Staff schedule an event and members RSVP with a button.', example: '/event create sets up an event with a date/time; members click "RSVP" to confirm.' },
+      { title: 'Single-server or network-wide broadcasting', explanation: 'Announcements and updates can target just one server or the whole network.', example: '/announcement scope:server only posts to the server it was run in.' },
     ],
   },
   {
@@ -53,6 +65,13 @@ const botData = [
       { name: '/member-count', description: 'Member stats breakdown' },
       { name: '/away', description: 'Set staff availability notice' },
     ],
+    moduleDetails: [
+      { title: 'Staff directory', explanation: 'Shows staff and their rank at both the server and network level.', example: '/staff-list scope:network lists every staff member across all servers.' },
+      { title: 'Moderation tools', explanation: 'Standard moderation actions logged against a member: warnings, kicks, bans, timeouts, notes.', example: '/warn @user reason:"Spamming" logs a warning staff can review later with /warnings.' },
+      { title: 'Network-wide blacklist', explanation: 'A member flagged in one server can be blacklisted across the whole network.', example: '/blacklist add @user reason:"Scamming" flags them network-wide.' },
+      { title: 'Member statistics', explanation: 'Quick breakdowns of member counts.', example: '/member-count shows totals for the current server or the whole network.' },
+      { title: 'Health Department check-ins', explanation: 'Staff can log a wellness check-in on a member who might need support.', example: '/checkin @user records a check-in staff can review later with /checkin-history.' },
+    ],
   },
   {
     name: 'Midnight Ascend', status: 'Planned',
@@ -70,6 +89,12 @@ const botData = [
       { name: '/xp-add', description: 'Manually adjust XP (staff)' },
       { name: '/currency-add', description: 'Manually adjust currency (staff)' },
     ],
+    moduleDetails: [
+      { title: 'XP from activity', explanation: 'Members earn XP passively from chat, voice, invites, and reactions.', example: '/rank shows how much XP a member has earned and their current level.' },
+      { title: 'Dual-wallet currency', explanation: 'Two separate currency balances per member: one for the server, one for the network.', example: '/balance shows both the server wallet and the network wallet.' },
+      { title: 'Shop/store system', explanation: 'Staff set up items members can buy with their currency.', example: '/shop lists items; a member buys one directly from the list.' },
+      { title: 'Relationship-based currencies', explanation: 'Special currency types only usable once a Bonds relationship is verified.', example: 'A verified pair can /give each other the relationship-themed currency once Bonds confirms the connection.' },
+    ],
   },
   {
     name: 'Midnight Roles', status: 'Planned',
@@ -81,6 +106,12 @@ const botData = [
       { name: '/setup-join-welcome-channel', description: 'Set the join welcome channel' },
       { name: '/setup-join-welcome-message', description: 'Set the join welcome message' },
       { name: '/setup-join-welcome-banner', description: 'Set the join welcome banner' },
+    ],
+    moduleDetails: [
+      { title: 'Button/reaction role menus', explanation: 'Members click a button or react to receive a role.', example: '/rolemenu create builds a menu; members click a button to get the "Gamer" role.' },
+      { title: 'Import existing role menus', explanation: 'Migrates a role menu built with another bot instead of rebuilding it from scratch.', example: '/rolemenu import pulls in an existing reaction-role message so it works through Midnight Roles.' },
+      { title: 'Automatic role assignment on join', explanation: 'New members get a role automatically the moment they join.', example: '/setup-autorole sets the role that\'s applied on join.' },
+      { title: 'Welcome messages', explanation: 'Posts a welcome message when someone joins.', example: '/setup-join-welcome-message sets the text; /setup-join-welcome-channel sets where it posts.' },
     ],
   },
   {
@@ -97,6 +128,12 @@ const botData = [
       { name: '/ask-to-friend', description: 'Request to friend someone' },
       { name: '/ask-to-call', description: 'Request a voice call' },
     ],
+    moduleDetails: [
+      { title: 'Owner/Handler/Pet dynamics', explanation: 'A formal relationship type between an Owner/Handler and their pet.', example: '/bonds request pairs two members and both must accept.' },
+      { title: 'Romantic relationships', explanation: 'A separate relationship type for partners.', example: '/relationship set @user proposes a romantic relationship; the other member confirms.' },
+      { title: 'Chosen family connections', explanation: 'Family-style bonds (siblings, parent/child, etc.) between members.', example: '/family add @user relation:"sibling" registers the connection.' },
+      { title: 'Consent routing through Owner/Handlers', explanation: 'Sensitive requests (DM, friend, voice call) can be routed through someone\'s registered Owner/Handler instead of going straight to them.', example: '/ask-to-dm @user checks their /dm-status first, and routes through their Handler if that\'s set.' },
+    ],
   },
   {
     name: 'Midnight Collar', status: 'Planned',
@@ -106,6 +143,13 @@ const botData = [
       { name: '/collar bind', description: 'Bind/unbind a member, or check status' },
       { name: '/collar leash', description: 'Leash/unleash a member, or check status' },
       { name: '/collar safeword', description: 'Instantly clears all active restrictions' },
+    ],
+    moduleDetails: [
+      { title: 'Gag, bind, and leash mechanics', explanation: 'Interactive restriction commands between consenting members.', example: '/collar gag @user applies the gag state; running it again lifts it.' },
+      { title: 'Requires an accepted Bonds relationship', explanation: 'Collar can\'t be used on someone without a confirmed Bonds relationship first.', example: 'Trying /collar bind on someone with no accepted Bonds relationship is blocked.' },
+      { title: 'Timed auto-expiry and manual override', explanation: 'Restrictions can be set to expire automatically or cleared early.', example: 'A bind can be set for 30 minutes and will lift on its own, or be ended early.' },
+      { title: 'Unconditional safeword', explanation: 'One command instantly clears every active restriction, no matter what.', example: '/collar safeword immediately removes all active states.' },
+      { title: 'Staff areas permanently exempt', explanation: 'Collar mechanics never apply while in staff-only channels or areas.', example: 'Commands are blocked automatically if run in a staff-only channel.' },
     ],
   },
   {
@@ -117,6 +161,13 @@ const botData = [
       { name: '/profile-[type] delete', description: 'Delete your profile' },
       { name: '/setup-profile-channel', description: 'Configure profile channels per server (staff)' },
     ],
+    moduleDetails: [
+      { title: 'Lifestyle/dynamic-focused types', explanation: 'Profile templates for lifestyle-specific info: Kink, Pet, Owner.', example: '/profile-kink post walks through the Kink profile\'s fields.' },
+      { title: 'Interest-based types', explanation: 'Profile templates for hobbies and interests: Gamer, Anime, Books.', example: '/profile-gamer post posts a profile listing platforms and favorite games.' },
+      { title: 'General Introduction type', explanation: 'A general-purpose "getting to know you" profile.', example: '/profile-intro post covers the basics: name, pronouns, interests.' },
+      { title: 'Multiple depth levels and tags', explanation: 'Profiles can be short or detailed, and tagged for searching.', example: 'Choosing the "detailed" version of /profile-gamer post adds extra optional fields and tags.' },
+      { title: 'Contextual way to reach out', explanation: 'A built-in way to contact the profile owner appropriately.', example: 'A "Reach Out" prompt on the profile respects that member\'s DM/friend consent settings.' },
+    ],
   },
   {
     name: 'Midnight Watch', status: 'Planned',
@@ -124,6 +175,11 @@ const botData = [
     commands: [
       { name: '/logs setup', description: 'Map local log channels' },
       { name: '/logs toggle', description: 'Enable/disable log categories per server' },
+    ],
+    moduleDetails: [
+      { title: 'Messages, roles, channels, and voice activity', explanation: 'Logs edits/deletes, role changes, channel changes, and voice join/leave.', example: 'Deleting a message posts a log entry showing who deleted it and the original content.' },
+      { title: 'Joins/leaves with invite-source tracking', explanation: 'Logs who joins or leaves and which invite link they used.', example: 'A join log entry shows the member joined via the "#partnerships" invite.' },
+      { title: 'Staff action logging', explanation: 'Logs moderation actions taken by staff.', example: 'A /warn from Midnight Council also shows up in Watch\'s action log.' },
     ],
   },
   {
@@ -141,6 +197,10 @@ const botData = [
       { name: '/blueprint bot-checklist', description: 'Setup reminder across all bots' },
       { name: '/blueprint webhook', description: 'Save or apply a webhook preset' },
     ],
+    moduleDetails: [
+      { title: 'Copies server structure to another server', explanation: 'Snapshots one server\'s roles, channels, and categories and applies them to another.', example: '/blueprint create saves the current server\'s structure as a template, then /blueprint load applies it elsewhere.' },
+      { title: 'Reusable templates and presets', explanation: 'Save permission sets, emoji packs, and content templates for reuse instead of rebuilding them each time.', example: '/blueprint permission saves a permission preset once, then applies it to a new channel later.' },
+    ],
   },
   {
     name: 'Midnight Roleplay', status: 'Planned',
@@ -156,6 +216,12 @@ const botData = [
       { name: '/turn', description: 'Start, advance, skip, or check turn order' },
       { name: '/scene archive', description: 'Archive a completed scene' },
       { name: '/scene summarize', description: 'Summarize a scene' },
+    ],
+    moduleDetails: [
+      { title: 'Character sheet management', explanation: 'Each character gets its own sheet, separate from a member\'s other characters.', example: '/character create makes a new sheet; /character list shows every character a member owns.' },
+      { title: 'Location and scene tracking', explanation: 'Tracks which location each character is currently in.', example: '/scene who-is-where shows every character\'s current location.' },
+      { title: 'Turn order management', explanation: 'Manages whose turn it is in a scene.', example: '/turn advances to the next character in the turn order.' },
+      { title: 'Session summary logging', explanation: 'Scenes can be archived with a summary for later reference.', example: '/scene summarize generates a recap, then /scene archive closes the scene out.' },
     ],
   },
 ];
@@ -178,7 +244,7 @@ const serverList = [
       <div class="sidebar-header"><h3>Bot Dashboard</h3></div>
       <nav>
         <div class="nav-item active" data-view="dashboard">Overview</div>
-        <div class="nav-item" data-view="modules">Modules</div>
+        {isStaff && <div class="nav-item" data-view="modules">Modules</div>}
         <div class="nav-item" data-view="commands">Commands</div>
         <div class="nav-item" data-view="servers">Server Listing</div>
         {isStaff && <div class="nav-item" data-view="botlogs">Bot Logs</div>}
@@ -221,22 +287,35 @@ const serverList = [
           </div>
         </div>
 
-        <div id="view-modules" style="display: none;">
-          <h3>Modules Manager</h3>
-          <div class="module-grid">
-            {botData.map((bot) => (
-              <div class="module-card">
-                <div class="module-card-header">
+        {isStaff && (
+          <div id="view-modules" style="display: none;">
+            <h3>Modules Manager</h3>
+            <div id="module-selection-grid" class="card-grid">
+              {botData.map((bot) => (
+                <div class="bot-card" onclick={`openModuleSubPage('${bot.name}')`}>
                   <h4>{bot.name}</h4>
+                </div>
+              ))}
+            </div>
+
+            {botData.map((bot) => (
+              <div class="module-sub-page" data-bot={bot.name} style="display: none;">
+                <button class="back-btn" onclick="backToModuleGrid()">← Back</button>
+                <div class="module-sub-header">
+                  <h3>{bot.name}</h3>
                   <span class={`status-text active ${bot.status === 'Live' ? 'process' : 'planned'}`}>{bot.status.toUpperCase()}</span>
                 </div>
-                <ul class="mini-list">
-                  {bot.highlights.map((h) => <li>{h}</li>)}
-                </ul>
+                {bot.moduleDetails.map((m) => (
+                  <div class="module-detail">
+                    <h4>{m.title}</h4>
+                    <p class="module-explain">{m.explanation}</p>
+                    <p class="module-example"><strong>Example:</strong> {m.example}</p>
+                  </div>
+                ))}
               </div>
             ))}
           </div>
-        </div>
+        )}
 
         <div id="view-commands" style="display: none;">
           <h3>Commands List</h3>
@@ -357,6 +436,18 @@ const serverList = [
       document.getElementById('sub-page-title').innerText = "Midnight " + name;
     }
 
+    function openModuleSubPage(name) {
+      document.getElementById('module-selection-grid').style.display = 'none';
+      document.querySelectorAll('.module-sub-page').forEach((el) => {
+        el.style.display = el.getAttribute('data-bot') === name ? 'block' : 'none';
+      });
+    }
+
+    function backToModuleGrid() {
+      document.getElementById('module-selection-grid').style.display = 'grid';
+      document.querySelectorAll('.module-sub-page').forEach((el) => { el.style.display = 'none'; });
+    }
+
     function showCommandBot(name) {
       document.querySelectorAll('.command-group').forEach((el) => {
         el.style.display = el.getAttribute('data-bot') === name ? 'block' : 'none';
@@ -424,11 +515,13 @@ const serverList = [
   .health-container { padding: 0.85rem; background: #0F0B1E; border: 1px solid #2A2145; border-radius: 6px; }
   .status-bars { display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap; }
 
-  .module-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.75rem; margin-top: 0.75rem; }
-  .module-card { background: #0F0B1E; border: 1px solid #2A2145; border-radius: 6px; padding: 0.75rem; }
-  .module-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
-  .module-card-header h4 { font-size: 0.8rem; margin: 0; color: #C4B5FD; }
-  .mini-list { margin: 0; padding-left: 1.1rem; color: #B8AED0; font-size: 0.72rem; line-height: 1.6; }
+  .module-sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+  .module-sub-header h3 { margin: 0; }
+  .module-detail { background: #0F0B1E; border: 1px solid #2A2145; border-radius: 6px; padding: 0.65rem 0.85rem; margin-bottom: 0.6rem; }
+  .module-detail h4 { font-size: 0.78rem; color: #C4B5FD; margin: 0 0 0.35rem; }
+  .module-explain { margin: 0 0 0.4rem; font-size: 0.75rem; color: #B8AED0; line-height: 1.5; }
+  .module-example { margin: 0; font-size: 0.72rem; color: #8A7FA8; line-height: 1.5; }
+  .module-example strong { color: #8A5CF6; }
 
   .command-select {
     margin-top: 0.75rem;
