@@ -32,5 +32,5 @@ export async function POST({ request, redirect }) {
     console.error('Failed to save bot config:', err);
   }
 
-  return redirect(`/staff-dashboard?server=${guildId}&saved=true#main-bot`);
+  return redirect(`/bots?server=${guildId}&saved=true&view=modules&bot=${encodeURIComponent('Midnight Tickets')}`);
 }
