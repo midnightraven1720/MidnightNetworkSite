@@ -170,9 +170,10 @@ const isStaff = !!user && STAFF_TIERS.includes(user.rank);
 
 <style>
   .dashboard-wrapper { display: flex; min-height: 100vh; background: #080612; color: #F0EDF7; }
-  .sidebar { width: 250px; background: #0F0B1E; border-right: 1px solid #2A2145; }
-  .sidebar-header { padding: 1.5rem; border-bottom: 1px solid #2A2145; }
-  .nav-item { padding: 1rem 1.5rem; color: #B8AED0; cursor: pointer; }
+  .sidebar { width: 220px; background: #0F0B1E; border-right: 1px solid #2A2145; }
+  .sidebar-header { padding: 1rem 1.25rem; border-bottom: 1px solid #2A2145; }
+  .sidebar-header h3 { font-size: 1.05rem; margin: 0; }
+  .nav-item { padding: 0.65rem 1.25rem; color: #B8AED0; cursor: pointer; font-size: 0.85rem; }
   .nav-item.active { color: #8A5CF6; border-left: 2px solid #8A5CF6; background: #1A1430; }
   .main-content { flex: 1; }
 
@@ -186,27 +187,29 @@ const isStaff = !!user && STAFF_TIERS.includes(user.rank);
   background-repeat: no-repeat;
 }
 
-  .overview-container { padding: 2rem; margin-top: 0; }
-  .overview-grid { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 2rem; }
-  .card-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-top: 1rem; }
-  .bot-card { background: #0F0B1E; border: 1px solid #2A2145; padding: 1rem; cursor: pointer; border-radius: 4px; transition: 0.3s; text-align: center; }
-  .bot-card h4 { font-size: 0.8rem; margin: 0; }
+  .overview-container { padding: 1.25rem 1.5rem; margin-top: 0; font-size: 0.9rem; }
+  .overview-container h3 { font-size: 1rem; }
+  .overview-grid { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 1.25rem; }
+  .overview-section h4 { font-size: 0.75rem; letter-spacing: 0.04em; color: #8A7FA8; margin: 0 0 0.5rem; }
+  .card-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem; margin-top: 0.75rem; }
+  .bot-card { background: #0F0B1E; border: 1px solid #2A2145; padding: 0.7rem; cursor: pointer; border-radius: 4px; transition: 0.3s; text-align: center; }
+  .bot-card h4 { font-size: 0.7rem; margin: 0; }
   .bot-card:hover { border-color: #8A5CF6; background: #1A1430; }
 
-  .log-table { width: 100%; border-collapse: collapse; margin-top: 1rem; background: #0F0B1E; }
-  .log-table th, .log-table td { padding: 1rem; border-bottom: 1px solid #2A2145; text-align: left; font-size: 0.85rem; }
+  .log-table { width: 100%; border-collapse: collapse; margin-top: 0.75rem; background: #0F0B1E; font-size: 0.8rem; }
+  .log-table th, .log-table td { padding: 0.6rem 0.75rem; border-bottom: 1px solid #2A2145; text-align: left; }
 
-  .back-btn { background: none; border: 1px solid #8A5CF6; color: #8A5CF6; padding: 0.4rem 0.8rem; cursor: pointer; border-radius: 4px; font-size: 0.8rem; }
-  .sub-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
-  .tab-btn { background: #1A1430; border: 1px solid #2A2145; color: #F0EDF7; padding: 0.4rem 0.8rem; cursor: pointer; border-radius: 4px; font-size: 0.8rem; }
+  .back-btn { background: none; border: 1px solid #8A5CF6; color: #8A5CF6; padding: 0.35rem 0.7rem; cursor: pointer; border-radius: 4px; font-size: 0.75rem; }
+  .sub-tabs { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; }
+  .tab-btn { background: #1A1430; border: 1px solid #2A2145; color: #F0EDF7; padding: 0.35rem 0.7rem; cursor: pointer; border-radius: 4px; font-size: 0.75rem; }
   .tab-btn.active { background: #8A5CF6; border: 1px solid #8A5CF6; }
 
-  .data-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; background: #0F0B1E; border: 1px solid #2A2145; border-radius: 6px; margin-bottom: 0.5rem; }
-  .status-row { display: flex; gap: 8px; }
-  .status-text { font-size: 0.55rem; color: #5A5270; background: #1A1430; padding: 2px 6px; border: 1px solid #2A2145; border-radius: 3px; text-transform: uppercase; font-weight: bold; }
+  .data-item { display: flex; justify-content: space-between; align-items: center; padding: 0.55rem 0.8rem; background: #0F0B1E; border: 1px solid #2A2145; border-radius: 6px; margin-bottom: 0.4rem; font-size: 0.85rem; }
+  .status-row { display: flex; gap: 6px; }
+  .status-text { font-size: 0.5rem; color: #5A5270; background: #1A1430; padding: 2px 5px; border: 1px solid #2A2145; border-radius: 3px; text-transform: uppercase; font-weight: bold; }
   .status-text.active.process { color: #22D3EE; border-color: #22D3EE; }
   .status-text.active.planned { color: #A0A0A0; border-color: #A0A0A0; }
 
-  .health-container { padding: 1rem; background: #0F0B1E; border: 1px solid #2A2145; border-radius: 6px; }
-  .status-bars { display: flex; gap: 4px; margin-top: 10px; flex-wrap: wrap; }
+  .health-container { padding: 0.85rem; background: #0F0B1E; border: 1px solid #2A2145; border-radius: 6px; }
+  .status-bars { display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap; }
 </style>
