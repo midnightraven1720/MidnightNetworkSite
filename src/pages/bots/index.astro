@@ -13,6 +13,162 @@ if (sessionCookie) {
 
 const STAFF_TIERS = ['owner', 'coOwner', 'staff'];
 const isStaff = !!user && STAFF_TIERS.includes(user.rank);
+
+const botData = [
+  {
+    name: 'Midnight Tickets', status: 'Live',
+    highlights: ['General support tickets', 'User and staff reports', 'Partnership requests', 'Multi-part staff application flow with branching questions based on role track'],
+    commands: [],
+  },
+  {
+    name: 'Midnight Network', status: 'Planned',
+    highlights: ['General announcements and structural update logs', 'Partner server listings', 'Event management with RSVP tracking', 'Covers both single-server and network-wide broadcasting'],
+    commands: [
+      { name: '/announcement', description: 'General comms (scope: server / network)' },
+      { name: '/update-log', description: 'Structural change record' },
+      { name: '/partners', description: 'List partner servers' },
+      { name: '/network-servers', description: 'List official network servers' },
+      { name: '/event', description: 'Create, plan, schedule, or poll an event with RSVP buttons' },
+      { name: '/suggest', description: 'Post a suggestion for community/staff vote' },
+      { name: '/suggestions', description: 'List or resolve pending suggestions (staff)' },
+    ],
+  },
+  {
+    name: 'Midnight Council', status: 'Planned',
+    highlights: ['Staff directory with server and network-level ranks', 'Moderation tools: warnings, kicks, bans, notes', 'Network-wide blacklist system', 'Member statistics', 'Health Department: staff-led wellness check-ins on members'],
+    commands: [
+      { name: '/staff-add', description: 'Add a staff member to the directory' },
+      { name: '/staff-remove', description: 'Remove a staff member' },
+      { name: '/staff-list', description: 'List staff (server/network)' },
+      { name: '/warn', description: 'Issue a warning' },
+      { name: '/warnings', description: "View a member's warning history" },
+      { name: '/note', description: 'Add a staff note on a member' },
+      { name: '/kick', description: 'Kick a member' },
+      { name: '/timeout', description: 'Timeout a member' },
+      { name: '/ban', description: 'Ban a member (scope: server/network)' },
+      { name: '/unban', description: 'Unban a member' },
+      { name: '/blacklist', description: 'Add, remove, check, or list blacklist entries' },
+      { name: '/checkin', description: 'Staff wellness check-in' },
+      { name: '/checkin-history', description: 'View check-in history' },
+      { name: '/member-count', description: 'Member stats breakdown' },
+      { name: '/away', description: 'Set staff availability notice' },
+    ],
+  },
+  {
+    name: 'Midnight Ascend', status: 'Planned',
+    highlights: ['XP from chat, voice, invites, and reactions', 'Dual-wallet currency (server + network)', 'Shop/store system', 'Themed relationship-based currencies requiring a verified Bonds relationship'],
+    commands: [
+      { name: '/rank', description: 'View level/XP (server/network)' },
+      { name: '/leaderboard', description: 'Top members (server/network)' },
+      { name: '/balance', description: 'View currency wallets' },
+      { name: '/give', description: 'Gift currency to another member' },
+      { name: '/economy-leaderboard', description: 'Top earners' },
+      { name: '/shop', description: 'View or buy shop items' },
+      { name: '/shop-setup', description: 'Add or remove shop items (staff)' },
+      { name: '/setup-xp-rates', description: 'Configure XP rates per server' },
+      { name: '/setup-currency-types', description: 'Configure currency types per server' },
+      { name: '/xp-add', description: 'Manually adjust XP (staff)' },
+      { name: '/currency-add', description: 'Manually adjust currency (staff)' },
+    ],
+  },
+  {
+    name: 'Midnight Roles', status: 'Planned',
+    highlights: ['Button/reaction-based role menus', 'Import existing role menus from other bots', 'Automatic role assignment on join', 'Welcome messages for new members'],
+    commands: [
+      { name: '/rolemenu', description: 'Create, edit, or post a self-role menu' },
+      { name: '/rolemenu import', description: 'Import an existing reaction-role menu' },
+      { name: '/setup-autorole', description: 'Configure auto-role on join' },
+      { name: '/setup-join-welcome-channel', description: 'Set the join welcome channel' },
+      { name: '/setup-join-welcome-message', description: 'Set the join welcome message' },
+      { name: '/setup-join-welcome-banner', description: 'Set the join welcome banner' },
+    ],
+  },
+  {
+    name: 'Midnight Bonds', status: 'Planned',
+    highlights: ['Owner/Handler/Pet dynamics', 'Romantic relationships', 'Chosen family connections', 'Full DM/Friend Request/Voice Call consent system with routing through registered Owner/Handlers'],
+    commands: [
+      { name: '/bonds', description: 'Set, accept, decline, or list Owner/Handler registrations' },
+      { name: '/relationship', description: 'Set, remove, or view a romantic relationship' },
+      { name: '/family', description: 'Add, remove, or view chosen family bonds' },
+      { name: '/dm-status', description: 'Set your DM consent status' },
+      { name: '/friend-status', description: 'Set your friend request consent status' },
+      { name: '/voice-status', description: 'Set your voice call consent status' },
+      { name: '/ask-to-dm', description: 'Request to DM someone' },
+      { name: '/ask-to-friend', description: 'Request to friend someone' },
+      { name: '/ask-to-call', description: 'Request a voice call' },
+    ],
+  },
+  {
+    name: 'Midnight Collar', status: 'Planned',
+    highlights: ['Gag, bind, and leash mechanics', 'Requires an existing accepted Bonds relationship', 'Timed auto-expiry and manual override', 'Unconditional safeword that always works', 'Staff areas permanently exempt'],
+    commands: [
+      { name: '/collar gag', description: 'Gag/ungag a member, or check status' },
+      { name: '/collar bind', description: 'Bind/unbind a member, or check status' },
+      { name: '/collar leash', description: 'Leash/unleash a member, or check status' },
+      { name: '/collar safeword', description: 'Instantly clears all active restrictions' },
+    ],
+  },
+  {
+    name: 'Midnight Profiles', status: 'Planned',
+    highlights: ['Lifestyle/dynamic-focused types: Kink, Pet, Owner', 'Interest-based types: Gamer, Anime, Books', 'General Introduction type', 'Multiple depth levels and tags per profile', 'Contextual way for others to reach out'],
+    commands: [
+      { name: '/profile-[type] post', description: 'Post your profile (versions A/B/C)' },
+      { name: '/profile-[type] edit', description: 'Edit your profile' },
+      { name: '/profile-[type] delete', description: 'Delete your profile' },
+      { name: '/setup-profile-channel', description: 'Configure profile channels per server (staff)' },
+    ],
+  },
+  {
+    name: 'Midnight Watch', status: 'Planned',
+    highlights: ['Messages, roles, channels, and voice activity', 'Joins/leaves with invite-source tracking', 'Staff action logging', 'Logged locally per server, mirrored centrally to one hub in Midnight Staff'],
+    commands: [
+      { name: '/logs setup', description: 'Map local log channels' },
+      { name: '/logs toggle', description: 'Enable/disable log categories per server' },
+    ],
+  },
+  {
+    name: 'Midnight Blueprint', status: 'Planned',
+    highlights: ['Full structure snapshots and templates', 'Quick single-item creation: roles, channels, categories', 'Reusable content templates', 'Permission and emoji presets', 'Setup checklist for onboarding new servers'],
+    commands: [
+      { name: '/blueprint create', description: 'Save a structure snapshot/template' },
+      { name: '/blueprint load', description: 'Restore from a saved template' },
+      { name: '/blueprint create-role', description: 'Quick-create a role' },
+      { name: '/blueprint create-channel', description: 'Quick-create a channel' },
+      { name: '/blueprint create-category', description: 'Quick-create a category' },
+      { name: '/blueprint content', description: 'Save or post a reusable content template' },
+      { name: '/blueprint permission', description: 'Save or apply a permission preset' },
+      { name: '/blueprint emoji-pack', description: 'Save or apply an emoji pack' },
+      { name: '/blueprint bot-checklist', description: 'Setup reminder across all bots' },
+      { name: '/blueprint webhook', description: 'Save or apply a webhook preset' },
+    ],
+  },
+  {
+    name: 'Midnight Roleplay', status: 'Planned',
+    highlights: ['Character sheet management, one profile per character', 'Location and scene tracking', 'Turn order management', 'Session summary logging for recapping completed scenes'],
+    commands: [
+      { name: '/character create', description: 'Create a character sheet' },
+      { name: '/character view', description: 'View a character sheet' },
+      { name: '/character edit', description: 'Edit a character sheet' },
+      { name: '/character delete', description: 'Delete a character sheet' },
+      { name: '/character list', description: 'List characters by owner' },
+      { name: "/scene set-location", description: "Set a scene's location" },
+      { name: '/scene who-is-where', description: 'View who is in which location' },
+      { name: '/turn', description: 'Start, advance, skip, or check turn order' },
+      { name: '/scene archive', description: 'Archive a completed scene' },
+      { name: '/scene summarize', description: 'Summarize a scene' },
+    ],
+  },
+];
+
+const serverList = [
+  { name: 'Den of Desire', slug: 'server-1', partner: true },
+  { name: 'Underground Gamer Lounge', slug: 'server-2', partner: true },
+  { name: 'Chaos Midnight House', slug: 'server-3', partner: false },
+  { name: 'Smutty Library Cafe', slug: 'server-4', partner: false },
+  { name: 'Velvet Cosy Collars', slug: 'server-5', partner: false },
+  { name: 'Advertising Lounge', slug: 'server-6', partner: false },
+  { name: 'Server 7', slug: 'server-7', partner: false },
+];
 ---
 
 <Layout title="Bots">
@@ -65,9 +221,54 @@ const isStaff = !!user && STAFF_TIERS.includes(user.rank);
           </div>
         </div>
 
-        <div id="view-modules" style="display: none;"><h3>Modules Manager</h3></div>
-        <div id="view-commands" style="display: none;"><h3>Commands List</h3></div>
-        <div id="view-servers" style="display: none;"><h3>Server Listing</h3></div>
+        <div id="view-modules" style="display: none;">
+          <h3>Modules Manager</h3>
+          <div class="module-grid">
+            {botData.map((bot) => (
+              <div class="module-card">
+                <div class="module-card-header">
+                  <h4>{bot.name}</h4>
+                  <span class={`status-text active ${bot.status === 'Live' ? 'process' : 'planned'}`}>{bot.status.toUpperCase()}</span>
+                </div>
+                <ul class="mini-list">
+                  {bot.highlights.map((h) => <li>{h}</li>)}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div id="view-commands" style="display: none;">
+          <h3>Commands List</h3>
+          {botData.filter((bot) => bot.commands.length > 0).map((bot) => (
+            <div class="command-group">
+              <h4>{bot.name}</h4>
+              <table class="log-table">
+                <thead><tr><th>Command</th><th>Description</th></tr></thead>
+                <tbody>
+                  {bot.commands.map((c) => (
+                    <tr><td>{c.name}</td><td>{c.description}</td></tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ))}
+        </div>
+
+        <div id="view-servers" style="display: none;">
+          <h3>Server Listing</h3>
+          <ul class="detail-list">
+            {serverList.map((s) => (
+              <li>
+                <span class="detail-primary">
+                  {s.name}
+                  {s.partner && <span class="status-text active process">PARTNER</span>}
+                </span>
+                <span class="detail-secondary"><a href={`/servers/${s.slug}`}>/servers/{s.slug}</a></span>
+              </li>
+            ))}
+          </ul>
+        </div>
 
         {isStaff && (
           <div id="view-botlogs" style="display: none;">
@@ -212,4 +413,22 @@ const isStaff = !!user && STAFF_TIERS.includes(user.rank);
 
   .health-container { padding: 0.85rem; background: #0F0B1E; border: 1px solid #2A2145; border-radius: 6px; }
   .status-bars { display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap; }
+
+  .module-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.75rem; margin-top: 0.75rem; }
+  .module-card { background: #0F0B1E; border: 1px solid #2A2145; border-radius: 6px; padding: 0.75rem; }
+  .module-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+  .module-card-header h4 { font-size: 0.8rem; margin: 0; color: #C4B5FD; }
+  .mini-list { margin: 0; padding-left: 1.1rem; color: #B8AED0; font-size: 0.72rem; line-height: 1.6; }
+
+  .command-group { margin-top: 0.75rem; }
+  .command-group h4 { font-size: 0.8rem; color: #C4B5FD; margin: 0 0 0.4rem; }
+  .command-group:first-of-type { margin-top: 0.5rem; }
+
+  .detail-list { list-style: none; margin: 0.75rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+  .detail-list li { display: flex; flex-direction: column; gap: 0.15rem; padding-bottom: 0.5rem; border-bottom: 1px solid #2A2145; }
+  .detail-list li:last-child { border-bottom: none; padding-bottom: 0; }
+  .detail-primary { color: #F0EDF7; font-weight: 600; font-size: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
+  .detail-secondary { color: #8A7FA8; font-size: 0.7rem; }
+  .detail-secondary a { color: #8A5CF6; text-decoration: none; }
+  .detail-secondary a:hover { color: #C4B5FD; }
 </style>
