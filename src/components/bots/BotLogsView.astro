@@ -1,7 +1,16 @@
 ---
 import BackButton from '../BackButton.astro';
 
+const { councilHealth } = Astro.props;
+
 const botNames = ['Tickets', 'Council', 'Network', 'Ascend', 'Roles', 'Bonds', 'Collar', 'Profiles', 'Watch', 'Blueprint', 'Roleplay', 'Place Holder'];
+
+function formatUptime(seconds: number | null | undefined) {
+  if (!seconds && seconds !== 0) return 'Unknown';
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  return `${h}h ${m}m`;
+}
 ---
 <div id="view-botlogs" style="display: none;">
   <h3>Bot Diagnostic Logs</h3>
@@ -16,6 +25,30 @@ const botNames = ['Tickets', 'Council', 'Network', 'Ascend', 'Roles', 'Bonds', '
   <div id="bot-sub-page" style="display: none;">
     <BackButton onclick="backToOverview()" />
     <h3 id="sub-page-title">Bot Name</h3>
+
+    <div id="council-live-status" style="display: none;">
+      <div class="health-container">
+        <div class="live-status-row">
+          <span class={`status-text active ${councilHealth?.online ? 'process' : 'planned'}`}>{councilHealth?.online ? 'ONLINE' : 'UNREACHABLE'}</span>
+          {councilHealth?.online && <span class="live-detail">Uptime: {formatUptime(councilHealth.uptimeSeconds)}</span>}
+          {councilHealth?.online && <span class="live-detail">Servers: {councilHealth.guildCount}</span>}
+        </div>
+        <h4>Recent Errors</h4>
+        {councilHealth?.online && councilHealth.recentErrors?.length > 0 ? (
+          <table class="log-table">
+            <thead><tr><th>Time</th><th>Message</th></tr></thead>
+            <tbody>
+              {councilHealth.recentErrors.map((e: { timestamp: string; message: string }) => (
+                <tr><td>{new Date(e.timestamp).toLocaleString()}</td><td>{e.message}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p class="placeholder-note">{councilHealth?.online ? 'No recent errors.' : "Couldn't reach the bot right now."}</p>
+        )}
+      </div>
+    </div>
+
     <div class="sub-tabs">
       <button class="tab-btn active" onclick="showSubTab('logs-table', this)">Logs</button>
       <button class="tab-btn" onclick="showSubTab('logs-health', this)">Status</button>
@@ -64,4 +97,11 @@ const botNames = ['Tickets', 'Council', 'Network', 'Ascend', 'Roles', 'Bonds', '
   .health-container { padding: 0.85rem; background: #0F0B1E; border: 1px solid #2A2145; border-radius: 6px; }
   .status-bars { display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap; }
   .sub-page-footer { margin-top: 1.25rem; padding-top: 0.85rem; border-top: 1px solid #2A2145; }
+
+  .live-status-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+  .status-text { font-size: 0.6rem; color: #5A5270; background: #1A1430; padding: 3px 8px; border: 1px solid #2A2145; border-radius: 3px; text-transform: uppercase; font-weight: bold; }
+  .status-text.active.process { color: #22D3EE; border-color: #22D3EE; }
+  .status-text.active.planned { color: #F87171; border-color: #F87171; }
+  .live-detail { font-size: 0.8rem; color: #B8AED0; }
+  .placeholder-note { margin: 0.5rem 0 0; font-size: 0.85rem; color: #8A7FA8; }
 </style>

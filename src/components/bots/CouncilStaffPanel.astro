@@ -1,0 +1,207 @@
+---
+const {
+  selectedCouncilGuildId,
+  councilStaffSaved,
+  councilServers,
+  councilNetworkStaff,
+  councilServerStaff,
+  councilAvailable,
+} = Astro.props;
+
+const RANKS = [
+  { value: 'OWNER', label: 'Owner' },
+  { value: 'ADMIN', label: 'Admin' },
+  { value: 'MOD', label: 'Mod' },
+  { value: 'HELPER', label: 'Helper' },
+  { value: 'PARTNERSHIP_MANAGER', label: 'Partnership Manager' },
+  { value: 'EVENT_MANAGER', label: 'Event Manager' },
+  { value: 'HEALTH_DEPARTMENT', label: 'Health Department' },
+];
+
+const HELPER_TYPES = [
+  { value: 'GENERAL', label: 'General' },
+  { value: 'TEXT', label: 'Text' },
+  { value: 'VOICE', label: 'Voice' },
+  { value: 'IMAGE', label: 'Image' },
+];
+
+const selectedServerName = councilServers.find((s) => s.id === selectedCouncilGuildId)?.name || null;
+
+function formatEntry(entry) {
+  const helper = entry.helperType ? ` (${entry.helperType})` : '';
+  return `${entry.rank}${helper}`;
+}
+---
+{councilStaffSaved && <p class="saved-note">✓ Staff Directory updated.</p>}
+
+<form method="get" class="server-picker-form">
+  <input type="hidden" name="view" value="modules" />
+  <input type="hidden" name="bot" value="Midnight Council" />
+  <select name="councilServer" class="command-select" onchange="this.form.submit()">
+    <option value="all" selected={selectedCouncilGuildId === 'all'}>Network-wide (no server selected)</option>
+    {councilServers.map((s) => (
+      <option value={s.id} selected={selectedCouncilGuildId === s.id}>{s.name}</option>
+    ))}
+  </select>
+</form>
+
+<div class="staff-lists">
+  <div class="staff-list-block">
+    <h5>Network Staff</h5>
+    {!councilAvailable ? (
+      <p class="placeholder-note">Couldn't reach the bot right now.</p>
+    ) : councilNetworkStaff.length > 0 ? (
+      <ul class="staff-directory-list">
+        {councilNetworkStaff.map((entry) => (
+          <li>
+            <span class="staff-entry-id">{entry.userId}</span>
+            <span class="staff-entry-rank">{formatEntry(entry)}</span>
+            <form method="post" action="/api/council-staff-remove" class="remove-form">
+              <input type="hidden" name="userId" value={entry.userId} />
+              <input type="hidden" name="scope" value="network" />
+              <button type="submit" class="remove-btn">Remove</button>
+            </form>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="placeholder-note">No network-scoped staff yet.</p>
+    )}
+  </div>
+
+  {selectedCouncilGuildId !== 'all' && (
+    <div class="staff-list-block">
+      <h5>Server Staff — {selectedServerName || selectedCouncilGuildId}</h5>
+      {!councilAvailable ? (
+        <p class="placeholder-note">Couldn't reach the bot right now.</p>
+      ) : councilServerStaff.length > 0 ? (
+        <ul class="staff-directory-list">
+          {councilServerStaff.map((entry) => (
+            <li>
+              <span class="staff-entry-id">{entry.userId}</span>
+              <span class="staff-entry-rank">{formatEntry(entry)}</span>
+              <form method="post" action="/api/council-staff-remove" class="remove-form">
+                <input type="hidden" name="userId" value={entry.userId} />
+                <input type="hidden" name="scope" value="server" />
+                <input type="hidden" name="guildId" value={selectedCouncilGuildId} />
+                <button type="submit" class="remove-btn">Remove</button>
+              </form>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="placeholder-note">No server-scoped staff yet for this server.</p>
+      )}
+    </div>
+  )}
+</div>
+
+<div class="add-staff-block">
+  <h5>Add Staff</h5>
+  {!councilAvailable ? (
+    <p class="placeholder-note">Couldn't reach the bot right now — can't add staff until it's back.</p>
+  ) : (
+  <form method="post" action="/api/council-staff-add" class="add-staff-form">
+    <label class="config-field">
+      <span>Discord User ID</span>
+      <input type="text" name="userId" required placeholder="e.g. 123456789012345678" />
+    </label>
+    <label class="config-field">
+      <span>Rank</span>
+      <select name="rank" required>
+        {RANKS.map((r) => <option value={r.value}>{r.label}</option>)}
+      </select>
+    </label>
+    <label class="config-field">
+      <span>Helper Type <em>(only used when rank is Helper)</em></span>
+      <select name="helperType">
+        <option value="">N/A</option>
+        {HELPER_TYPES.map((h) => <option value={h.value}>{h.label}</option>)}
+      </select>
+    </label>
+    {selectedCouncilGuildId !== 'all' ? (
+      <label class="config-field">
+        <span>Scope</span>
+        <select name="scope">
+          <option value="network">Network</option>
+          <option value="server">Server ({selectedServerName || selectedCouncilGuildId})</option>
+        </select>
+      </label>
+    ) : (
+      <>
+        <input type="hidden" name="scope" value="network" />
+        <p class="placeholder-note">Select a server above to add server-scoped staff instead of network-wide.</p>
+      </>
+    )}
+    <input type="hidden" name="guildId" value={selectedCouncilGuildId !== 'all' ? selectedCouncilGuildId : ''} />
+    <button type="submit" class="save-btn">Add Staff</button>
+  </form>
+  )}
+</div>
+
+<style>
+  .server-picker-form { margin-bottom: 0.75rem; }
+  .saved-note { color: #22C55E; font-weight: 600; font-size: 0.75rem; margin: 0 0 0.75rem; }
+  .command-select {
+    margin-top: 0.75rem;
+    padding: 0.4rem 0.6rem;
+    background: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 6px;
+    color: #F0EDF7;
+    font-size: 0.8rem;
+  }
+  .staff-lists { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-top: 0.75rem; }
+  .staff-list-block h5 { font-size: 0.78rem; color: #C4B5FD; margin: 0 0 0.5rem; }
+  .staff-directory-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+  .staff-directory-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: #0F0B1E;
+    border: 1px solid #2A2145;
+    border-radius: 6px;
+    padding: 0.45rem 0.65rem;
+    font-size: 0.75rem;
+  }
+  .staff-entry-id { color: #8A7FA8; font-family: monospace; }
+  .staff-entry-rank { color: #F0EDF7; font-weight: 600; flex: 1; }
+  .remove-form { margin: 0; }
+  .remove-btn {
+    background: none;
+    border: 1px solid #F87171;
+    color: #F87171;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    cursor: pointer;
+  }
+  .remove-btn:hover { background: #F87171; color: #0F0B1E; }
+  .placeholder-note { margin: 0; font-size: 0.75rem; color: #8A7FA8; line-height: 1.5; }
+
+  .add-staff-block { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid #2A2145; }
+  .add-staff-block h5 { font-size: 0.85rem; color: #C4B5FD; margin: 0 0 0.5rem; }
+  .add-staff-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.85rem; align-items: end; }
+  .config-field { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.72rem; color: #B8AED0; }
+  .config-field em { color: #5A5270; font-style: normal; font-size: 0.65rem; }
+  .config-field input, .config-field select {
+    padding: 0.4rem;
+    background: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 6px;
+    color: #F0EDF7;
+    font-size: 0.75rem;
+  }
+  .save-btn {
+    padding: 0.5rem 1.25rem;
+    background: #8A5CF6;
+    color: #F0EDF7;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+    height: fit-content;
+  }
+  .save-btn:hover { background: #7C4FE0; }
+</style>

@@ -2,8 +2,12 @@
 import { botData } from '../../data/bots.js';
 import BackButton from '../BackButton.astro';
 import TicketConfigForm from './TicketConfigForm.astro';
+import CouncilStaffPanel from './CouncilStaffPanel.astro';
 
-const { selectedGuildId, configSaved, ticketServers, ticketGuildOptions, selectedTicketConfig } = Astro.props;
+const {
+  selectedGuildId, configSaved, ticketServers, ticketGuildOptions, selectedTicketConfig,
+  selectedCouncilGuildId, councilStaffSaved, councilServers, councilNetworkStaff, councilServerStaff, councilAvailable,
+} = Astro.props;
 ---
 <div id="view-modules" style="display: none;">
   <h3>Modules Manager</h3>
@@ -32,7 +36,7 @@ const { selectedGuildId, configSaved, ticketServers, ticketGuildOptions, selecte
 
       <div class="module-setup">
         <h4>Setup</h4>
-        {bot.configurable ? (
+        {bot.configurable === 'tickets' ? (
           <TicketConfigForm
             botName={bot.name}
             selectedGuildId={selectedGuildId}
@@ -40,6 +44,15 @@ const { selectedGuildId, configSaved, ticketServers, ticketGuildOptions, selecte
             ticketGuildOptions={ticketGuildOptions}
             selectedTicketConfig={selectedTicketConfig}
             configSaved={configSaved}
+          />
+        ) : bot.configurable === 'council' ? (
+          <CouncilStaffPanel
+            selectedCouncilGuildId={selectedCouncilGuildId}
+            councilStaffSaved={councilStaffSaved}
+            councilServers={councilServers}
+            councilNetworkStaff={councilNetworkStaff}
+            councilServerStaff={councilServerStaff}
+            councilAvailable={councilAvailable}
           />
         ) : (
           <p class="placeholder-note">Setup will be available here once {bot.name} is live.</p>

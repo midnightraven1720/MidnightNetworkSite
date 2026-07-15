@@ -1,4 +1,5 @@
 import { postToBot } from '../../lib/bot-api.js';
+import { BOT_API_HOSTS } from '../../data/bot-hosts.js';
 
 export async function POST({ request, redirect }) {
   const formData = await request.formData();
@@ -18,7 +19,7 @@ export async function POST({ request, redirect }) {
     verification: formData.get('category_verification') || null,
   };
 
-  await postToBot('/api/update-config', { guildId, roleUpdates, categoryUpdates });
+  await postToBot(BOT_API_HOSTS['Midnight Tickets'], '/api/update-config', { guildId, roleUpdates, categoryUpdates });
 
   return redirect(`/bots?server=${guildId}&saved=true&view=modules&bot=${encodeURIComponent('Midnight Tickets')}`);
 }

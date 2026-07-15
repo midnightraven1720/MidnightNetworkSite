@@ -1,6 +1,6 @@
 export const botData = [
   {
-    name: 'Midnight Tickets', status: 'Live', configurable: true,
+    name: 'Midnight Tickets', status: 'Live', configurable: 'tickets',
     highlights: ['General support tickets', 'User and staff reports', 'Partnership requests', 'Multi-part staff application flow with branching questions based on role track'],
     commands: [],
     moduleDetails: [
@@ -30,7 +30,7 @@ export const botData = [
     ],
   },
   {
-    name: 'Midnight Council', status: 'Planned',
+    name: 'Midnight Council', status: 'Live', configurable: 'council',
     highlights: ['Staff directory with server and network-level ranks', 'Moderation tools: warnings, kicks, bans, notes', 'Network-wide blacklist system', 'Member statistics', 'Health Department: staff-led wellness check-ins on members'],
     commands: [
       { name: '/staff-add', description: 'Add a staff member to the directory' },

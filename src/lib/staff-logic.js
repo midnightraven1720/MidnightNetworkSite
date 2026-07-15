@@ -1,16 +1,19 @@
 // src/lib/staff-logic.js
 import { fetchFromBot } from './bot-api.js';
+import { BOT_API_HOSTS } from '../data/bot-hosts.js';
+
+const TICKETS_API = BOT_API_HOSTS['Midnight Tickets'];
 
 export async function getStaffData(guildId = 'all') {
   const [serversData, ticketsData, applicationsData] = await Promise.all([
-    fetchFromBot('/api/servers'),
-    fetchFromBot('/api/tickets'),
-    fetchFromBot('/api/applications'),
+    fetchFromBot(TICKETS_API, '/api/servers'),
+    fetchFromBot(TICKETS_API, '/api/tickets'),
+    fetchFromBot(TICKETS_API, '/api/applications'),
   ]);
 
   let guildOptionsData = null;
   if (guildId !== 'all') {
-    guildOptionsData = await fetchFromBot(`/api/guild-options?guildId=${guildId}`);
+    guildOptionsData = await fetchFromBot(TICKETS_API, `/api/guild-options?guildId=${guildId}`);
   }
 
   return {

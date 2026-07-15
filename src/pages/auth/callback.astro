@@ -1,5 +1,6 @@
 ---
 import { fetchFromBot } from '../../lib/bot-api.js';
+import { BOT_API_HOSTS } from '../../data/bot-hosts.js';
 
 const code = Astro.url.searchParams.get('code');
 
@@ -44,7 +45,7 @@ const discordUser = await userResponse.json();
 
 // Check their staff rank in the Staff Server
 const STAFF_SERVER_ID = '1396985703379763251';
-const rankData = await fetchFromBot(`/api/member-rank?guildId=${STAFF_SERVER_ID}&userId=${discordUser.id}`);
+const rankData = await fetchFromBot(BOT_API_HOSTS['Midnight Tickets'], `/api/member-rank?guildId=${STAFF_SERVER_ID}&userId=${discordUser.id}`);
 const rank = rankData?.rank || 'member';
 
 Astro.cookies.set('midnight_session', JSON.stringify({

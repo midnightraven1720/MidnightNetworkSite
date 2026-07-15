@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { getUser, isStaff } from '../../lib/session.js';
 import { fetchFromBot } from '../../lib/bot-api.js';
+import { BOT_API_HOSTS } from '../../data/bot-hosts.js';
 import OverviewView from '../../components/bots/OverviewView.astro';
 import ModulesView from '../../components/bots/ModulesView.astro';
 import CommandsView from '../../components/bots/CommandsView.astro';
@@ -9,26 +10,51 @@ import ServerListingView from '../../components/bots/ServerListingView.astro';
 import BotLogsView from '../../components/bots/BotLogsView.astro';
 import ActionLogsView from '../../components/bots/ActionLogsView.astro';
 
+const TICKETS_API = BOT_API_HOSTS['Midnight Tickets'];
+const COUNCIL_API = BOT_API_HOSTS['Midnight Council'];
+
 const user = getUser(Astro);
 const staff = isStaff(user);
 
 const selectedGuildId = Astro.url.searchParams.get('server') || 'all';
 const configSaved = Astro.url.searchParams.get('saved') === 'true';
+const selectedCouncilGuildId = Astro.url.searchParams.get('councilServer') || 'all';
+const councilStaffSaved = Astro.url.searchParams.get('councilSaved') === 'true';
 
 let ticketServers = [];
 let ticketGuildOptions = null;
 let selectedTicketConfig = null;
 
+let councilServers = [];
+let councilNetworkStaff = [];
+let councilServerStaff = [];
+let councilHealth = null;
+let councilAvailable = false;
+
 if (staff) {
-  const serversData = await fetchFromBot('/api/servers');
+  const serversData = await fetchFromBot(TICKETS_API, '/api/servers');
   ticketServers = serversData?.servers || [];
 
   if (selectedGuildId !== 'all') {
-    const botConfigData = await fetchFromBot('/api/bot-config');
+    const botConfigData = await fetchFromBot(TICKETS_API, '/api/bot-config');
     const allConfigs = botConfigData?.configs || [];
     selectedTicketConfig = allConfigs.find((c) => c.guildId === selectedGuildId) || null;
-    ticketGuildOptions = await fetchFromBot(`/api/guild-options?guildId=${selectedGuildId}`);
+    ticketGuildOptions = await fetchFromBot(TICKETS_API, `/api/guild-options?guildId=${selectedGuildId}`);
   }
+
+  const councilServersData = await fetchFromBot(COUNCIL_API, '/api/servers');
+  councilServers = councilServersData?.servers || [];
+  councilAvailable = councilServersData !== null;
+
+  const councilNetworkData = await fetchFromBot(COUNCIL_API, '/api/staff?scope=network');
+  councilNetworkStaff = councilNetworkData?.staff || [];
+
+  if (selectedCouncilGuildId !== 'all') {
+    const councilServerData = await fetchFromBot(COUNCIL_API, `/api/staff?scope=server&guildId=${selectedCouncilGuildId}`);
+    councilServerStaff = councilServerData?.staff || [];
+  }
+
+  councilHealth = await fetchFromBot(COUNCIL_API, '/api/health');
 }
 ---
 
@@ -60,12 +86,18 @@ if (staff) {
             ticketServers={ticketServers}
             ticketGuildOptions={ticketGuildOptions}
             selectedTicketConfig={selectedTicketConfig}
+            selectedCouncilGuildId={selectedCouncilGuildId}
+            councilStaffSaved={councilStaffSaved}
+            councilServers={councilServers}
+            councilNetworkStaff={councilNetworkStaff}
+            councilServerStaff={councilServerStaff}
+            councilAvailable={councilAvailable}
           />
         )}
 
         <CommandsView />
         <ServerListingView />
-        {staff && <BotLogsView />}
+        {staff && <BotLogsView councilHealth={councilHealth} />}
         {staff && <ActionLogsView />}
       </div>
     </main>
@@ -95,6 +127,15 @@ if (staff) {
       document.getElementById('bot-selection-grid').style.display = 'none';
       document.getElementById('bot-sub-page').style.display = 'block';
       document.getElementById('sub-page-title').innerText = 'Midnight ' + name;
+
+      const isCouncil = name === 'Council';
+      document.getElementById('council-live-status').style.display = isCouncil ? 'block' : 'none';
+      document.querySelector('.sub-tabs').style.display = isCouncil ? 'none' : 'flex';
+
+      ['logs-table', 'logs-health', 'logs-latency', 'logs-errors'].forEach((tabId) => {
+        document.getElementById(tabId).style.display = (!isCouncil && tabId === 'logs-table') ? 'block' : 'none';
+      });
+      document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
     }
 
     function openModuleSubPage(name) {
