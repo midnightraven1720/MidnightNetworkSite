@@ -1,307 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 
-const { slug } = Astro.params;
-
-const API_BASE = 'http://midnight-tickets.railway.internal:3001';
-const API_KEY = import.meta.env.DASHBOARD_API_KEY;
-
-async function fetchFromBot(path) {
-  try {
-    const res = await fetch(`${API_BASE}${path}`, {
-      headers: { 'x-api-key': API_KEY },
-    });
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
-
-const botData = {
-  'midnight-tickets': {
-    name: 'Midnight Tickets',
-    status: 'Live',
-    hasLiveBot: true,
-    summary: "Handles the network's ticket system, age verification, and staff applications.",
-    highlights: [
-      'General support tickets',
-      'User and staff reports',
-      'Partnership requests',
-      'Multi-part staff application flow with branching questions based on role track',
-    ],
-    plannedCommands: [],
-  },
-  'midnight-network': {
-    name: 'Midnight Network',
-    status: 'Planned',
-    hasLiveBot: false,
-    summary: "The network's communications hub for announcements, updates, partnerships, and events.",
-    highlights: [
-      'General announcements and structural update logs',
-      'Partner server listings',
-      'Event management with RSVP tracking',
-      'Covers both single-server and network-wide broadcasting',
-    ],
-    plannedCommands: [
-      { name: '/announcement', description: 'General comms (scope: server / network)' },
-      { name: '/update-log', description: 'Structural change record' },
-      { name: '/partners', description: 'List partner servers' },
-      { name: '/network-servers', description: 'List official network servers' },
-      { name: '/event', description: 'Create, plan, schedule, or poll an event with RSVP buttons' },
-      { name: '/suggest', description: 'Post a suggestion for community/staff vote' },
-      { name: '/suggestions', description: 'List or resolve pending suggestions (staff)' },
-    ],
-  },
-  'midnight-council': {
-    name: 'Midnight Council',
-    status: 'Planned',
-    hasLiveBot: false,
-    summary: "Staff operations center for the whole network.",
-    highlights: [
-      'Staff directory with server and network-level ranks',
-      'Moderation tools: warnings, kicks, bans, notes',
-      'Network-wide blacklist system',
-      'Member statistics',
-      'Health Department: staff-led wellness check-ins on members',
-    ],
-    plannedCommands: [
-      { name: '/staff-add', description: 'Add a staff member to the directory' },
-      { name: '/staff-remove', description: 'Remove a staff member' },
-      { name: '/staff-list', description: 'List staff (server/network)' },
-      { name: '/warn', description: 'Issue a warning' },
-      { name: '/warnings', description: 'View a member\'s warning history' },
-      { name: '/note', description: 'Add a staff note on a member' },
-      { name: '/kick', description: 'Kick a member' },
-      { name: '/timeout', description: 'Timeout a member' },
-      { name: '/ban', description: 'Ban a member (scope: server/network)' },
-      { name: '/unban', description: 'Unban a member' },
-      { name: '/blacklist', description: 'Add, remove, check, or list blacklist entries' },
-      { name: '/checkin', description: 'Staff wellness check-in' },
-      { name: '/checkin-history', description: 'View check-in history' },
-      { name: '/member-count', description: 'Member stats breakdown' },
-      { name: '/away', description: 'Set staff availability notice' },
-    ],
-  },
-  'midnight-ascend': {
-    name: 'Midnight Ascend',
-    status: 'Planned',
-    hasLiveBot: false,
-    summary: "Leveling and economy system running in parallel at both server and network scope.",
-    highlights: [
-      'XP from chat, voice, invites, and reactions',
-      'Dual-wallet currency (server + network)',
-      'Shop/store system',
-      'Themed relationship-based currencies requiring a verified Bonds relationship',
-    ],
-    plannedCommands: [
-      { name: '/rank', description: 'View level/XP (server/network)' },
-      { name: '/leaderboard', description: 'Top members (server/network)' },
-      { name: '/balance', description: 'View currency wallets' },
-      { name: '/give', description: 'Gift currency to another member' },
-      { name: '/economy-leaderboard', description: 'Top earners' },
-      { name: '/shop', description: 'View or buy shop items' },
-      { name: '/shop-setup', description: 'Add or remove shop items (staff)' },
-      { name: '/setup-xp-rates', description: 'Configure XP rates per server' },
-      { name: '/setup-currency-types', description: 'Configure currency types per server' },
-      { name: '/xp-add', description: 'Manually adjust XP (staff)' },
-      { name: '/currency-add', description: 'Manually adjust currency (staff)' },
-    ],
-  },
-  'midnight-roles': {
-    name: 'Midnight Roles',
-    status: 'Planned',
-    hasLiveBot: false,
-    summary: "Self-role management for the network's servers.",
-    highlights: [
-      'Button/reaction-based role menus',
-      'Import existing role menus from other bots',
-      'Automatic role assignment on join',
-      'Welcome messages for new members',
-    ],
-    plannedCommands: [
-      { name: '/rolemenu', description: 'Create, edit, or post a self-role menu' },
-      { name: '/rolemenu import', description: 'Import an existing reaction-role menu' },
-      { name: '/setup-autorole', description: 'Configure auto-role on join' },
-      { name: '/setup-join-welcome-channel', description: 'Set the join welcome channel' },
-      { name: '/setup-join-welcome-message', description: 'Set the join welcome message' },
-      { name: '/setup-join-welcome-banner', description: 'Set the join welcome banner' },
-    ],
-  },
-  'midnight-bonds': {
-    name: 'Midnight Bonds',
-    status: 'Planned',
-    hasLiveBot: false,
-    summary: "Relationship and consent management across the network.",
-    highlights: [
-      'Owner/Handler/Pet dynamics',
-      'Romantic relationships',
-      'Chosen family connections',
-      'Full DM/Friend Request/Voice Call consent system with routing through registered Owner/Handlers',
-    ],
-    plannedCommands: [
-      { name: '/bonds', description: 'Set, accept, decline, or list Owner/Handler registrations' },
-      { name: '/relationship', description: 'Set, remove, or view a romantic relationship' },
-      { name: '/family', description: 'Add, remove, or view chosen family bonds' },
-      { name: '/dm-status', description: 'Set your DM consent status' },
-      { name: '/friend-status', description: 'Set your friend request consent status' },
-      { name: '/voice-status', description: 'Set your voice call consent status' },
-      { name: '/ask-to-dm', description: 'Request to DM someone' },
-      { name: '/ask-to-friend', description: 'Request to friend someone' },
-      { name: '/ask-to-call', description: 'Request a voice call' },
-    ],
-  },
-  'midnight-collar': {
-    name: 'Midnight Collar',
-    status: 'Planned',
-    hasLiveBot: false,
-    summary: "NSFW-only interactive dynamics bot built with safety as the priority.",
-    highlights: [
-      'Gag, bind, and leash mechanics',
-      'Requires an existing accepted Bonds relationship',
-      'Timed auto-expiry and manual override',
-      'Unconditional safeword that always works',
-      'Staff areas permanently exempt',
-    ],
-    plannedCommands: [
-      { name: '/collar gag', description: 'Gag/ungag a member, or check status' },
-      { name: '/collar bind', description: 'Bind/unbind a member, or check status' },
-      { name: '/collar leash', description: 'Leash/unleash a member, or check status' },
-      { name: '/collar safeword', description: 'Instantly clears all active restrictions' },
-    ],
-  },
-  'midnight-profiles': {
-    name: 'Midnight Profiles',
-    status: 'Planned',
-    hasLiveBot: false,
-    summary: "Public-facing profile system across nine distinct profile types.",
-    highlights: [
-      'Lifestyle/dynamic-focused types: Kink, Pet, Owner',
-      'Interest-based types: Gamer, Anime, Books',
-      'General Introduction type',
-      'Multiple depth levels and tags per profile',
-      'Contextual way for others to reach out',
-    ],
-    plannedCommands: [
-      { name: '/profile-[type] post', description: 'Post your profile (versions A/B/C)' },
-      { name: '/profile-[type] edit', description: 'Edit your profile' },
-      { name: '/profile-[type] delete', description: 'Delete your profile' },
-      { name: '/setup-profile-channel', description: 'Configure profile channels per server (staff)' },
-    ],
-  },
-  'midnight-watch': {
-    name: 'Midnight Watch',
-    status: 'Planned',
-    hasLiveBot: false,
-    summary: "Cross-server activity logging for the whole network.",
-    highlights: [
-      'Messages, roles, channels, and voice activity',
-      'Joins/leaves with invite-source tracking',
-      'Staff action logging',
-      'Logged locally per server, mirrored centrally to one hub in Midnight Staff',
-    ],
-    plannedCommands: [
-      { name: '/logs setup', description: 'Map local log channels' },
-      { name: '/logs toggle', description: 'Enable/disable log categories per server' },
-    ],
-  },
-  'midnight-blueprint': {
-    name: 'Midnight Blueprint',
-    status: 'Planned',
-    hasLiveBot: false,
-    summary: "The network's server-building toolkit.",
-    highlights: [
-      'Full structure snapshots and templates',
-      'Quick single-item creation: roles, channels, categories',
-      'Reusable content templates',
-      'Permission and emoji presets',
-      'Setup checklist for onboarding new servers',
-    ],
-    plannedCommands: [
-      { name: '/blueprint create', description: 'Save a structure snapshot/template' },
-      { name: '/blueprint load', description: 'Restore from a saved template' },
-      { name: '/blueprint create-role', description: 'Quick-create a role' },
-      { name: '/blueprint create-channel', description: 'Quick-create a channel' },
-      { name: '/blueprint create-category', description: 'Quick-create a category' },
-      { name: '/blueprint content', description: 'Save or post a reusable content template' },
-      { name: '/blueprint permission', description: 'Save or apply a permission preset' },
-      { name: '/blueprint emoji-pack', description: 'Save or apply an emoji pack' },
-      { name: '/blueprint bot-checklist', description: 'Setup reminder across all bots' },
-      { name: '/blueprint webhook', description: 'Save or apply a webhook preset' },
-    ],
-  },
-  'midnight-bot-roleplay': {
-    name: 'Midnight Bot (Roleplay)',
-    status: 'Planned',
-    hasLiveBot: false,
-    summary: "Supports structured roleplay across the network.",
-    highlights: [
-      'Character sheet management, one profile per character',
-      'Location and scene tracking',
-      'Turn order management',
-      'Session summary logging for recapping completed scenes',
-    ],
-    plannedCommands: [
-      { name: '/character create', description: 'Create a character sheet' },
-      { name: '/character view', description: 'View a character sheet' },
-      { name: '/character edit', description: 'Edit a character sheet' },
-      { name: '/character delete', description: 'Delete a character sheet' },
-      { name: '/character list', description: 'List characters by owner' },
-      { name: '/scene set-location', description: 'Set a scene\'s location' },
-      { name: '/scene who-is-where', description: 'View who is in which location' },
-      { name: '/turn', description: 'Start, advance, skip, or check turn order' },
-      { name: '/scene archive', description: 'Archive a completed scene' },
-      { name: '/scene summarize', description: 'Summarize a scene' },
-    ],
-  },
-  'midnight-advertising': {
-    name: 'Midnight Advertising',
-    status: 'Planned',
-    hasLiveBot: false,
-    summary: "Ad quality control, spam/scam protection, and cleanup for the Advertising Lounge.",
-    highlights: [
-      'Ad quality scoring and keyword filtering',
-      'Spam/scam detection',
-      'Member-departure cleanup',
-      'Staff Yes/Pending/No decision flow on new listings',
-    ],
-    plannedCommands: [
-      { name: '/ad schedule', description: 'Schedule an ad post' },
-      { name: '/ad post-now', description: 'Post an ad immediately' },
-      { name: '/setup-keyword-filter', description: 'Configure NSFW/keyword filtering (staff)' },
-    ],
-  },
-};
-
-const bannerMap = {
-  'midnight-tickets': 'bot-tickets.jpg',
-  'midnight-network': 'bots.jpg',
-  'midnight-council': 'bot-council.jpg',
-  'midnight-ascend': 'bot-ascend.jpg',
-  'midnight-roles': 'bot-roles.jpg',
-  'midnight-bonds': 'bot-bonds.jpg',
-  'midnight-collar': 'bot-collar.jpg',
-  'midnight-profiles': 'bot-profiles.jpg',
-  'midnight-watch': 'bot-watch.jpg',
-  'midnight-blueprint': 'bot-blueprint.jpg',
-  'midnight-bot-roleplay': 'bot-roleplay.jpg',
-  'midnight-advertising': 'bot-advertising.jpg',
-};
-
-const bannerPositionMap = {
-  'midnight-collar': 'center 70%',
-};
-
-const bot = botData[slug];
-
-if (!bot) {
-  return Astro.redirect('/bots');
-}
-
-const bannerFile = bannerMap[slug] || 'bots.jpg';
-const bannerPosition = bannerPositionMap[slug] || 'center 30%';
-
-// Check staff rank
 const sessionCookie = Astro.cookies.get('midnight_session');
 let user = null;
 if (sessionCookie) {
@@ -311,302 +10,203 @@ if (sessionCookie) {
     user = null;
   }
 }
+
 const STAFF_TIERS = ['owner', 'coOwner', 'staff'];
-const canEdit = user && STAFF_TIERS.includes(user.rank);
-
-// Fetch staff-written content overrides
-const pageContentData = await fetchFromBot('/api/bot-page-content');
-const override = pageContentData?.pages?.[slug];
-const summary = override?.summary || bot.summary;
-const highlights = override?.highlights || bot.highlights;
-
-// Fetch live commands if this bot actually exists
-let commands = bot.plannedCommands;
-let commandsAreLive = false;
-if (bot.hasLiveBot) {
-  const liveCommandsData = await fetchFromBot('/api/commands');
-  if (liveCommandsData?.commands) {
-    commands = liveCommandsData.commands;
-    commandsAreLive = true;
-  }
-}
-
-const saved = Astro.url.searchParams.get('saved') === 'true';
+const isStaff = !!user && STAFF_TIERS.includes(user.rank);
 ---
-<Layout title={bot.name}>
-  <div class="page-banner" style={`background-image: url('/banners/${bannerFile}'); background-position: ${bannerPosition};`}>
-    <a href="/bots" class="banner-back-link">&larr; Back to Bots</a>
-    <h2>{bot.name}</h2>
+
+<Layout title="Dashboard">
+  <div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+      <div class="sidebar-header"><h3>Bot Dashboard</h3></div>
+      <nav>
+        <div class="nav-item active" data-view="dashboard">Overview</div>
+        <div class="nav-item" data-view="modules">Modules</div>
+        <div class="nav-item" data-view="commands">Commands</div>
+        <div class="nav-item" data-view="servers">Server Listing</div>
+        {isStaff && <div class="nav-item" data-view="botlogs">Bot Logs</div>}
+        {isStaff && <div class="nav-item" data-view="actionlogs">Action Logs</div>}
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <div class="page-banner" style="background-image: url('/banners/bots.jpg');"></div>
+
+      <div class="overview-container">
+        
+        <div id="view-dashboard">
+          <div class="overview-grid">
+            <div class="overview-section">
+              <h4>ACTIVE BOTS</h4>
+              {["Midnight Tickets", "Midnight Council", "Midnight Network", "Midnight Ascend", "Midnight Roles", "Midnight Bonds", "Midnight Collar", "Midnight Profiles", "Midnight Watch", "Midnight Blueprint", "Midnight Roleplay"].map((name) => (
+                <div class="data-item">
+                  <span>{name}</span> 
+                  <div class="status-row">
+                    {(name === "Midnight Tickets" || name === "Midnight Council") ? (
+                      <span class="status-text active process">PROCESS</span>
+                    ) : (
+                      <span class="status-text active planned">PLANNED</span>
+                    )}
+                    <span class="status-text">UPDATE</span>
+                    <span class="status-text">OFFLINE</span>
+                    <span class="status-text">ERROR</span>
+                    <span class="status-text">ONLINE</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div class="divider-vertical"></div>
+            <div class="overview-section">
+              <h4>NETWORK TOTALS</h4>
+              <div class="data-item"><span>Total Members</span> <span>13</span></div>
+              <div class="data-item"><span>Total Staff</span> <span>2</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="view-modules" style="display: none;"><h3>Modules Manager</h3></div>
+        <div id="view-commands" style="display: none;"><h3>Commands List</h3></div>
+        <div id="view-servers" style="display: none;"><h3>Server Listing</h3></div>
+        
+        {isStaff && (
+          <div id="view-botlogs" style="display: none;">
+            <h3>Bot Diagnostic Logs</h3>
+            <div id="bot-selection-grid" class="card-grid">
+              {["Tickets", "Council", "Network", "Ascend", "Roles", "Bonds", "Collar", "Profiles", "Watch", "Blueprint", "Roleplay", "Place Holder"].map((name) => (
+                <div class="bot-card" onclick={`openBotSubPage('${name}')`}>
+                  <h4>Midnight {name}</h4>
+                </div>
+              ))}
+            </div>
+
+            <div id="bot-sub-page" style="display: none;">
+              <button class="back-btn" onclick="backToOverview()">← Back</button>
+              <h3 id="sub-page-title">Bot Name</h3>
+              <div class="sub-tabs">
+                <button class="tab-btn active" onclick="showSubTab('logs-table', this)">Logs</button>
+                <button class="tab-btn" onclick="showSubTab('logs-health', this)">Status</button>
+                <button class="tab-btn" onclick="showSubTab('logs-latency', this)">Latency</button>
+                <button class="tab-btn" onclick="showSubTab('logs-errors', this)">Errors</button>
+              </div>
+
+              <div id="logs-table"><table class="log-table"><thead><tr><th>Time</th><th>Action</th></tr></thead><tbody><tr><td>12:00</td><td>Data processed</td></tr></tbody></table></div>
+
+              <div id="logs-health" style="display: none;">
+                <div class="health-container">
+                  <h4>Uptime History</h4>
+                  <div class="status-bars" style="margin-bottom: 20px;">
+                    {Array.from({ length: 40 }).map(() => (<div class="bar" style="background:#4ADE80; width: 6px; height: 16px; border-radius: 2px;"></div>))}
+                  </div>
+                  <h4>Latency History</h4>
+                  <div class="status-bars" style="margin-bottom: 20px;">
+                    {Array.from({ length: 40 }).map(() => (<div class="bar" style="background:#FBBF24; width: 6px; height: 16px; border-radius: 2px;"></div>))}
+                  </div>
+                  <h4>Error Frequency</h4>
+                  <div class="status-bars">
+                    {Array.from({ length: 40 }).map(() => (<div class="bar" style="background:#F87171; width: 6px; height: 16px; border-radius: 2px;"></div>))}
+                  </div>
+                </div>
+              </div>
+
+              <div id="logs-latency" style="display: none;"><table class="log-table"><thead><tr><th>Time</th><th>Ping</th></tr></thead><tbody><tr><td>12:00</td><td>42ms</td></tr></tbody></table></div>
+              <div id="logs-errors" style="display: none;"><table class="log-table"><thead><tr><th>Time</th><th>Error</th></tr></thead><tbody><tr><td>None</td><td>No errors</td></tr></tbody></table></div>
+            </div>
+          </div>
+        )}
+
+        {isStaff && (
+          <div id="view-actionlogs" style="display: none;">
+            <h3>Staff Action Logs</h3>
+            <table class="log-table"><thead><tr><th>Time</th><th>Staff</th><th>Dept</th><th>Action</th></tr></thead><tbody><tr><td>12:30</td><td>@midnightraven</td><td>Leadership</td><td>Edited Form</td></tr></tbody></table>
+          </div>
+        )}
+      </div>
+    </main>
   </div>
 
-  <section class="section">
-    <span class={`badge ${bot.status === 'Live' ? 'badge-live' : 'badge-planned'}`}>{bot.status}</span>
-    {saved && <p class="saved-note">✓ Changes saved.</p>}
+  <script is:inline>
+    const navItems = document.querySelectorAll('.nav-item');
+    const views = {
+      dashboard: document.getElementById('view-dashboard'),
+      modules: document.getElementById('view-modules'),
+      commands: document.getElementById('view-commands'),
+      servers: document.getElementById('view-servers'),
+      botlogs: document.getElementById('view-botlogs'),
+      actionlogs: document.getElementById('view-actionlogs')
+    };
 
-    <div class="bot-tabs">
-      <input type="radio" name="bottab" id="tab-overview" class="tab-radio" checked />
-      <input type="radio" name="bottab" id="tab-details" class="tab-radio" />
-      <input type="radio" name="bottab" id="tab-commands" class="tab-radio" />
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const target = item.getAttribute('data-view');
+        navItems.forEach(nav => nav.classList.remove('active'));
+        item.classList.add('active');
+        Object.values(views).forEach(v => { if(v) v.style.display = 'none' });
+        if(views[target]) views[target].style.display = 'block';
+      });
+    });
 
-      <div class="tab-buttons">
-        <label for="tab-overview" class="tab-btn">Overview</label>
-        <label for="tab-details" class="tab-btn">Details</label>
-        <label for="tab-commands" class="tab-btn">Commands</label>
-      </div>
+    function openBotSubPage(name) {
+      document.getElementById('bot-selection-grid').style.display = 'none';
+      document.getElementById('bot-sub-page').style.display = 'block';
+      document.getElementById('sub-page-title').innerText = "Midnight " + name;
+    }
+    
+    function backToOverview() {
+      document.getElementById('bot-selection-grid').style.display = 'grid';
+      document.getElementById('bot-sub-page').style.display = 'none';
+    }
 
-      <div class="tab-panel panel-overview">
-        <p class="summary-text">{summary}</p>
-      </div>
-
-      <div class="tab-panel panel-details">
-        <ul class="info-list">
-          {highlights.map((item) => <li>{item}</li>)}
-        </ul>
-      </div>
-
-      <div class="tab-panel panel-commands">
-        {!commandsAreLive && bot.hasLiveBot === false && (
-          <p class="planned-note">These commands are planned — this bot isn't built yet.</p>
-        )}
-        <ul class="command-list">
-          {commands.map((cmd) => (
-            <li>
-              <code class="command-name">{cmd.name}</code>
-              <p class="command-desc">{cmd.description}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-
-    {canEdit && (
-      <details class="edit-section">
-        <summary>Edit this page</summary>
-        <form method="post" action="/api/save-bot-page">
-          <input type="hidden" name="slug" value={slug} />
-          <label class="edit-field">
-            <span>Summary</span>
-            <textarea name="summary" rows="3">{summary}</textarea>
-          </label>
-          <label class="edit-field">
-            <span>Highlights (one per line)</span>
-            <textarea name="highlights" rows="6">{highlights.join('\n')}</textarea>
-          </label>
-          <button type="submit" class="save-btn">Save Changes</button>
-        </form>
-      </details>
-    )}
-  </section>
-
-  <section class="section">
-    <a href="/bots" class="back-link">&larr; Back to Bots</a>
-  </section>
+    function showSubTab(id, btn) {
+      ['logs-table', 'logs-health', 'logs-latency', 'logs-errors'].forEach(tabId => {
+        document.getElementById(tabId).style.display = 'none';
+      });
+      document.getElementById(id).style.display = 'block';
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+  </script>
 </Layout>
+
 <style>
-  .page-banner {
-    background-size: cover;
-    height: 380px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-  }
-  .page-banner {
-    position: relative;
-  }
-  .banner-back-link {
-    position: absolute;
-    top: 1.25rem;
-    left: 1.25rem;
-    color: #F0EDF7;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.9rem;
-    background-color: rgba(15, 11, 30, 0.6);
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    transition: background-color 0.2s;
-  }
-  .banner-back-link:hover {
-    background-color: rgba(138, 92, 246, 0.8);
-  }
-  .page-banner h2 {
-    font-size: 2.5rem;
-    color: #F0EDF7;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.8);
-    margin: 0;
-  }
-  .badge {
-    display: inline-block;
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 0.25rem 0.6rem;
-    border-radius: 999px;
-    margin-bottom: 0.75rem;
-  }
-  .badge-live {
-    background-color: #22C55E;
-    color: #08130C;
-  }
-  .badge-planned {
-    background-color: #2A2145;
-    color: #B8AED0;
-  }
-  .saved-note {
-    color: #22C55E;
-    font-weight: 600;
-    font-size: 0.9rem;
-  }
-  .bot-tabs {
-    max-width: 700px;
-    margin: 1.5rem auto 0;
-    padding: 0 1rem;
-    text-align: left;
-  }
-  .tab-radio {
-    display: none;
-  }
-  .tab-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
-  }
-  .tab-btn {
-    cursor: pointer;
-    padding: 0.5rem 1.25rem;
-    border-radius: 6px;
-    background-color: #1A1430;
-    border: 1px solid #2A2145;
-    color: #B8AED0;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: background-color 0.2s, color 0.2s;
-  }
-  .tab-btn:hover {
-    color: #F0EDF7;
-  }
-  .tab-panel {
-    display: none;
-  }
-  #tab-overview:checked ~ .panel-overview {
-    display: block;
-    text-align: center;
-  }
-  #tab-details:checked ~ .panel-details {
-    display: block;
-  }
-  #tab-commands:checked ~ .panel-commands {
-    display: block;
-  }
-  #tab-overview:checked ~ .tab-buttons label[for="tab-overview"],
-  #tab-details:checked ~ .tab-buttons label[for="tab-details"],
-  #tab-commands:checked ~ .tab-buttons label[for="tab-commands"] {
-    background-color: #8A5CF6;
-    color: #F0EDF7;
-  }
-  .summary-text {
-    color: #B8AED0;
-    max-width: 500px;
-    margin: 0 auto;
-  }
-  .info-list {
-    color: #F0EDF7;
-    line-height: 1.8;
-    padding-left: 1.5rem;
-    margin: 0;
-  }
-  .planned-note {
-    color: #8A7FA8;
-    font-size: 0.85rem;
-    font-style: italic;
-    margin: 0 0 1rem;
-  }
-  .command-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .command-list li {
-    margin-bottom: 1.25rem;
-    padding-bottom: 1.25rem;
-    border-bottom: 1px solid #2A2145;
-  }
-  .command-list li:last-child {
-    border-bottom: none;
-  }
-  .command-name {
-    display: inline-block;
-    background-color: #1A1430;
-    color: #C4B5FD;
-    padding: 0.25rem 0.6rem;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    margin-bottom: 0.4rem;
-  }
-  .command-desc {
-    margin: 0;
-    color: #B8AED0;
-    font-size: 0.9rem;
-    line-height: 1.5;
-  }
-  .edit-section {
-    max-width: 700px;
-    margin: 2rem auto 0;
-    background-color: #1A1430;
-    border: 1px solid #2A2145;
-    border-radius: 12px;
-    padding: 1rem 1.5rem;
-  }
-  .edit-section summary {
-    cursor: pointer;
-    color: #8A5CF6;
-    font-weight: 600;
-  }
-  .edit-field {
-    display: block;
-    margin: 1rem 0;
-    font-size: 0.85rem;
-    color: #B8AED0;
-  }
-  .edit-field textarea {
-    width: 100%;
-    margin-top: 0.4rem;
-    padding: 0.6rem;
-    background-color: #0F0B1E;
-    border: 1px solid #2A2145;
-    border-radius: 6px;
-    color: #F0EDF7;
-    font-family: inherit;
-    font-size: 0.9rem;
-    resize: vertical;
-    box-sizing: border-box;
-  }
-  .save-btn {
-    padding: 0.6rem 1.5rem;
-    background-color: #8A5CF6;
-    color: #F0EDF7;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-  }
-  .save-btn:hover {
-    background-color: #7C4FE0;
-  }
-  .back-link {
-    display: block;
-    color: #8A5CF6;
-    font-weight: 600;
-    text-decoration: none;
-    text-align: center;
-    margin-top: 1.5rem;
-  }
-  .back-link:hover {
-    color: #C4B5FD;
-  }
+  .dashboard-wrapper { display: flex; min-height: 100vh; background: #080612; color: #F0EDF7; }
+  .sidebar { width: 250px; background: #0F0B1E; border-right: 1px solid #2A2145; }
+  .sidebar-header { padding: 1.5rem; border-bottom: 1px solid #2A2145; }
+  .nav-item { padding: 1rem 1.5rem; color: #B8AED0; cursor: pointer; }
+  .nav-item.active { color: #8A5CF6; border-left: 2px solid #8A5CF6; background: #1A1430; }
+  .main-content { flex: 1; }
+  
+  /* Banner Fixes */
+ .page-banner {
+  width: 100%;
+  height: 250px;                 /* Adjust this to make it taller or shorter */
+  background-image: url('/banners/bots.jpg');
+  background-size: cover;        /* Fills the whole area without distorting pixels */
+  background-position: center;   /* Keeps the moon centered so it doesn't get cut off */
+  background-repeat: no-repeat;
+}
+
+  .overview-container { padding: 2rem; margin-top: 0; }
+  .overview-grid { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 2rem; }
+  .card-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-top: 1rem; }
+  .bot-card { background: #0F0B1E; border: 1px solid #2A2145; padding: 1rem; cursor: pointer; border-radius: 4px; transition: 0.3s; text-align: center; }
+  .bot-card h4 { font-size: 0.8rem; margin: 0; }
+  .bot-card:hover { border-color: #8A5CF6; background: #1A1430; }
+  
+  .log-table { width: 100%; border-collapse: collapse; margin-top: 1rem; background: #0F0B1E; }
+  .log-table th, .log-table td { padding: 1rem; border-bottom: 1px solid #2A2145; text-align: left; font-size: 0.85rem; }
+  
+  .back-btn { background: none; border: 1px solid #8A5CF6; color: #8A5CF6; padding: 0.4rem 0.8rem; cursor: pointer; border-radius: 4px; font-size: 0.8rem; }
+  .sub-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+  .tab-btn { background: #1A1430; border: 1px solid #2A2145; color: #F0EDF7; padding: 0.4rem 0.8rem; cursor: pointer; border-radius: 4px; font-size: 0.8rem; }
+  .tab-btn.active { background: #8A5CF6; border: 1px solid #8A5CF6; }
+  
+  .data-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; background: #0F0B1E; border: 1px solid #2A2145; border-radius: 6px; margin-bottom: 0.5rem; }
+  .status-row { display: flex; gap: 8px; }
+  .status-text { font-size: 0.55rem; color: #5A5270; background: #1A1430; padding: 2px 6px; border: 1px solid #2A2145; border-radius: 3px; text-transform: uppercase; font-weight: bold; }
+  .status-text.active.process { color: #22D3EE; border-color: #22D3EE; }
+  .status-text.active.planned { color: #A0A0A0; border-color: #A0A0A0; }
+  
+  .health-container { padding: 1rem; background: #0F0B1E; border: 1px solid #2A2145; border-radius: 6px; }
+  .status-bars { display: flex; gap: 4px; margin-top: 10px; flex-wrap: wrap; }
 </style>

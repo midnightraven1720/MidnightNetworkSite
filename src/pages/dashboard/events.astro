@@ -1,0 +1,18 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Sidebar from '../../components/Sidebar.astro';
+---
+
+<Layout title="Upcoming Events">
+  <div class="dashboard-wrapper">
+    <Sidebar />
+    <main class="content">
+      <h1>Upcoming Events</h1>
+    </main>
+  </div>
+</Layout>
+
+<style>
+  .dashboard-wrapper { display: flex; min-height: 100vh; background: #0A0714; color: white; }
+  .content { padding: 1.5rem; flex: 1; }
+</style>

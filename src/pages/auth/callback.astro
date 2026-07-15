@@ -72,5 +72,9 @@ Astro.cookies.set('midnight_session', JSON.stringify({
   maxAge: 60 * 60 * 24 * 7,
 });
 
-return Astro.redirect('/account');
+if (rank === 'member') {
+  return Astro.redirect('/user-dashboard');
+} else {
+  return Astro.redirect('/staff-dashboard');
+}
 ---

@@ -1,5 +1,7 @@
 ---
+// src/pages/staff-dashboard.astro
 import Layout from '../layouts/Layout.astro';
+import { getStaffData } from '../lib/staff-logic';
 
 const sessionCookie = Astro.cookies.get('midnight_session');
 let user = null;
@@ -17,640 +19,159 @@ if (!user) {
 
 const STAFF_TIERS = ['owner', 'coOwner', 'staff'];
 if (!STAFF_TIERS.includes(user.rank)) {
-  return Astro.redirect('/account');
+  return Astro.redirect('/user-dashboard');
 }
 
 const API_BASE = 'http://midnight-tickets.railway.internal:3001';
 const API_KEY = import.meta.env.DASHBOARD_API_KEY;
-
-async function fetchFromBot(path) {
-  try {
-    const res = await fetch(`${API_BASE}${path}`, {
-      headers: { 'x-api-key': API_KEY },
-    });
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
-
-const serversData = await fetchFromBot('/api/servers');
-const ticketsData = await fetchFromBot('/api/tickets');
-const applicationsData = await fetchFromBot('/api/applications');
-const healthData = await fetchFromBot('/api/health');
-const botConfigData = await fetchFromBot('/api/bot-config');
-
-const departments = [
-  {
-    name: "Leadership",
-    members: [
-      { name: "Staff Member", role: "Owner" },
-      { name: "Staff Member", role: "Co-Owner" },
-    ]
-  },
-  {
-    name: "Moderation",
-    members: [
-      { name: "Staff Member", role: "Admin" },
-      { name: "Staff Member", role: "Mod" },
-      { name: "Staff Member", role: "Helper" },
-    ]
-  },
-  {
-    name: "Partnerships",
-    members: [
-      { name: "Staff Member", role: "Partnership Manager" },
-    ]
-  },
-  {
-    name: "Events",
-    members: [
-      { name: "Staff Member", role: "Event Manager" },
-    ]
-  },
-  {
-    name: "Health Department",
-    members: [
-      { name: "Staff Member", role: "Health Department" },
-    ]
-  },
-];
-
-const botOnline = healthData !== null;
-const servers = serversData ? serversData.servers : [];
-const useDropdown = servers.length >= 8;
-
 const selectedGuildId = Astro.url.searchParams.get('server') || 'all';
 
-const allTickets = ticketsData ? ticketsData.tickets : [];
-const allApplications = applicationsData ? applicationsData.applications : [];
+// Call the logic file
+const data = await getStaffData(API_BASE, API_KEY, selectedGuildId);
 
-const filteredTickets = selectedGuildId === 'all'
-  ? allTickets
-  : allTickets.filter(t => t.guildId === selectedGuildId);
-
-const filteredApplications = selectedGuildId === 'all'
-  ? allApplications
-  : allApplications.filter(a => a.guildId === selectedGuildId);
-
-const allConfigs = botConfigData ? botConfigData.configs : [];
-const selectedConfig = selectedGuildId === 'all'
-  ? null
-  : allConfigs.find(c => c.guildId === selectedGuildId);
-
-const guildOptionsData = selectedGuildId !== 'all'
-  ? await fetchFromBot(`/api/guild-options?guildId=${selectedGuildId}`)
-  : null;
-
-const saved = Astro.url.searchParams.get('saved') === 'true';
-
-function serverLink(guildId) {
-  return `/staff-dashboard?server=${guildId}`;
-}
+const selectedServer = data.servers.find((s) => s.id === selectedGuildId);
+const guildName = selectedGuildId === 'all' ? 'All Servers' : (selectedServer?.name || 'Selected Server');
 ---
+
 <Layout title="Staff Dashboard">
-  <section class="section">
-    <h2>Staff Dashboard</h2>
-  </section>
+  <div class="dashboard-wrapper">
+    <aside class="server-nav">
+      <nav style="padding: 1rem; border-bottom: 1px solid #2A2145;">
+        <a href="/user-dashboard" style="color: #8A5CF6; font-weight: bold; text-decoration: none;">&larr; User Dashboard</a>
+      </nav>
 
-  <div class="main-tabs">
-    <input type="radio" name="mainTab" id="main-staff" class="tab-radio" checked />
-    <input type="radio" name="mainTab" id="main-bot" class="tab-radio" />
+      <ul class="server-list">
+        <li><a href="/staff-dashboard?server=all" class={selectedGuildId === 'all' ? 'active' : ''}>All Servers</a></li>
+        {data.servers.map((s) => (
+          <li><a href={`/staff-dashboard?server=${s.id}`} class={selectedGuildId === s.id ? 'active' : ''}>{s.name}</a></li>
+        ))}
+      </ul>
+    </aside>
 
-    <div class="main-tab-buttons">
-      <label for="main-staff" class="main-tab-btn">Staff Dashboard</label>
-      <label for="main-bot" class="main-tab-btn">Bot Dashboard</label>
-    </div>
+    <main class="content">
+      <h1>Dashboard for {guildName}</h1>
 
-    <!-- ============ STAFF DASHBOARD TAB ============ -->
-    <div class="main-panel panel-main-staff">
-      <div class="dashboard-layout">
-        <aside class="server-nav">
-          {useDropdown ? (
-            <form method="get" class="server-dropdown-form">
-              <select name="server" class="server-dropdown" onchange="this.form.submit()">
-                <option value="all" selected={selectedGuildId === 'all'}>All Servers</option>
-                {servers.map((s) => (
-                  <option value={s.id} selected={selectedGuildId === s.id}>{s.name}</option>
+      <div class="panel-grid">
+        <div class="panel">
+          <h3>Tickets <span class="count">{data.filteredTickets.length}</span></h3>
+          {data.ticketsAvailable ? (
+            data.filteredTickets.length > 0 ? (
+              <ul class="detail-list">
+                {data.filteredTickets.map((t) => (
+                  <li>
+                    <span class="detail-primary">{t.username}</span>
+                    <span class="detail-secondary">{t.typeKey}{selectedGuildId === 'all' && ` · ${t.guildName}`} · opened {new Date(t.openedAt).toLocaleDateString()}</span>
+                  </li>
                 ))}
-              </select>
-            </form>
-          ) : (
-            <ul class="server-list">
-              <li><a href="/staff-dashboard?server=all" class={selectedGuildId === 'all' ? 'active' : ''}>All Servers</a></li>
-              {servers.map((s) => (
-                <li><a href={serverLink(s.id)} class={selectedGuildId === s.id ? 'active' : ''}>{s.name}</a></li>
-              ))}
-            </ul>
-          )}
-        </aside>
-
-        <div class="dashboard-content">
-          <div class="staff-bio-card">
-            <h3>Staff Directory</h3>
-            <p class="placeholder-note-small">Network-wide directory below. Per-server bios/ranks are coming once Midnight Council is live.</p>
-            <div class="department-grid">
-              {departments.map(dept => (
-                <div class="department-mini">
-                  <h4>{dept.name}</h4>
-                  <ul class="mini-list">
-                    {dept.members.map(m => <li>{m.name} — {m.role}</li>)}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div class="cat-tabs">
-            <input type="radio" name="catTab" id="cat-tickets" class="tab-radio" checked />
-            <input type="radio" name="catTab" id="cat-applications" class="tab-radio" />
-            <input type="radio" name="catTab" id="cat-moderation" class="tab-radio" />
-
-            <div class="cat-tab-buttons">
-              <label for="cat-tickets" class="cat-tab-btn">
-                <span class="cat-name">Tickets</span>
-                <span class="cat-count">{ticketsData ? filteredTickets.length : '—'}</span>
-              </label>
-              <label for="cat-applications" class="cat-tab-btn">
-                <span class="cat-name">Applications</span>
-                <span class="cat-count">{applicationsData ? filteredApplications.length : '—'}</span>
-              </label>
-              <label for="cat-moderation" class="cat-tab-btn">
-                <span class="cat-name">Moderation &amp; Blacklist</span>
-                <span class="cat-count">—</span>
-              </label>
-            </div>
-
-            <div class="cat-panel panel-tickets">
-              {ticketsData ? (
-                filteredTickets.length > 0 ? (
-                  <ul class="detail-list">
-                    {filteredTickets.map((t) => (
-                      <li>
-                        <span class="detail-primary">{t.username}</span>
-                        <span class="detail-secondary">{t.typeKey} {selectedGuildId === 'all' && `· ${t.guildName}`} · opened {new Date(t.openedAt).toLocaleDateString()}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p class="placeholder-note">No open tickets right now.</p>
-                )
-              ) : (
-                <p class="placeholder-note">Couldn't reach the bot right now.</p>
-              )}
-            </div>
-
-            <div class="cat-panel panel-applications">
-              {applicationsData ? (
-                filteredApplications.length > 0 ? (
-                  <ul class="detail-list">
-                    {filteredApplications.map((a) => (
-                      <li>
-                        <span class="detail-primary">{a.username}</span>
-                        <span class="detail-secondary">{selectedGuildId === 'all' && `${a.guildName} · `}status: {a.status}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p class="placeholder-note">No applications awaiting review.</p>
-                )
-              ) : (
-                <p class="placeholder-note">Couldn't reach the bot right now.</p>
-              )}
-            </div>
-
-            <div class="cat-panel panel-moderation">
-              <p class="placeholder-note">Coming soon — searchable warning history, notes, and blacklist entries for every member, once Midnight Council is live.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ============ BOT DASHBOARD TAB ============ -->
-    <div class="main-panel panel-main-bot">
-      <div class="dashboard-layout">
-        <aside class="server-nav">
-          {useDropdown ? (
-            <form method="get" class="server-dropdown-form">
-              <select name="server" class="server-dropdown" onchange="this.form.submit()">
-                <option value="all" selected={selectedGuildId === 'all'}>All Servers</option>
-                {servers.map((s) => (
-                  <option value={s.id} selected={selectedGuildId === s.id}>{s.name}</option>
-                ))}
-              </select>
-            </form>
-          ) : (
-            <ul class="server-list">
-              <li><a href="/staff-dashboard?server=all" class={selectedGuildId === 'all' ? 'active' : ''}>All Servers</a></li>
-              {servers.map((s) => (
-                <li><a href={serverLink(s.id)} class={selectedGuildId === s.id ? 'active' : ''}>{s.name}</a></li>
-              ))}
-            </ul>
-          )}
-        </aside>
-
-        <div class="dashboard-content">
-          <div class="bot-config-card">
-            <h3>Midnight Tickets — Configuration</h3>
-            {saved && <p class="saved-note">✓ Settings saved.</p>}
-            {selectedGuildId === 'all' ? (
-              <p class="placeholder-note">Select a specific server from the list to edit its bot configuration.</p>
-            ) : botConfigData && selectedConfig && guildOptionsData ? (
-              <form method="post" action="/api/save-bot-config" class="config-form">
-                <input type="hidden" name="guildId" value={selectedGuildId} />
-                <div class="config-grid">
-                  <div>
-                    <h4>Roles</h4>
-                    <label class="config-field">
-                      <span>Ticket Staff</span>
-                      <select name="role_ticketStaff">
-                        <option value="">Not set</option>
-                        {guildOptionsData.roles.map(r => (
-                          <option value={r.id} selected={selectedConfig.roles.ticketStaff?.id === r.id}>{r.name}</option>
-                        ))}
-                      </select>
-                    </label>
-                    <label class="config-field">
-                      <span>Owner</span>
-                      <select name="role_owner">
-                        <option value="">Not set</option>
-                        {guildOptionsData.roles.map(r => (
-                          <option value={r.id} selected={selectedConfig.roles.owner?.id === r.id}>{r.name}</option>
-                        ))}
-                      </select>
-                    </label>
-                    <label class="config-field">
-                      <span>Co-Owner</span>
-                      <select name="role_coOwner">
-                        <option value="">Not set</option>
-                        {guildOptionsData.roles.map(r => (
-                          <option value={r.id} selected={selectedConfig.roles.coOwner?.id === r.id}>{r.name}</option>
-                        ))}
-                      </select>
-                    </label>
-                    <label class="config-field">
-                      <span>Partnership Manager</span>
-                      <select name="role_partnershipManager">
-                        <option value="">Not set</option>
-                        {guildOptionsData.roles.map(r => (
-                          <option value={r.id} selected={selectedConfig.roles.partnershipManager?.id === r.id}>{r.name}</option>
-                        ))}
-                      </select>
-                    </label>
-                    <label class="config-field">
-                      <span>ID Verified Staff</span>
-                      <select name="role_idVerifiedStaff">
-                        <option value="">Not set</option>
-                        {guildOptionsData.roles.map(r => (
-                          <option value={r.id} selected={selectedConfig.roles.idVerifiedStaff?.id === r.id}>{r.name}</option>
-                        ))}
-                      </select>
-                    </label>
-                  </div>
-                  <div>
-                    <h4>Categories</h4>
-                    <label class="config-field">
-                      <span>Support/Report/Partnership</span>
-                      <select name="category_support">
-                        <option value="">Not set</option>
-                        {guildOptionsData.categories.map(c => (
-                          <option value={c.id} selected={selectedConfig.categories.support?.id === c.id}>{c.name}</option>
-                        ))}
-                      </select>
-                    </label>
-                    <label class="config-field">
-                      <span>Staff Reports</span>
-                      <select name="category_staffReport">
-                        <option value="">Not set</option>
-                        {guildOptionsData.categories.map(c => (
-                          <option value={c.id} selected={selectedConfig.categories.staffReport?.id === c.id}>{c.name}</option>
-                        ))}
-                      </select>
-                    </label>
-                    <label class="config-field">
-                      <span>Verification</span>
-                      <select name="category_verification">
-                        <option value="">Not set</option>
-                        {guildOptionsData.categories.map(c => (
-                          <option value={c.id} selected={selectedConfig.categories.verification?.id === c.id}>{c.name}</option>
-                        ))}
-                      </select>
-                    </label>
-                  </div>
-                </div>
-                <button type="submit" class="save-btn">Save Changes</button>
-              </form>
+              </ul>
             ) : (
-              <p class="placeholder-note">Couldn't reach the bot right now.</p>
-            )}
-          </div>
-
-          <div class="bot-status-list">
-            <div class="bot-status-card">
-              <div class="bot-status-header">
-                <h3>Midnight Tickets</h3>
-                <span class={`status-line ${botOnline ? 'status-online' : 'status-offline'}`}>
-                  {botOnline ? '● Online' : '● Offline / Unreachable'}
-                </span>
-              </div>
-              {healthData ? (
-                <>
-                  <p class="stat-label">Uptime: {Math.floor(healthData.uptimeSeconds / 60)} minutes</p>
-                  {healthData.recentErrors.length > 0 ? (
-                    <ul class="mini-list error-list">
-                      {healthData.recentErrors.slice(0, 8).map((e) => (
-                        <li>{e.message} <span class="error-time">({new Date(e.timestamp).toLocaleString()})</span></li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p class="placeholder-note">No recent errors logged.</p>
-                  )}
-                </>
-              ) : (
-                <p class="placeholder-note">Couldn't reach this bot right now.</p>
-              )}
-            </div>
-
-            <div class="bot-status-card">
-              <div class="bot-status-header">
-                <h3>Other Bots</h3>
-                <span class="status-line status-planned">— Not built yet</span>
-              </div>
-              <p class="placeholder-note">Health monitoring for the rest of the network's bots will appear here once they're built and connected.</p>
-            </div>
-          </div>
+              <p class="placeholder-note">No open tickets right now.</p>
+            )
+          ) : (
+            <p class="placeholder-note">Couldn't reach the bot right now.</p>
+          )}
         </div>
+
+        <div class="panel">
+          <h3>Applications <span class="count">{data.filteredApps.length}</span></h3>
+          {data.applicationsAvailable ? (
+            data.filteredApps.length > 0 ? (
+              <ul class="detail-list">
+                {data.filteredApps.map((a) => (
+                  <li>
+                    <span class="detail-primary">{a.username}</span>
+                    <span class="detail-secondary">{selectedGuildId === 'all' && `${a.guildName} · `}status: {a.status}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p class="placeholder-note">No applications awaiting review.</p>
+            )
+          ) : (
+            <p class="placeholder-note">Couldn't reach the bot right now.</p>
+          )}
+        </div>
+
+        {selectedGuildId !== 'all' && data.guildOptionsData && (
+          <div class="panel">
+            <h3>Server Roles &amp; Categories</h3>
+            <div class="role-cols">
+              <div>
+                <h4>Roles</h4>
+                <ul class="mini-list">
+                  {(data.guildOptionsData.roles || []).map((r) => <li>{r.name}</li>)}
+                </ul>
+              </div>
+              <div>
+                <h4>Categories</h4>
+                <ul class="mini-list">
+                  {(data.guildOptionsData.categories || []).map((c) => <li>{c.name}</li>)}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-    </div>
+    </main>
   </div>
-
-  <section class="section">
-    <a href="/account" class="staff-link">&larr; Back to My Dashboard</a>
-  </section>
 </Layout>
+
 <style>
-  .intro-note {
-    max-width: 600px;
-    margin: 0.5rem auto 0;
-    color: #8A7FA8;
-    font-size: 0.9rem;
-  }
-  .tab-radio {
-    display: none;
-  }
-
-  .main-tab-buttons {
+  .dashboard-wrapper {
     display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin: 1.5rem auto;
-    max-width: 1200px;
-    padding: 0 1.5rem;
-  }
-  .main-tab-btn {
-    cursor: pointer;
-    padding: 0.6rem 1.5rem;
-    border-radius: 8px;
-    background-color: #1A1430;
-    border: 1px solid #2A2145;
-    color: #B8AED0;
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: background-color 0.2s, color 0.2s;
-  }
-  .main-tab-btn:hover {
-    color: #F0EDF7;
-  }
-  .main-panel {
-    display: none;
-  }
-  #main-staff:checked ~ .panel-main-staff {
-    display: block;
-  }
-  #main-bot:checked ~ .panel-main-bot {
-    display: block;
-  }
-  #main-staff:checked ~ .main-tab-buttons label[for="main-staff"],
-  #main-bot:checked ~ .main-tab-buttons label[for="main-bot"] {
-    background-color: #8A5CF6;
-    color: #F0EDF7;
-  }
-
-  .dashboard-layout {
-    display: flex;
-    gap: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1.5rem 2rem;
-    align-items: flex-start;
+    min-height: 100vh;
   }
   .server-nav {
-    flex-shrink: 0;
-    width: 200px;
-  }
-  .server-dropdown-form {
-    width: 100%;
-  }
-  .server-dropdown {
-    width: 100%;
-    padding: 0.6rem;
-    background-color: #1A1430;
-    border: 1px solid #2A2145;
-    border-radius: 8px;
-    color: #F0EDF7;
-    font-size: 0.9rem;
+    width: 250px;
+    background: #0F0B1E;
+    border-right: 1px solid #2A2145;
   }
   .server-list {
     list-style: none;
-    margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
+    margin: 0;
   }
-  .server-list a {
+  .server-list li a {
     display: block;
-    padding: 0.6rem 0.9rem;
-    border-radius: 8px;
+    padding: 1rem;
     color: #B8AED0;
     text-decoration: none;
-    font-size: 0.9rem;
-    transition: background-color 0.2s, color 0.2s;
   }
-  .server-list a:hover {
-    background-color: #1A1430;
-    color: #F0EDF7;
+  .server-list li a.active {
+    background: #2A2145;
+    color: white;
   }
-  .server-list a.active {
-    background-color: #8A5CF6;
-    color: #F0EDF7;
-    font-weight: 600;
-  }
-  .dashboard-content {
+  .content {
+    padding: 2rem;
     flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
   }
-
-  h3 {
+  .panel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .panel {
+    background: #1A1430;
+    border: 1px solid #2A2145;
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .panel h3 {
+    margin: 0 0 1rem;
     font-size: 1.1rem;
     color: #C4B5FD;
-    margin: 0 0 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
-  h4 {
-    font-size: 0.9rem;
-    color: #B8AED0;
-    margin: 0 0 0.5rem;
-  }
-
-  .staff-bio-card,
-  .bot-config-card {
-    background-color: #1A1430;
-    border: 1px solid #2A2145;
-    border-radius: 12px;
-    padding: 1.5rem;
-    text-align: left;
-  }
-
-  .placeholder-note-small {
-    margin: 0 0 1rem;
+  .count {
     font-size: 0.8rem;
-    color: #8A7FA8;
-  }
-  .department-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1.25rem;
-  }
-  .department-mini h4 {
-    color: #8A5CF6;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin: 0 0 0.5rem;
-  }
-
-  .config-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 0.75rem;
-  }
-  .config-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    font-size: 0.85rem;
+    background: #2A2145;
     color: #F0EDF7;
+    border-radius: 999px;
+    padding: 0.1rem 0.6rem;
   }
-  .config-key {
-    color: #8A7FA8;
-  }
-  .edit-note {
-    margin: 0;
-    font-size: 0.75rem;
-    color: #8A7FA8;
-    font-style: italic;
-  }
-  .config-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    margin-bottom: 0.85rem;
-    font-size: 0.8rem;
-    color: #B8AED0;
-  }
-  .config-field select {
-    padding: 0.5rem;
-    background-color: #0F0B1E;
-    border: 1px solid #2A2145;
-    border-radius: 6px;
-    color: #F0EDF7;
-    font-size: 0.85rem;
-  }
-  .save-btn {
-    margin-top: 0.5rem;
-    padding: 0.6rem 1.5rem;
-    background-color: #8A5CF6;
-    color: #F0EDF7;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  .save-btn:hover {
-    background-color: #7C4FE0;
-  }
-  .saved-note {
-    color: #22C55E;
-    font-weight: 600;
-    font-size: 0.9rem;
-    margin: 0 0 1rem;
-  }
-
-  .cat-tab-buttons {
-    display: flex;
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
-  }
-  .cat-tab-btn {
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 0.85rem 1.25rem;
-    border-radius: 10px;
-    background-color: #1A1430;
-    border: 1px solid #2A2145;
-    min-width: 140px;
-    transition: border-color 0.2s;
-  }
-  .cat-tab-btn:hover {
-    border-color: #8A5CF6;
-  }
-  .cat-name {
-    font-size: 0.8rem;
-    color: #B8AED0;
-    font-weight: 600;
-  }
-  .cat-count {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #F0EDF7;
-  }
-  .cat-panel {
-    display: none;
-    background-color: #1A1430;
-    border: 1px solid #2A2145;
-    border-radius: 12px;
-    padding: 1.5rem;
-  }
-  #cat-tickets:checked ~ .cat-tab-buttons label[for="cat-tickets"],
-  #cat-applications:checked ~ .cat-tab-buttons label[for="cat-applications"],
-  #cat-moderation:checked ~ .cat-tab-buttons label[for="cat-moderation"] {
-    border-color: #8A5CF6;
-    background-color: #241B3D;
-  }
-  #cat-tickets:checked ~ .panel-tickets {
-    display: block;
-  }
-  #cat-applications:checked ~ .panel-applications {
-    display: block;
-  }
-  #cat-moderation:checked ~ .panel-moderation {
-    display: block;
-  }
-
   .detail-list {
     list-style: none;
     margin: 0;
@@ -679,87 +200,22 @@ function serverLink(guildId) {
     color: #8A7FA8;
     font-size: 0.8rem;
   }
-
-  .bot-status-list {
+  .role-cols {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.5rem;
-  }
-  .bot-status-card {
-    background-color: #1A1430;
-    border: 1px solid #2A2145;
-    border-radius: 12px;
-    padding: 1.5rem;
-    text-align: left;
-  }
-  .bot-status-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.75rem;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  .bot-status-header h3 {
-    margin: 0;
-  }
-  .status-line {
-    font-weight: 600;
-    font-size: 0.85rem;
-  }
-  .status-online {
-    color: #22C55E;
-  }
-  .status-offline {
-    color: #EF4444;
-  }
-  .status-planned {
-    color: #8A7FA8;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
   }
   .mini-list {
-    margin: 0.5rem 0 0;
-    padding-left: 1.25rem;
+    margin: 0;
+    padding-left: 1.1rem;
     color: #F0EDF7;
     font-size: 0.85rem;
     line-height: 1.6;
-  }
-  .error-list li {
-    color: #F0A5A5;
-  }
-  .error-time {
-    color: #8A7FA8;
-    font-size: 0.75rem;
-  }
-  .stat-label {
-    margin: 0 0 0.5rem;
-    font-size: 0.85rem;
-    color: #8A7FA8;
   }
   .placeholder-note {
     margin: 0;
     font-size: 0.9rem;
     color: #8A7FA8;
     line-height: 1.5;
-  }
-
-  .staff-link {
-    display: block;
-    color: #8A5CF6;
-    font-weight: 600;
-    text-decoration: none;
-    text-align: center;
-    margin-top: 1rem;
-  }
-  .staff-link:hover {
-    color: #C4B5FD;
-  }
-
-  @media (max-width: 640px) {
-    .dashboard-layout {
-      flex-direction: column;
-    }
-    .server-nav {
-      width: 100%;
-    }
   }
 </style>

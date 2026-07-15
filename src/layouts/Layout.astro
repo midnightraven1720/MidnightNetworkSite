@@ -53,7 +53,7 @@ if (sessionCookie) {
                   class="user-avatar"
                 />
               )}
-              <a href="/account" class="username">{user.username}</a>
+              <a href={user.rank === 'member' ? '/user-dashboard' : '/staff-dashboard'} class="username">{user.username}</a>
               <a href="/logout" class="logout-link">Log out</a>
             </div>
           ) : (
@@ -131,16 +131,15 @@ if (sessionCookie) {
   .nav-menu {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
     flex: 1;
-    justify-content: space-between;
+    justify-content: flex-end;
     min-width: 0;
   }
   .tab-links {
     display: flex;
     gap: 0.5rem;
-    flex-wrap: nowrap;
-    flex-shrink: 1;
+    flex-shrink: 0;
     min-width: 0;
   }
   .tab {
