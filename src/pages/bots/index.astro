@@ -5,6 +5,7 @@ import { fetchFromBot } from '../../lib/bot-api.js';
 import { BOT_API_HOSTS } from '../../data/bot-hosts.js';
 import OverviewView from '../../components/bots/OverviewView.astro';
 import ModulesView from '../../components/bots/ModulesView.astro';
+import PanelConfigsView from '../../components/bots/PanelConfigsView.astro';
 import CommandsView from '../../components/bots/CommandsView.astro';
 import ServerListingView from '../../components/bots/ServerListingView.astro';
 import BotLogsView from '../../components/bots/BotLogsView.astro';
@@ -18,12 +19,15 @@ const staff = isStaff(user);
 
 const selectedGuildId = Astro.url.searchParams.get('server') || 'all';
 const configSaved = Astro.url.searchParams.get('saved') === 'true';
+const panelSaved = Astro.url.searchParams.get('panelSaved') === 'true';
 const selectedCouncilGuildId = Astro.url.searchParams.get('councilServer') || 'all';
 const councilStaffSaved = Astro.url.searchParams.get('councilSaved') === 'true';
 
 let ticketServers = [];
 let ticketGuildOptions = null;
 let selectedTicketConfig = null;
+let panels = [];
+let panelTicketTypes = [];
 
 let councilServers = [];
 let councilNetworkStaff = [];
@@ -40,7 +44,13 @@ if (staff) {
     const allConfigs = botConfigData?.configs || [];
     selectedTicketConfig = allConfigs.find((c) => c.guildId === selectedGuildId) || null;
     ticketGuildOptions = await fetchFromBot(TICKETS_API, `/api/guild-options?guildId=${selectedGuildId}`);
+
+    const panelsData = await fetchFromBot(TICKETS_API, `/api/panels?guildId=${selectedGuildId}`);
+    panels = panelsData?.panels || [];
   }
+
+  const panelTypesData = await fetchFromBot(TICKETS_API, '/api/panel-ticket-types');
+  panelTicketTypes = panelTypesData?.types || [];
 
   const councilServersData = await fetchFromBot(COUNCIL_API, '/api/servers');
   councilServers = councilServersData?.servers || [];
@@ -66,6 +76,7 @@ if (staff) {
       <nav>
         <div class="nav-item active" data-view="dashboard">Overview</div>
         {staff && <div class="nav-item" data-view="modules">Modules</div>}
+        {staff && <div class="nav-item" data-view="panelconfigs">Panel Configs</div>}
         <div class="nav-item" data-view="commands">Commands</div>
         <div class="nav-item" data-view="servers">Server Listing</div>
         {staff && <div class="nav-item" data-view="botlogs">Bot Logs</div>}
@@ -95,6 +106,17 @@ if (staff) {
           />
         )}
 
+        {staff && (
+          <PanelConfigsView
+            selectedGuildId={selectedGuildId}
+            panelSaved={panelSaved}
+            ticketServers={ticketServers}
+            ticketGuildOptions={ticketGuildOptions}
+            panels={panels}
+            panelTicketTypes={panelTicketTypes}
+          />
+        )}
+
         <CommandsView />
         <ServerListingView />
         {staff && <BotLogsView councilHealth={councilHealth} />}
@@ -108,6 +130,7 @@ if (staff) {
     const views = {
       dashboard: document.getElementById('view-dashboard'),
       modules: document.getElementById('view-modules'),
+      panelconfigs: document.getElementById('view-panelconfigs'),
       commands: document.getElementById('view-commands'),
       servers: document.getElementById('view-servers'),
       botlogs: document.getElementById('view-botlogs'),
@@ -175,6 +198,9 @@ if (staff) {
       showView('modules');
       const botParam = params.get('bot');
       if (botParam) openModuleSubPage(botParam);
+    }
+    if (params.get('view') === 'panelconfigs' && views.panelconfigs) {
+      showView('panelconfigs');
     }
   </script>
 </Layout>

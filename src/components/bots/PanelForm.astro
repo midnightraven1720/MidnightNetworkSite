@@ -1,0 +1,99 @@
+---
+const { action, guildId, panel, ticketGuildOptions, panelTicketTypes, submitLabel } = Astro.props;
+const kind = panel?.kind || 'ticket';
+const selectedTypes = new Set(panel?.buttonTypeKeys || []);
+const selectedRoles = new Set(panel?.staffRoleIds || []);
+---
+<form method="post" action={action} class="panel-form">
+  <input type="hidden" name="guildId" value={guildId} />
+  {panel && <input type="hidden" name="panelId" value={panel.id} />}
+
+  <label class="config-field">
+    <span>Panel Name</span>
+    <input type="text" name="name" value={panel?.name || ''} required />
+  </label>
+
+  <div class="kind-picker config-field">
+    <span>Kind</span>
+    <label><input type="radio" name="kind" value="ticket" checked={kind === 'ticket'} /> Ticket</label>
+    <label><input type="radio" name="kind" value="verification" checked={kind === 'verification'} /> Verification</label>
+  </div>
+
+  <div class="type-picker config-field">
+    <span>Ticket Types (buttons shown on this panel)</span>
+    {panelTicketTypes.map((t) => (
+      <label class="checkbox-row">
+        <input type="checkbox" name="buttonTypeKeys" value={t.key} checked={selectedTypes.has(t.key)} />
+        {t.emoji} {t.label}
+      </label>
+    ))}
+  </div>
+
+  <label class="config-field">
+    <span>Category (where tickets are created)</span>
+    <select name="categoryId">
+      <option value="">Not set</option>
+      {(ticketGuildOptions.categories || []).map((c) => (
+        <option value={c.id} selected={panel?.categoryId === c.id}>{c.name}</option>
+      ))}
+    </select>
+  </label>
+
+  <div class="role-picker config-field">
+    <span>Staff Roles</span>
+    {(ticketGuildOptions.roles || []).map((r) => (
+      <label class="checkbox-row">
+        <input type="checkbox" name="staffRoleIds" value={r.id} checked={selectedRoles.has(r.id)} />
+        {r.name}
+      </label>
+    ))}
+  </div>
+
+  <label class="config-field">
+    <span>Log Channel</span>
+    <select name="logChannelId">
+      <option value="">Not set</option>
+      {(ticketGuildOptions.textChannels || []).map((c) => (
+        <option value={c.id} selected={panel?.logChannelId === c.id}>#{c.name}</option>
+      ))}
+    </select>
+  </label>
+
+  <label class="config-field">
+    <span>Title</span>
+    <input type="text" name="title" value={panel?.title || ''} placeholder="Panel embed title" />
+  </label>
+
+  <label class="config-field">
+    <span>Description</span>
+    <textarea name="description" rows="3" placeholder="Panel embed description">{panel?.description || ''}</textarea>
+  </label>
+
+  <label class="config-field">
+    <span>Slash Command Name</span>
+    <input type="text" name="commandName" value={panel?.commandName || ''} placeholder="e.g. support-panel" pattern="[a-z0-9\-_]{1,32}" />
+  </label>
+
+  <label class="config-field">
+    <span>Text Trigger</span>
+    <input type="text" name="textTrigger" value={panel?.textTrigger || ''} placeholder="e.g. !support-panel" />
+  </label>
+
+  <button type="submit" class="save-btn">{submitLabel}</button>
+</form>
+
+<style>
+  .config-field { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 0.75rem; font-size: 0.72rem; color: #B8AED0; }
+  .config-field > span { color: #C4B5FD; font-weight: 600; }
+  .config-field input[type="text"], .config-field select, .config-field textarea {
+    padding: 0.4rem; background: #1A1430; border: 1px solid #2A2145; border-radius: 6px; color: #F0EDF7; font-size: 0.75rem; font-family: inherit;
+  }
+  .type-picker { display: none; }
+  form:has(input[name="kind"][value="ticket"]:checked) .type-picker { display: flex; flex-direction: column; }
+  .kind-picker { flex-direction: row; gap: 1.25rem; align-items: center; }
+  .kind-picker label, .role-picker label, .checkbox-row { font-weight: normal; }
+  .checkbox-row { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.15rem; }
+  .role-picker { max-height: 140px; overflow-y: auto; }
+  .save-btn { margin-top: 0.25rem; padding: 0.5rem 1.25rem; background: #8A5CF6; color: #F0EDF7; border: none; border-radius: 8px; font-weight: 600; font-size: 0.8rem; cursor: pointer; }
+  .save-btn:hover { background: #7C4FE0; }
+</style>

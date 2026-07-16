@@ -1,0 +1,136 @@
+---
+import PanelForm from './PanelForm.astro';
+
+const { selectedGuildId, panelSaved, ticketServers, ticketGuildOptions, panels, panelTicketTypes } = Astro.props;
+---
+<div id="view-panelconfigs" style="display: none;">
+  <h3>Panel Configs</h3>
+  {panelSaved && selectedGuildId !== 'all' && <p class="saved-note">✓ Panel saved.</p>}
+
+  <form method="get" class="server-picker-form">
+    <input type="hidden" name="view" value="panelconfigs" />
+    <select name="server" class="command-select" onchange="this.form.submit()">
+      <option value="all" selected={selectedGuildId === 'all'}>Select a server…</option>
+      {ticketServers.map((s) => (
+        <option value={s.id} selected={selectedGuildId === s.id}>{s.name}</option>
+      ))}
+    </select>
+  </form>
+
+  {selectedGuildId === 'all' ? (
+    <p class="placeholder-note">Select a server above to manage its ticket panels.</p>
+  ) : ticketGuildOptions ? (
+    <>
+      <div class="panel-list">
+        {panels.length === 0 ? (
+          <p class="placeholder-note">No panels created yet for this server.</p>
+        ) : panels.map((panel) => (
+          <details class="panel-card">
+            <summary>
+              <strong>{panel.name}</strong>
+              <span class="panel-kind">{panel.kind}</span>
+              {panel.commandName && <code>/{panel.commandName}</code>}
+              {panel.textTrigger && <code>{panel.textTrigger}</code>}
+              <span class={`panel-status ${panel.channelId ? 'posted' : ''}`}>{panel.channelId ? 'Posted' : 'Not sent'}</span>
+            </summary>
+
+            <PanelForm
+              action="/api/update-panel"
+              guildId={selectedGuildId}
+              panel={panel}
+              ticketGuildOptions={ticketGuildOptions}
+              panelTicketTypes={panelTicketTypes}
+              submitLabel="Save Changes"
+            />
+
+            <form method="post" action="/api/send-panel" class="inline-form">
+              <input type="hidden" name="guildId" value={selectedGuildId} />
+              <input type="hidden" name="panelId" value={panel.id} />
+              <select name="channelId" required>
+                <option value="">Select a channel to send to…</option>
+                {(ticketGuildOptions.textChannels || []).map((c) => (
+                  <option value={c.id}>#{c.name}</option>
+                ))}
+              </select>
+              <button type="submit" class="send-btn">Send to Channel</button>
+            </form>
+
+            <div class="panel-actions">
+              <form method="post" action="/api/clone-panel" class="inline-form">
+                <input type="hidden" name="guildId" value={selectedGuildId} />
+                <input type="hidden" name="panelId" value={panel.id} />
+                <button type="submit">Clone</button>
+              </form>
+              <form method="post" action="/api/delete-panel" class="inline-form" onsubmit="return confirm('Delete this panel? This cannot be undone.');">
+                <input type="hidden" name="guildId" value={selectedGuildId} />
+                <input type="hidden" name="panelId" value={panel.id} />
+                <button type="submit" class="danger-btn">Delete</button>
+              </form>
+            </div>
+          </details>
+        ))}
+      </div>
+
+      <details class="panel-card new-panel">
+        <summary>+ New Panel</summary>
+        <PanelForm
+          action="/api/create-panel"
+          guildId={selectedGuildId}
+          panel={null}
+          ticketGuildOptions={ticketGuildOptions}
+          panelTicketTypes={panelTicketTypes}
+          submitLabel="Create Panel"
+        />
+      </details>
+    </>
+  ) : (
+    <p class="placeholder-note">Couldn't reach the bot right now.</p>
+  )}
+</div>
+
+<style>
+  .saved-note { color: #22C55E; font-weight: 600; font-size: 0.75rem; margin: 0 0 0.75rem; }
+  .placeholder-note { margin: 0; font-size: 0.9rem; color: #8A7FA8; line-height: 1.5; }
+  .server-picker-form { margin-bottom: 0.75rem; }
+  .command-select {
+    margin-top: 0.25rem; padding: 0.4rem 0.6rem; background: #1A1430; border: 1px solid #2A2145;
+    border-radius: 6px; color: #F0EDF7; font-size: 0.8rem;
+  }
+
+  .panel-list { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1rem; }
+  .panel-card {
+    background: #0F0B1E; border: 1px solid #2A2145; border-radius: 8px; padding: 0.65rem 0.85rem;
+  }
+  .panel-card summary {
+    cursor: pointer; display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+    font-size: 0.82rem; color: #F0EDF7; list-style: none;
+  }
+  .panel-card summary::-webkit-details-marker { display: none; }
+  .panel-card summary::before { content: '▸'; color: #8A5CF6; }
+  .panel-card[open] summary::before { content: '▾'; }
+  .panel-kind {
+    font-size: 0.62rem; text-transform: uppercase; color: #8A7FA8; border: 1px solid #2A2145;
+    border-radius: 4px; padding: 1px 5px;
+  }
+  .panel-card summary code { font-size: 0.68rem; color: #C4B5FD; background: #1A1430; padding: 1px 5px; border-radius: 4px; }
+  .panel-status { margin-left: auto; font-size: 0.62rem; color: #8A7FA8; }
+  .panel-status.posted { color: #22D3EE; }
+
+  .panel-form { margin-top: 0.85rem; padding-top: 0.75rem; border-top: 1px solid #2A2145; }
+
+  .inline-form { display: flex; gap: 0.5rem; align-items: center; margin-top: 0.6rem; }
+  .inline-form select {
+    flex: 1; padding: 0.4rem; background: #1A1430; border: 1px solid #2A2145; border-radius: 6px;
+    color: #F0EDF7; font-size: 0.75rem;
+  }
+  .send-btn, .panel-actions button {
+    padding: 0.4rem 0.9rem; background: #2A2145; color: #F0EDF7; border: 1px solid #3A3160;
+    border-radius: 6px; font-size: 0.72rem; cursor: pointer;
+  }
+  .send-btn:hover, .panel-actions button:hover { border-color: #8A5CF6; }
+  .panel-actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+  .danger-btn { color: #F87171; }
+  .danger-btn:hover { border-color: #F87171; }
+
+  .new-panel summary { color: #8A5CF6; font-weight: 600; }
+</style>
