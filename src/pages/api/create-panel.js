@@ -1,6 +1,7 @@
 import { postToBot } from '../../lib/bot-api.js';
 import { BOT_API_HOSTS } from '../../data/bot-hosts.js';
 import { requireStaff } from '../../lib/session.js';
+import { parseCustomFields } from '../../lib/panel-fields.js';
 
 export async function POST(context) {
   const { redirect: staffRedirect } = requireStaff(context);
@@ -17,6 +18,9 @@ export async function POST(context) {
     title: formData.get('title') || null,
     description: formData.get('description') || null,
     buttonTypeKeys: formData.getAll('buttonTypeKeys'),
+    buttonLabel: formData.get('buttonLabel') || null,
+    buttonEmoji: formData.get('buttonEmoji') || null,
+    customFields: parseCustomFields(formData),
     categoryId: formData.get('categoryId') || null,
     staffRoleIds: formData.getAll('staffRoleIds'),
     logChannelId: formData.get('logChannelId') || null,

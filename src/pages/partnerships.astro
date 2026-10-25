@@ -1,5 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import DashboardShell from '../components/DashboardShell.astro';
+
+const navItems = [
+  { href: '#top', label: 'Overview' },
+  { href: '#types', label: 'Partnership Types' },
+  { href: '#requirements', label: 'What We Look For' },
+  { href: '#apply', label: 'How to Apply' },
+];
 
 const requirements = [
   { title: "18+ Community", detail: "Your server must be a genuine adult (18+) community, in line with our own network." },
@@ -7,91 +15,116 @@ const requirements = [
   { title: "Active & Engaged", detail: "Activity matters more than size. We look for servers where members are genuinely active and engaged, not quiet or inactive spaces." },
   { title: "Aligned Rules & Values", detail: "Your server's rules and community values should be broadly compatible with ours, to keep the partnership a good fit for both member bases." },
 ];
+
+const partnershipTypes = [
+  { title: "Server Partnership", detail: "A direct partnership between your server and one specific Midnight Network server. Terms are discussed and agreed individually, based on what fits both communities." },
+  { title: "Network Partnership", detail: "A partnership with Midnight Network as a whole, including full cross-promotion and collaboration across all of our servers." },
+];
 ---
 <Layout title="Partnerships">
-  <div class="page-banner" style="background-image: url('/banners/partnerships.jpg');">
-    <h2>Partnerships</h2>
-  </div>
+  <DashboardShell heading="Partnerships" navItems={navItems}>
+  <header class="page-hero" id="top">
+    <div class="moon" aria-hidden="true"></div>
+    <div class="page-hero-eyebrow">Grow Together</div>
+    <h1>Partnerships</h1>
+    <p class="page-hero-sub">Midnight Network partners with other 18+ Discord communities to cross-promote and grow together. If you run a server that fits what we're looking for, we'd love to hear from you.</p>
+  </header>
 
-  <section class="section">
-    <div class="two-col">
-      <div class="info-col">
-        <h3>About Partnering</h3>
-        <p>Midnight Network partners with other 18+ Discord communities to cross-promote and grow together. If you run a server that fits what we're looking for, we'd love to hear from you.</p>
-        <h3>Partnership Types</h3>
-        <p><strong>Server Partnership</strong> — a direct partnership between your server and one specific Midnight Network server. Terms are discussed and agreed individually, based on what fits both communities.</p>
-        <p><strong>Network Partnership</strong> — a partnership with Midnight Network as a whole, including full cross-promotion and collaboration across all of our servers.</p>
-        <h3>How to Apply</h3>
-        <p>Open a <strong>Partnership Request</strong> ticket via the Midnight Tickets bot in the Midnight Network Discord server, and let us know which type of partnership you're interested in. All requests go through a review process before approval, including a trial period for new partnerships.</p>
-      </div>
-      <div class="req-col">
-        <h3>What We Look For</h3>
-        <ul class="doc-list">
-          {requirements.map(req => (
-            <li><strong>{req.title}</strong> — {req.detail}</li>
-          ))}
-        </ul>
-      </div>
+  <section class="section" id="types">
+    <div class="eyebrow">Partnership Types</div>
+    <div class="type-grid">
+      {partnershipTypes.map(t => (
+        <div class="type-card">
+          <h3>{t.title}</h3>
+          <p>{t.detail}</p>
+        </div>
+      ))}
     </div>
   </section>
+
+  <section class="section requirements-section" id="requirements">
+    <div class="eyebrow">What We Look For</div>
+    <div class="type-grid">
+      {requirements.map(req => (
+        <div class="type-card requirement-card">
+          <h3>{req.title}</h3>
+          <p>{req.detail}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="apply-cta" id="apply">
+    <div class="eyebrow">How to Apply</div>
+    <h2>Ready to Partner?</h2>
+    <p>Invite <strong>Midnight-Alliance</strong> to your server, then run <strong>/partner-apply</strong> and let us know which type of partnership you're interested in. That opens a private line of contact between your staff and our Partnership Managers — all requests go through a review process before approval, including a trial period for new partnerships.</p>
+  </section>
+  </DashboardShell>
 </Layout>
 <style>
-  .page-banner {
-    background-size: cover;
-    background-position: center;
-    height: 280px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+  .section { padding-top: 1rem; padding-bottom: 1rem; }
+  .eyebrow {
+    font-family: var(--font-utility);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 1.25rem;
   }
-  .page-banner h2 {
-    font-size: 2.5rem;
-    color: #F0EDF7;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.8);
-    margin: 0;
-  }
-  .two-col {
+  .requirements-section .eyebrow { margin-top: 1rem; }
+
+  .type-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2.5rem;
-    max-width: 1000px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    max-width: 900px;
     margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 0 1rem;
     text-align: left;
   }
-  .info-col h3,
-  .req-col h3 {
-    font-size: 1.3rem;
-    color: #C4B5FD;
-    margin-top: 1.5rem;
-    margin-bottom: 0.75rem;
+  .type-card {
+    background: var(--night-card);
+    border: 1px solid var(--card-border);
+    border-radius: 4px;
+    padding: 1.5rem;
   }
-  .info-col h3:first-child {
-    margin-top: 0;
+  .type-card h3 {
+    font-size: 1.15rem;
+    color: var(--star-silver);
+    margin-bottom: 0.5rem;
   }
-  .info-col p {
-    color: #F0EDF7;
+  .type-card p {
+    font-family: var(--font-body);
+    color: var(--text-muted);
     line-height: 1.7;
-    margin-bottom: 1rem;
-  }
-  .doc-list {
-    color: #F0EDF7;
-    line-height: 1.8;
-    padding-left: 1.5rem;
     margin: 0;
   }
-  .doc-list li {
-    margin-bottom: 0.75rem;
-  }
-  .doc-list strong {
-    color: #C4B5FD;
+  .requirement-card {
+    background: transparent;
+    border-style: dashed;
   }
 
-  @media (max-width: 768px) {
-    .two-col {
-      grid-template-columns: 1fr;
-      gap: 2rem;
-    }
+  .apply-cta {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    max-width: 700px;
+    margin: 2rem auto 0;
+    padding: 3.5rem 2rem 4.5rem;
+    border-top: 1px solid var(--card-border-soft);
+  }
+  .apply-cta h2 {
+    font-size: 1.9rem;
+    color: var(--star-silver);
+    margin: 0 0 1rem;
+  }
+  .apply-cta p {
+    font-family: var(--font-body);
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin: 0;
+  }
+  .apply-cta p strong {
+    color: var(--star-silver);
   }
 </style>

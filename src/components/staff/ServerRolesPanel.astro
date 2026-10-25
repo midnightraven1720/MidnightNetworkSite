@@ -20,8 +20,9 @@ const { guildOptionsData } = Astro.props;
 </div>
 
 <style>
-  .panel { background: #1A1430; border: 1px solid #2A2145; border-radius: 12px; padding: 1.5rem; }
-  .panel h3 { margin: 0 0 1rem; font-size: 1.1rem; color: #C4B5FD; }
+  .panel { background: var(--night-card); border: 1px solid var(--card-border); border-radius: 4px; padding: 1.5rem; }
+  .panel h3 { margin: 0 0 1rem; font-family: var(--font-display); font-size: 1.1rem; color: var(--star-silver); }
   .role-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  .mini-list { margin: 0; padding-left: 1.1rem; color: #F0EDF7; font-size: 0.85rem; line-height: 1.6; }
+  .role-cols h4 { font-family: var(--font-utility); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); margin: 0 0 0.5rem; }
+  .mini-list { margin: 0; padding-left: 1.1rem; color: var(--text-muted); font-family: var(--font-body); font-size: 0.85rem; line-height: 1.6; }
 </style>

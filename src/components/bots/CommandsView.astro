@@ -1,40 +1,215 @@
 ---
 import { botData } from '../../data/bots.js';
-
-const commandBots = botData.filter((bot) => bot.commands.length > 0);
 ---
 <div id="view-commands" style="display: none;">
-  <h3>Commands List</h3>
-  <select id="command-bot-select" class="command-select" onchange="showCommandBot(this.value)">
-    {commandBots.map((bot) => (
-      <option value={bot.name}>{bot.name}</option>
+  <div class="commands-head">
+    <h3>Commands</h3>
+    <p class="commands-sub">Every command across all 9 bots, grouped by category. Toggling a command off disables it for this server once that bot is connected.</p>
+  </div>
+
+  <div class="bot-select-row">
+    {botData.map((bot, i) => (
+      <button type="button" class={`bot-select-btn ${i === 0 ? 'active' : ''}`} data-bot={bot.id}>{bot.name}</button>
     ))}
-  </select>
-  {commandBots.map((bot, i) => (
-    <div class="command-group" data-bot={bot.name} style={i === 0 ? '' : 'display: none;'}>
-      <table class="log-table">
-        <thead><tr><th>Command</th><th>Description</th></tr></thead>
-        <tbody>
-          {bot.commands.map((c) => (
-            <tr><td>{c.name}</td><td>{c.description}</td></tr>
-          ))}
-        </tbody>
-      </table>
+  </div>
+
+  {botData.map((bot, bi) => (
+    <div class="command-bot-panel" data-bot={bot.id} style={bi === 0 ? '' : 'display: none;'}>
+      <div class="category-row">
+        {bot.categories.map((cat, ci) => (
+          <button type="button" class={`category-btn ${ci === 0 ? 'active' : ''}`} data-category={cat.key}>{cat.label}</button>
+        ))}
+      </div>
+
+      {bot.categories.map((cat, ci) => (
+        <div class="category-panel" data-category={cat.key} style={ci === 0 ? '' : 'display: none;'}>
+          <div class="category-bulk-row">
+            <button type="button" class="bulk-btn enable-all">Enable All</button>
+            <button type="button" class="bulk-btn disable-all">Disable All</button>
+          </div>
+          <div class="command-card-grid">
+            {cat.commands.map((c) => (
+              <div class="command-card">
+                <div class="command-card-top">
+                  <span class="command-name">{c.name}</span>
+                  <label class="toggle-switch">
+                    <input type="checkbox" checked disabled />
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                  </label>
+                </div>
+                <p class="command-desc">{c.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
     </div>
   ))}
 </div>
 
 <style>
-  .command-select {
-    margin-top: 0.75rem;
-    padding: 0.4rem 0.6rem;
-    background: #1A1430;
-    border: 1px solid #2A2145;
-    border-radius: 6px;
-    color: #F0EDF7;
-    font-size: 0.8rem;
+  .commands-head { margin-bottom: 1rem; }
+  .commands-head h3 { font-family: var(--font-display); color: var(--star-silver); }
+  .commands-sub { margin: 0.35rem 0 0; font-size: 0.78rem; color: var(--text-faint); max-width: 60ch; }
+
+  .bot-select-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1.25rem;
   }
-  .command-group { margin-top: 0.75rem; }
-  .log-table { width: 100%; border-collapse: collapse; margin-top: 0.75rem; background: #0F0B1E; font-size: 0.8rem; }
-  .log-table th, .log-table td { padding: 0.6rem 0.75rem; border-bottom: 1px solid #2A2145; text-align: left; }
+  .bot-select-btn {
+    font: inherit;
+    font-family: var(--font-utility);
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    padding: 0.4rem 0.85rem;
+    background: var(--night-card);
+    border: 1px solid var(--card-border);
+    border-radius: 100px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .bot-select-btn:hover { border-color: var(--accent-violet-dim); color: var(--star-silver); }
+  .bot-select-btn.active {
+    background: var(--accent-violet);
+    border-color: var(--accent-violet);
+    color: var(--night-deepest);
+    font-weight: 600;
+  }
+
+  .category-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--card-border-soft);
+  }
+  .category-btn {
+    font: inherit;
+    font-family: var(--font-utility);
+    font-size: 0.7rem;
+    padding: 0.32rem 0.7rem;
+    background: transparent;
+    border: 1px solid var(--card-border);
+    border-radius: 4px;
+    color: var(--text-faint);
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .category-btn:hover { color: var(--text-muted); }
+  .category-btn.active {
+    border-color: var(--accent-violet);
+    color: var(--star-silver);
+    background: var(--night-card);
+  }
+
+  .category-bulk-row {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    margin-bottom: 0.75rem;
+  }
+  .bulk-btn {
+    font: inherit;
+    font-family: var(--font-utility);
+    font-size: 0.68rem;
+    padding: 0.3rem 0.7rem;
+    background: none;
+    border: 1px dashed var(--card-border);
+    border-radius: 4px;
+    color: var(--text-faint);
+    cursor: not-allowed;
+  }
+
+  .command-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0.6rem;
+  }
+  .command-card {
+    background: var(--night-card);
+    border: 1px solid var(--card-border);
+    border-radius: 4px;
+    padding: 0.75rem 0.85rem;
+  }
+  .command-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .command-name {
+    font-family: var(--font-utility);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--star-silver);
+  }
+  .command-desc {
+    margin: 0.35rem 0 0;
+    font-size: 0.72rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+
+  /* Toggle switch — visual only until a bot's dashboard API exists to back it */
+  .toggle-switch { flex-shrink: 0; cursor: not-allowed; }
+  .toggle-switch input { display: none; }
+  .toggle-track {
+    display: block;
+    width: 30px;
+    height: 16px;
+    border-radius: 100px;
+    background: var(--card-border);
+    position: relative;
+    opacity: 0.7;
+  }
+  .toggle-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--text-faint);
+    transition: transform 0.15s ease, background-color 0.15s ease;
+  }
+  .toggle-switch input:checked ~ .toggle-track { background: rgba(138, 120, 221, 0.35); }
+  .toggle-switch input:checked ~ .toggle-track .toggle-thumb {
+    transform: translateX(14px);
+    background: var(--accent-violet);
+  }
 </style>
+
+<script is:inline>
+  (function () {
+    var botButtons = document.querySelectorAll('.bot-select-btn');
+    var botPanels = document.querySelectorAll('.command-bot-panel');
+
+    botButtons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-bot');
+        botButtons.forEach(function (b) { b.classList.toggle('active', b === btn); });
+        botPanels.forEach(function (p) {
+          p.style.display = p.getAttribute('data-bot') === id ? '' : 'none';
+        });
+      });
+    });
+
+    document.querySelectorAll('.command-bot-panel').forEach(function (panel) {
+      var catButtons = panel.querySelectorAll('.category-btn');
+      var catPanels = panel.querySelectorAll('.category-panel');
+      catButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var key = btn.getAttribute('data-category');
+          catButtons.forEach(function (b) { b.classList.toggle('active', b === btn); });
+          catPanels.forEach(function (p) {
+            p.style.display = p.getAttribute('data-category') === key ? '' : 'none';
+          });
+        });
+      });
+    });
+  })();
+</script>

@@ -16,11 +16,11 @@ const { staff, serverName } = Astro.props;
 )}
 
 <style>
-  .doc-container { max-width: 700px; margin: 0 auto; text-align: left; }
-  .intro { color: #B8AED0; line-height: 1.7; margin-bottom: 1rem; }
-  .intro a { color: #8A5CF6; text-decoration: underline; }
-  .intro a:hover { color: #C4B5FD; }
-  .staff-list { color: #F0EDF7; line-height: 1.8; padding-left: 1.5rem; margin-bottom: 1rem; }
-  .staff-list strong { color: #C4B5FD; }
-  .placeholder-note { margin: 0; font-size: 0.9rem; color: #8A7FA8; line-height: 1.5; text-align: center; }
+  .doc-container { max-width: 700px; margin: 0 auto; text-align: left; font-family: var(--font-body); }
+  .intro { color: var(--text-muted); line-height: 1.7; margin-bottom: 1rem; }
+  .intro a { color: var(--accent-violet); text-decoration: underline; }
+  .intro a:hover { color: var(--star-silver); }
+  .staff-list { color: var(--text-primary); line-height: 1.8; padding-left: 1.5rem; margin-bottom: 1rem; }
+  .staff-list strong { color: var(--star-silver); }
+  .placeholder-note { margin: 0; font-family: var(--font-utility); font-size: 0.9rem; color: var(--text-faint); line-height: 1.5; text-align: center; }
 </style>

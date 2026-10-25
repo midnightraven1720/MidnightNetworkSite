@@ -16,16 +16,16 @@ const { alerts } = Astro.props;
 )}
 
 <style>
-  .doc-container { max-width: 700px; margin: 0 auto; text-align: left; }
+  .doc-container { max-width: 700px; margin: 0 auto; text-align: left; font-family: var(--font-body); }
   .alert-card {
-    background-color: #1A1430;
-    border: 1px solid #2A2145;
-    border-radius: 12px;
+    background: var(--night-card);
+    border: 1px solid var(--card-border);
+    border-radius: 4px;
     padding: 1.25rem;
     margin-bottom: 1rem;
-    color: #F0EDF7;
+    color: var(--text-primary);
   }
-  .alert-card h4 { color: #C4B5FD; margin: 0 0 0.25rem; }
-  .event-date { color: #8A5CF6; font-size: 0.85rem; font-weight: 600; margin: 0 0 0.5rem; }
-  .placeholder-note { margin: 0; font-size: 0.9rem; color: #8A7FA8; line-height: 1.5; text-align: center; }
+  .alert-card h4 { font-family: var(--font-display); color: var(--star-silver); margin: 0 0 0.25rem; }
+  .event-date { color: var(--accent-violet); font-family: var(--font-utility); font-size: 0.8rem; font-weight: 600; margin: 0 0 0.5rem; }
+  .placeholder-note { margin: 0; font-family: var(--font-utility); font-size: 0.9rem; color: var(--text-faint); line-height: 1.5; text-align: center; }
 </style>

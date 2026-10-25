@@ -111,23 +111,31 @@ const departments = [
 ];
 ---
 <Layout title="About Us">
-  <div class="page-banner" style="background-image: url('/banners/about-us.jpg');">
-    <h2>About Us</h2>
-  </div>
-
-  <section class="section">
+  <div class="dashboard-wrapper about-layout">
     <input type="radio" name="main-tabs" id="main-about" class="main-tab-radio" checked />
     <input type="radio" name="main-tabs" id="main-departments" class="main-tab-radio" />
     <input type="radio" name="main-tabs" id="main-bios" class="main-tab-radio" />
     <input type="radio" name="main-tabs" id="main-rules" class="main-tab-radio" />
 
-    <div class="main-tab-buttons">
-      <label for="main-about" class="main-tab-btn">About Us</label>
-      <label for="main-departments" class="main-tab-btn">Staff Departments</label>
-      <label for="main-bios" class="main-tab-btn">Staff Bio</label>
-      <label for="main-rules" class="main-tab-btn">Server Rules</label>
-    </div>
+    <aside class="sidebar">
+      <div class="sidebar-header"><h3>About Us</h3></div>
+      <nav>
+        <label for="main-about" class="nav-item">About Us</label>
+        <label for="main-departments" class="nav-item">Staff Departments</label>
+        <label for="main-bios" class="nav-item">Staff Bio</label>
+        <label for="main-rules" class="nav-item">Server Rules</label>
+      </nav>
+    </aside>
 
+    <main class="main-content">
+    <header class="page-hero">
+      <div class="moon" aria-hidden="true"></div>
+      <div class="page-hero-eyebrow">The Network</div>
+      <h1>About Midnight Network</h1>
+      <p class="page-hero-sub">Who we are, how we're run, and what to expect from every server under the same night sky.</p>
+    </header>
+
+    <section class="section">
     <!-- ABOUT US TAB -->
     <div class="main-tab-content about-content">
       <div class="intro-container">
@@ -205,82 +213,89 @@ const departments = [
         ))}
       </div>
     </div>
-  </section>
+    </section>
+    </main>
+  </div>
 </Layout>
 <style>
-  .page-banner {
-    background-size: cover;
-    background-position: center;
-    height: 280px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-  }
-  .page-banner h2 {
-    font-size: 2.5rem;
-    color: #F0EDF7;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.8);
-    margin: 0;
-  }
   .intro {
-    color: #B8AED0;
+    color: var(--text-muted);
+    font-family: var(--font-body);
     line-height: 1.7;
     margin-bottom: 1rem;
   }
   h3 {
     font-size: 1.5rem;
-    color: #C4B5FD;
+    color: var(--star-silver);
     margin-top: 2rem;
     margin-bottom: 0.75rem;
   }
   h4 {
     font-size: 1.1rem;
-    color: #F0EDF7;
+    color: var(--text-primary);
     margin-top: 1.5rem;
     margin-bottom: 0.5rem;
   }
 
-  /* Main top-level tabs */
+  /* Main sidebar + content layout — matches /bots' dashboard-wrapper pattern */
   .main-tab-radio {
     display: none;
   }
-  .main-tab-buttons {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-bottom: 2rem;
+  .dashboard-wrapper { display: flex; position: relative; z-index: 1; }
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: var(--night-base);
+    border-right: 1px solid var(--card-border-soft);
+    align-self: flex-start;
+    position: sticky;
+    top: 0;
+    max-height: 100vh;
+    overflow-y: auto;
   }
-  .main-tab-btn {
-    padding: 0.6rem 1.4rem;
-    background-color: #1A1430;
-    border: 1px solid #2A2145;
-    border-radius: 8px;
-    color: #B8AED0;
-    font-weight: 600;
-    font-size: 0.95rem;
+  .sidebar-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--card-border-soft); }
+  .sidebar-header h3 { font-family: var(--font-display); font-size: 1.05rem; margin: 0; color: var(--star-silver); }
+  .sidebar nav { display: flex; flex-direction: column; padding: 0.4rem 0; }
+  .nav-item {
+    display: block;
+    padding: 0.65rem 1.25rem;
+    color: var(--text-muted);
     cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
+    font-size: 0.85rem;
+    font-family: var(--font-utility);
+    transition: color 0.2s ease, background-color 0.2s ease;
   }
-  .main-tab-btn:hover {
-    background-color: #2A2145;
-    color: #F0EDF7;
-  }
+  .nav-item:hover { color: var(--star-silver); }
+  .main-content { flex: 1; min-width: 0; padding-bottom: 3rem; }
+
   .main-tab-content {
     display: none;
   }
-  #main-about:checked ~ .about-content { display: block; }
-  #main-departments:checked ~ .departments-content { display: block; }
-  #main-bios:checked ~ .bios-content { display: block; }
-  #main-rules:checked ~ .rules-content { display: block; }
+  .about-layout:has(#main-about:checked) .about-content { display: block; }
+  .about-layout:has(#main-departments:checked) .departments-content { display: block; }
+  .about-layout:has(#main-bios:checked) .bios-content { display: block; }
+  .about-layout:has(#main-rules:checked) .rules-content { display: block; }
 
-  #main-about:checked ~ .main-tab-buttons label[for="main-about"],
-  #main-departments:checked ~ .main-tab-buttons label[for="main-departments"],
-  #main-bios:checked ~ .main-tab-buttons label[for="main-bios"],
-  #main-rules:checked ~ .main-tab-buttons label[for="main-rules"] {
-    background-color: #8A5CF6;
-    color: #F0EDF7;
+  .about-layout:has(#main-about:checked) .nav-item[for="main-about"],
+  .about-layout:has(#main-departments:checked) .nav-item[for="main-departments"],
+  .about-layout:has(#main-bios:checked) .nav-item[for="main-bios"],
+  .about-layout:has(#main-rules:checked) .nav-item[for="main-rules"] {
+    color: var(--star-silver);
+    box-shadow: inset 2px 0 0 var(--accent-violet);
+    background: var(--night-card);
+  }
+
+  @media (max-width: 780px) {
+    .dashboard-wrapper { flex-direction: column; }
+    .sidebar {
+      width: 100%;
+      position: static;
+      max-height: none;
+      border-right: none;
+      border-bottom: 1px solid var(--card-border-soft);
+    }
+    .sidebar nav { flex-direction: row; overflow-x: auto; padding: 0.4rem; }
+    .nav-item { white-space: nowrap; }
   }
 
   /* About Us sub-tabs (Simple/Detailed) */
@@ -297,21 +312,22 @@ const departments = [
     gap: 0.5rem;
     margin-bottom: 1.5rem;
     justify-content: center;
+    font-family: var(--font-utility);
   }
   .tab-btn {
     padding: 0.5rem 1.25rem;
-    background-color: #1A1430;
-    border: 1px solid #2A2145;
-    border-radius: 8px;
-    color: #B8AED0;
+    background: var(--night-card);
+    border: 1px solid var(--card-border);
+    border-radius: 100px;
+    color: var(--text-muted);
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
+    transition: border-color 0.2s ease, color 0.2s ease;
   }
   .tab-btn:hover {
-    background-color: #2A2145;
-    color: #F0EDF7;
+    border-color: var(--accent-violet-dim);
+    color: var(--star-silver);
   }
   .tab-content {
     display: none;
@@ -320,8 +336,9 @@ const departments = [
   #tab-detailed:checked ~ .detailed-content { display: block; }
   #tab-simple:checked ~ .tab-buttons label[for="tab-simple"],
   #tab-detailed:checked ~ .tab-buttons label[for="tab-detailed"] {
-    background-color: #8A5CF6;
-    color: #F0EDF7;
+    background: var(--accent-violet);
+    border-color: var(--accent-violet);
+    color: var(--night-deepest);
   }
 
   /* Doc-style container for Departments/Bios tabs */
@@ -329,6 +346,7 @@ const departments = [
     max-width: 800px;
     margin: 0 auto;
     text-align: left;
+    font-family: var(--font-body);
   }
   .placeholder-note {
     text-align: center;
@@ -337,7 +355,7 @@ const departments = [
   .dept-block {
     margin-bottom: 2.5rem;
     padding-bottom: 1.5rem;
-    border-bottom: 1px solid #2A2145;
+    border-bottom: 1px solid var(--card-border-soft);
   }
   .dept-block:last-child {
     border-bottom: none;
@@ -345,7 +363,7 @@ const departments = [
   .role-block {
     margin-bottom: 1.5rem;
     padding-left: 1rem;
-    border-left: 2px solid #2A2145;
+    border-left: 2px solid var(--card-border-soft);
   }
 
   /* Per-role short/detailed toggle */
@@ -353,21 +371,22 @@ const departments = [
     display: flex;
     gap: 0.4rem;
     margin-bottom: 0.75rem;
+    font-family: var(--font-utility);
   }
   .small-btn {
     padding: 0.3rem 0.9rem;
-    background-color: #1A1430;
-    border: 1px solid #2A2145;
-    border-radius: 6px;
-    color: #B8AED0;
+    background: var(--night-card);
+    border: 1px solid var(--card-border);
+    border-radius: 100px;
+    color: var(--text-muted);
     font-weight: 600;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
+    transition: border-color 0.2s ease, color 0.2s ease;
   }
   .small-btn:hover {
-    background-color: #2A2145;
-    color: #F0EDF7;
+    border-color: var(--accent-violet-dim);
+    color: var(--star-silver);
   }
   .role-content {
     display: none;
@@ -376,8 +395,9 @@ const departments = [
   input.detailed-radio:checked ~ .role-content.detailed-content-role { display: block; }
   input.short-radio:checked ~ .small-tabs .short-label,
   input.detailed-radio:checked ~ .small-tabs .detailed-label {
-    background-color: #8A5CF6;
-    color: #F0EDF7;
+    background: var(--accent-violet);
+    border-color: var(--accent-violet);
+    color: var(--night-deepest);
   }
 
   /* Server Rules card grid */
@@ -389,28 +409,30 @@ const departments = [
     margin: 0 auto;
   }
   .card {
-    background-color: #1A1430;
-    border: 1px solid #2A2145;
-    border-radius: 12px;
+    background: var(--night-card);
+    border: 1px solid var(--card-border);
+    border-radius: 4px;
     padding: 1.5rem;
     text-decoration: none;
-    color: #F0EDF7;
-    transition: transform 0.2s, border-color 0.2s;
+    color: var(--text-primary);
+    transition: transform 0.2s ease, border-color 0.2s ease;
   }
   a.card:hover {
     transform: translateY(-4px);
-    border-color: #8A5CF6;
+    border-color: var(--accent-violet);
   }
   .card p {
     margin: 0;
     font-size: 0.9rem;
-    color: #B8AED0;
+    font-family: var(--font-body);
+    color: var(--text-muted);
   }
   .view-rules {
     display: inline-block;
     margin-top: 0.75rem;
+    font-family: var(--font-utility);
     font-size: 0.85rem;
-    color: #8A5CF6;
+    color: var(--accent-violet);
     font-weight: 600;
   }
 

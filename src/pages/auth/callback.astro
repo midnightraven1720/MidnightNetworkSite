@@ -43,9 +43,10 @@ if (!userResponse.ok) {
 
 const discordUser = await userResponse.json();
 
-// Check their staff rank in the Staff Server
+// Check their staff rank in the Staff Server, via Gate's dashboard API once it's deployed
+// (BOT_API_HOSTS is empty until then, so this gracefully no-ops and defaults to 'member').
 const STAFF_SERVER_ID = '1396985703379763251';
-const rankData = await fetchFromBot(BOT_API_HOSTS['Midnight Tickets'], `/api/member-rank?guildId=${STAFF_SERVER_ID}&userId=${discordUser.id}`);
+const rankData = await fetchFromBot(BOT_API_HOSTS['gate'], `/api/member-rank?guildId=${STAFF_SERVER_ID}&userId=${discordUser.id}`);
 const rank = rankData?.rank || 'member';
 
 Astro.cookies.set('midnight_session', JSON.stringify({

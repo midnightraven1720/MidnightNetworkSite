@@ -1,62 +1,37 @@
 ---
 import { botData } from '../../data/bots.js';
 import BackButton from '../BackButton.astro';
-import TicketConfigForm from './TicketConfigForm.astro';
-import CouncilStaffPanel from './CouncilStaffPanel.astro';
-
-const {
-  selectedGuildId, configSaved, ticketServers, ticketGuildOptions, selectedTicketConfig,
-  selectedCouncilGuildId, councilStaffSaved, councilServers, councilNetworkStaff, councilServerStaff, councilAvailable,
-} = Astro.props;
 ---
 <div id="view-modules" style="display: none;">
-  <h3>Modules Manager</h3>
   <div id="module-selection-grid" class="card-grid">
     {botData.map((bot) => (
-      <div class="bot-card" onclick={`openModuleSubPage('${bot.name}')`}>
+      <div class="bot-card" onclick={`openModuleSubPage('${bot.id}')`}>
         <h4>{bot.name}</h4>
       </div>
     ))}
   </div>
 
   {botData.map((bot) => (
-    <div class="module-sub-page" data-bot={bot.name} style="display: none;">
+    <div class="module-sub-page" data-bot={bot.id} style="display: none;">
       <BackButton onclick="backToModuleGrid()" />
       <div class="module-sub-header">
         <h3>{bot.name}</h3>
-        <span class={`status-text active ${bot.status === 'Live' ? 'process' : 'planned'}`}>{bot.status.toUpperCase()}</span>
+        <span class="status-text active planned">{bot.status.toUpperCase()}</span>
       </div>
-      {bot.moduleDetails.map((m) => (
-        <div class="module-detail">
-          <h4>{m.title}</h4>
-          <p class="module-explain">{m.explanation}</p>
-          <p class="module-example"><strong>Example:</strong> {m.example}</p>
-        </div>
-      ))}
+      <p class="bot-tagline">{bot.tagline}</p>
+
+      <div class="category-list">
+        {bot.categories.map((cat) => (
+          <div class="category-chip">
+            <span class="category-chip-label">{cat.label}</span>
+            <span class="category-chip-count">{cat.commands.length}</span>
+          </div>
+        ))}
+      </div>
 
       <div class="module-setup">
         <h4>Setup</h4>
-        {bot.configurable === 'tickets' ? (
-          <TicketConfigForm
-            botName={bot.name}
-            selectedGuildId={selectedGuildId}
-            ticketServers={ticketServers}
-            ticketGuildOptions={ticketGuildOptions}
-            selectedTicketConfig={selectedTicketConfig}
-            configSaved={configSaved}
-          />
-        ) : bot.configurable === 'council' ? (
-          <CouncilStaffPanel
-            selectedCouncilGuildId={selectedCouncilGuildId}
-            councilStaffSaved={councilStaffSaved}
-            councilServers={councilServers}
-            councilNetworkStaff={councilNetworkStaff}
-            councilServerStaff={councilServerStaff}
-            councilAvailable={councilAvailable}
-          />
-        ) : (
-          <p class="placeholder-note">Setup will be available here once {bot.name} is live.</p>
-        )}
+        <p class="placeholder-note">Not connected yet — {bot.name} hasn't been redeployed since the restart. Setup controls will appear here once it's live and exposing its dashboard API.</p>
       </div>
 
       <div class="sub-page-footer">
@@ -68,23 +43,29 @@ const {
 
 <style>
   .card-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem; margin-top: 0.75rem; }
-  .bot-card { background: #0F0B1E; border: 1px solid #2A2145; padding: 0.7rem; cursor: pointer; border-radius: 4px; transition: 0.3s; text-align: center; }
-  .bot-card h4 { font-size: 0.7rem; margin: 0; }
-  .bot-card:hover { border-color: #8A5CF6; background: #1A1430; }
+  .bot-card { background: var(--night-card); border: 1px solid var(--card-border); padding: 0.7rem; cursor: pointer; border-radius: 4px; transition: border-color 0.2s ease; text-align: center; }
+  .bot-card h4 { font-size: 0.68rem; margin: 0; color: var(--text-primary); }
+  .bot-card:hover { border-color: var(--accent-violet); }
 
-  .module-sub-header { display: flex; justify-content: space-between; align-items: center; margin: 0.75rem 0; }
-  .module-sub-header h3 { margin: 0; }
-  .status-text { font-size: 0.45rem; color: #5A5270; background: #1A1430; padding: 1px 4px; border: 1px solid #2A2145; border-radius: 3px; text-transform: uppercase; font-weight: bold; }
-  .status-text.active.process { color: #22D3EE; border-color: #22D3EE; }
-  .status-text.active.planned { color: #A0A0A0; border-color: #A0A0A0; }
-  .module-detail { background: #0F0B1E; border: 1px solid #2A2145; border-radius: 6px; padding: 0.65rem 0.85rem; margin-bottom: 0.6rem; }
-  .module-detail h4 { font-size: 0.78rem; color: #C4B5FD; margin: 0 0 0.35rem; }
-  .module-explain { margin: 0 0 0.4rem; font-size: 0.75rem; color: #B8AED0; line-height: 1.5; }
-  .module-example { margin: 0; font-size: 0.72rem; color: #8A7FA8; line-height: 1.5; }
-  .module-example strong { color: #8A5CF6; }
+  .module-sub-header { display: flex; justify-content: space-between; align-items: center; margin: 0.75rem 0 0.35rem; }
+  .module-sub-header h3 { margin: 0; font-family: var(--font-display); color: var(--star-silver); }
+  .status-text { font-size: 0.55rem; color: var(--text-faint); background: var(--night-card); padding: 2px 6px; border: 1px solid var(--card-border); border-radius: 3px; text-transform: uppercase; font-weight: bold; }
+  .bot-tagline { margin: 0 0 1rem; font-size: 0.8rem; color: var(--text-muted); max-width: 60ch; }
 
-  .module-setup { margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid #2A2145; }
-  .module-setup h4 { font-size: 0.85rem; color: #C4B5FD; margin: 0 0 0.5rem; }
-  .placeholder-note { margin: 0; font-size: 0.9rem; color: #8A7FA8; line-height: 1.5; }
-  .sub-page-footer { margin-top: 1.25rem; padding-top: 0.85rem; border-top: 1px solid #2A2145; }
+  .category-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+  .category-chip {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--night-deepest); border: 1px solid var(--card-border-soft);
+    border-radius: 100px; padding: 4px 10px 4px 12px; font-size: 0.7rem;
+  }
+  .category-chip-label { color: var(--text-muted); }
+  .category-chip-count {
+    background: var(--night-card); color: var(--text-faint); border-radius: 100px;
+    padding: 1px 6px; font-size: 0.62rem;
+  }
+
+  .module-setup { margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid var(--card-border-soft); }
+  .module-setup h4 { font-size: 0.85rem; font-family: var(--font-display); color: var(--star-silver); margin: 0 0 0.5rem; }
+  .placeholder-note { margin: 0; font-size: 0.85rem; color: var(--text-faint); line-height: 1.5; }
+  .sub-page-footer { margin-top: 1.25rem; padding-top: 0.85rem; border-top: 1px solid var(--card-border-soft); }
 </style>

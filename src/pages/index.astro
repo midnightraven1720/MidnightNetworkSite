@@ -1,32 +1,42 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import DashboardShell from '../components/DashboardShell.astro';
+import { servers } from '../data/servers.js';
 
 const stats = [
-  { label: "Servers", value: "7" },
-  { label: "Bots", value: "12" },
+  { label: "Servers", value: String(servers.length) },
+  { label: "Bots", value: "9" },
   { label: "Members", value: "1,000+" },
   { label: "Network", value: "1" },
 ];
 
-const featuredServers = [
-  { name: "Server 1", slug: "den-of-desire", description: "Placeholder description." },
-  { name: "Server 2", slug: "underground-gamer-lounge", description: "Placeholder description." },
-  { name: "Server 3", slug: "chaos-midnight-house", description: "Placeholder description." },
+const featuredServers = servers.slice(0, 3);
+
+const navItems = [
+  { href: '#top', label: 'Welcome' },
+  { href: '#about', label: 'About' },
+  { href: '#stats', label: 'Network Totals' },
+  { href: '#featured', label: 'Featured Servers' },
+  { href: '#join', label: 'Join' },
 ];
 ---
 <Layout title="Home">
-  <section class="hero">
-    <div class="hero-overlay">
-      <p>A connected universe of communities, under one night sky.</p>
-    </div>
-  </section>
+  <DashboardShell heading="Midnight Network" navItems={navItems}>
+  <header class="hero" id="top">
+    <div class="moon" aria-hidden="true"></div>
+    <div class="hero-eyebrow">Midnight Network</div>
+    <h1>One network. Every night.</h1>
+    <p class="hero-tagline">A connected universe of communities, under one night sky.</p>
+    <div class="scroll-cue"><span></span>Scroll</div>
+  </header>
 
-  <section class="section intro">
+  <section class="section intro" id="about">
+    <div class="eyebrow">About</div>
     <h2>What is Midnight Network?</h2>
-    <p>Placeholder description of the Midnight Network — a collection of connected communities, each with its own identity, all part of one shared universe.</p>
+    <p>Midnight Network is a collection of 18+ Discord communities, connected under one network rather than existing as separate, unrelated servers. Each server has its own identity and focus, giving members the freedom to find the community that actually fits what they're into.</p>
   </section>
 
-  <section class="section stats">
+  <section class="section stats" id="stats">
     <div class="stats-grid">
       {stats.map(stat => (
         <div class="stat">
@@ -37,7 +47,8 @@ const featuredServers = [
     </div>
   </section>
 
-  <section class="section featured">
+  <section class="section featured" id="featured">
+    <div class="eyebrow">Explore</div>
     <h2>Featured Servers</h2>
     <div class="card-grid">
       {featuredServers.map(server => (
@@ -50,53 +61,112 @@ const featuredServers = [
     <a href="/servers" class="view-all">View All Servers &rarr;</a>
   </section>
 
-  <section class="cta">
+  <section class="cta" id="join">
+    <div class="moon cta-moon" aria-hidden="true"></div>
     <h2>Ready to Join?</h2>
     <p>Step into the Midnight Network and find your community.</p>
     <a href="#" class="cta-button">Join Our Discord</a>
   </section>
+  </DashboardShell>
 </Layout>
 <style>
   .hero {
-    background-image: url('/background/hero-banner.jpg');
-    background-size: cover;
-    background-position: center;
-    height: 60vh;
+    position: relative;
+    z-index: 1;
+    min-height: 74vh;
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
     text-align: center;
-    padding-bottom: 4rem;
+    padding: 80px 32px 60px;
   }
-  @media (max-width: 640px) {
-    .hero {
-      height: 45vh;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-color: #0F0B1E;
-      padding-bottom: 1rem;
-    }
-    .hero-overlay p {
-      font-size: 1rem;
-      padding: 0 1rem;
-    }
+
+  .moon {
+    position: absolute;
+    top: 10%;
+    right: 12%;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 35%, #fbf5e4, var(--moon-glow) 60%, var(--moon-glow-dim) 100%);
+    box-shadow: 0 0 60px rgba(243, 234, 210, 0.32), 0 0 120px rgba(243, 234, 210, 0.14);
   }
-  .hero-overlay p {
-    font-size: 1.2rem;
-    margin: 0;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  .moon::after {
+    content: '';
+    position: absolute;
+    top: -12%;
+    left: -32%;
+    width: 108%;
+    height: 108%;
+    border-radius: 50%;
+    background: var(--night-deepest);
+  }
+
+  .hero-eyebrow {
+    font-family: var(--font-utility);
+    font-size: 0.78rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent-violet);
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.4rem, 6.5vw, 4rem);
+    letter-spacing: 0.01em;
+    color: var(--star-silver);
+    text-shadow: 0 0 40px rgba(201, 210, 240, 0.16);
+  }
+
+  .hero-tagline {
+    margin-top: 18px;
+    max-width: 42ch;
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    font-style: italic;
+  }
+
+  .scroll-cue {
+    margin-top: 48px;
+    font-family: var(--font-utility);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .scroll-cue span {
+    width: 1px;
+    height: 30px;
+    background: linear-gradient(var(--text-faint), transparent);
+  }
+
+  .eyebrow {
+    font-family: var(--font-utility);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 10px;
   }
 
   .intro p {
-    max-width: 600px;
-    margin: 1rem auto 0;
-    color: #B8AED0;
+    max-width: 60ch;
+    margin: 14px auto 0;
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    line-height: 1.7;
   }
 
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 1.5rem;
+    gap: 1.25rem;
     max-width: 800px;
     margin: 1rem auto 0;
     padding: 0 1rem;
@@ -105,22 +175,23 @@ const featuredServers = [
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #1A1430;
-    border: 1px solid #2A2145;
-    border-radius: 12px;
+    background: var(--night-card);
+    border: 1px solid var(--card-border);
+    border-radius: 4px;
     padding: 1.5rem 1rem;
   }
   .stat-value {
+    font-family: var(--font-display);
     font-size: 2rem;
-    font-weight: 700;
-    color: #C4B5FD;
+    color: var(--star-silver);
   }
   .stat-label {
-    margin-top: 0.25rem;
-    font-size: 0.85rem;
-    color: #8A7FA8;
+    margin-top: 0.35rem;
+    font-family: var(--font-utility);
+    font-size: 0.72rem;
+    color: var(--text-faint);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
   }
 
   .card-grid {
@@ -132,65 +203,80 @@ const featuredServers = [
     padding: 0 1rem;
   }
   .card {
-    background-color: #1A1430;
-    border: 1px solid #2A2145;
-    border-radius: 12px;
+    background: var(--night-card);
+    border: 1px solid var(--card-border);
+    border-radius: 4px;
     padding: 1.5rem;
     text-decoration: none;
-    color: #F0EDF7;
-    transition: transform 0.2s, border-color 0.2s;
+    color: var(--text-primary);
+    transition: transform 0.2s ease, border-color 0.2s ease;
   }
   .card:hover {
     transform: translateY(-4px);
-    border-color: #8A5CF6;
+    border-color: var(--accent-violet);
   }
   .card h3 {
-    color: #C4B5FD;
+    color: var(--star-silver);
     margin: 0 0 0.5rem;
   }
   .card p {
     margin: 0;
     font-size: 0.9rem;
-    color: #B8AED0;
+    font-family: var(--font-body);
+    color: var(--text-muted);
   }
 
   .view-all {
     display: inline-block;
     margin-top: 2rem;
-    color: #8A5CF6;
+    font-family: var(--font-utility);
+    font-size: 0.85rem;
+    color: var(--accent-violet);
     font-weight: 600;
     text-decoration: none;
   }
-  .view-all:hover {
-    color: #C4B5FD;
-  }
+  .view-all:hover { color: var(--star-silver); }
 
   .cta {
+    position: relative;
+    z-index: 1;
     text-align: center;
     padding: 4rem 2rem;
-    background-color: #150F26;
-    border-top: 1px solid #2A2145;
+    border-top: 1px solid var(--card-border-soft);
+    overflow: hidden;
+  }
+  .cta-moon {
+    top: -30px;
+    right: 50%;
+    transform: translateX(50%);
+    width: 70px;
+    height: 70px;
+    opacity: 0.9;
   }
   .cta h2 {
     font-size: 2rem;
-    color: #C4B5FD;
+    color: var(--star-silver);
     margin: 0 0 0.5rem;
   }
   .cta p {
-    color: #B8AED0;
+    color: var(--text-muted);
+    font-family: var(--font-body);
     margin: 0 0 1.5rem;
   }
   .cta-button {
     display: inline-block;
     padding: 0.85rem 2.5rem;
-    background-color: #8A5CF6;
-    color: #F0EDF7;
+    background: var(--accent-violet);
+    color: var(--night-deepest);
     text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: background-color 0.2s;
+    border-radius: 100px;
+    font-family: var(--font-utility);
+    font-weight: 600;
+    transition: background-color 0.2s ease;
   }
-  .cta-button:hover {
-    background-color: #7440E0;
+  .cta-button:hover { background: var(--moon-glow); }
+
+  @media (max-width: 640px) {
+    .moon { width: 76px; height: 76px; top: 6%; right: 8%; }
   }
 </style>

@@ -5,7 +5,6 @@ const { server } = Astro.props;
   {server.about.length > 0 ? (
     <>
       {server.about.map((p) => <p class="server-desc">{p}</p>)}
-      {server.contentNotice && <p class="content-notice">{server.contentNotice}</p>}
 
       {server.whatWeOffer.length > 0 && (
         <>
@@ -41,27 +40,27 @@ const { server } = Astro.props;
 </div>
 
 <style>
-  .doc-container { max-width: 650px; margin: 0 auto; text-align: left; }
-  .server-desc { color: #F0EDF7; line-height: 1.7; margin-bottom: 1rem; }
+  .doc-container { max-width: 650px; margin: 0 auto; text-align: left; font-family: var(--font-body); }
+  .server-desc { color: var(--text-muted); line-height: 1.7; margin-bottom: 1rem; }
   .server-desc.closing-line { text-align: center; font-style: italic; }
-  .server-desc.closing-line:last-child { font-weight: 700; font-style: normal; }
-  h4 { color: #C4B5FD; font-size: 1.1rem; text-align: center; margin-top: 2rem; margin-bottom: 1rem; }
+  .server-desc.closing-line:last-child { font-weight: 700; font-style: normal; color: var(--text-primary); }
+  h4 { font-family: var(--font-display); color: var(--star-silver); font-size: 1.1rem; text-align: center; margin-top: 2rem; margin-bottom: 1rem; }
   .offer-list { list-style: none; padding: 0; margin: 0 0 1.5rem; }
-  .offer-list li { color: #B8AED0; line-height: 1.6; margin-bottom: 0.75rem; }
-  .offer-list strong { color: #F0EDF7; }
-  .content-notice { color: #C4B5FD; font-size: 0.9rem; max-width: 600px; margin: 0 auto 1rem; }
+  .offer-list li { color: var(--text-muted); line-height: 1.6; margin-bottom: 0.75rem; }
+  .offer-list strong { color: var(--text-primary); }
   .invite-wrap { text-align: center; margin-top: 1.5rem; }
   .invite-button {
     display: inline-block;
     margin-top: 1rem;
     padding: 0.75rem 2rem;
-    background-color: #8A5CF6;
-    color: #F0EDF7;
+    background: var(--accent-violet);
+    color: var(--night-deepest);
     text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: background-color 0.2s;
+    border-radius: 100px;
+    font-family: var(--font-utility);
+    font-weight: 600;
+    transition: background-color 0.2s ease;
   }
-  .invite-button:hover { background-color: #7440E0; }
-  .placeholder-note { margin: 0 0 1.5rem; font-size: 0.9rem; color: #8A7FA8; line-height: 1.5; text-align: center; }
+  .invite-button:hover { background: var(--moon-glow); }
+  .placeholder-note { margin: 0 0 1.5rem; font-family: var(--font-utility); font-size: 0.9rem; color: var(--text-faint); line-height: 1.5; text-align: center; }
 </style>

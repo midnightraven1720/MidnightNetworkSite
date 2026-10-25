@@ -87,19 +87,21 @@ const { events = [] } = Astro.props;
     max-width: 1300px;
     margin: 0 auto;
     align-items: start;
+    font-family: var(--font-utility);
   }
   .event-calendar {
     width: 100%;
   }
   .legend-sidebar,
   .upcoming-sidebar {
-    background-color: #1A1430;
-    border: 1px solid #2A2145;
-    border-radius: 12px;
+    background: var(--night-card);
+    border: 1px solid var(--card-border);
+    border-radius: 4px;
     padding: 1.25rem;
   }
   .legend-title {
-    color: #C4B5FD;
+    font-family: var(--font-display);
+    color: var(--star-silver);
     font-size: 0.95rem;
     margin: 0 0 1rem;
   }
@@ -117,13 +119,13 @@ const { events = [] } = Astro.props;
     flex-shrink: 0;
   }
   .legend-name {
-    color: #F0EDF7;
+    color: var(--text-primary);
     font-weight: 600;
     font-size: 0.85rem;
     margin: 0 0 0.15rem;
   }
   .legend-desc {
-    color: #8A7FA8;
+    color: var(--text-faint);
     font-size: 0.75rem;
     margin: 0;
     line-height: 1.4;
@@ -144,19 +146,19 @@ const { events = [] } = Astro.props;
     flex-shrink: 0;
   }
   .upcoming-date {
-    color: #8A5CF6;
+    color: var(--accent-violet);
     font-size: 0.75rem;
     font-weight: 600;
     margin: 0 0 0.15rem;
   }
   .upcoming-title {
-    color: #F0EDF7;
+    color: var(--text-primary);
     font-size: 0.85rem;
     font-weight: 600;
     margin: 0;
   }
   .no-upcoming {
-    color: #8A7FA8;
+    color: var(--text-faint);
     font-size: 0.85rem;
     margin: 0;
   }
@@ -175,20 +177,22 @@ const { events = [] } = Astro.props;
   }
   .view-btn {
     padding: 0.4rem 1rem;
-    background-color: #1A1430;
-    border: 1px solid #2A2145;
-    border-radius: 6px;
-    color: #B8AED0;
+    background: var(--night-card);
+    border: 1px solid var(--card-border);
+    border-radius: 100px;
+    color: var(--text-muted);
     font-weight: 600;
     font-size: 0.85rem;
     cursor: pointer;
   }
   .view-btn:hover {
-    background-color: #2A2145;
+    border-color: var(--accent-violet-dim);
+    color: var(--star-silver);
   }
   .view-btn.active {
-    background-color: #8A5CF6;
-    color: #F0EDF7;
+    background: var(--accent-violet);
+    border-color: var(--accent-violet);
+    color: var(--night-deepest);
   }
   .calendar-header {
     display: flex;
@@ -198,24 +202,25 @@ const { events = [] } = Astro.props;
     margin-bottom: 1rem;
   }
   .calendar-header h4 {
-    color: #F0EDF7;
+    font-family: var(--font-display);
+    color: var(--star-silver);
     font-size: 1.2rem;
     margin: 0;
     min-width: 160px;
     text-align: center;
   }
   .cal-nav {
-    background-color: #1A1430;
-    border: 1px solid #2A2145;
-    color: #F0EDF7;
-    border-radius: 6px;
+    background: var(--night-card);
+    border: 1px solid var(--card-border);
+    color: var(--text-primary);
+    border-radius: 100px;
     width: 32px;
     height: 32px;
     cursor: pointer;
     font-size: 1rem;
   }
   .cal-nav:hover {
-    background-color: #2A2145;
+    border-color: var(--accent-violet-dim);
   }
 
   .dot {
@@ -244,29 +249,29 @@ const { events = [] } = Astro.props;
   .mini-weekday {
     text-align: center;
     font-size: 0.7rem;
-    color: #8A7FA8;
+    color: var(--text-faint);
     font-weight: 600;
     padding-bottom: 0.35rem;
   }
   .mini-day {
     aspect-ratio: 1;
-    background-color: #1A1430;
-    border: 1px solid #2A2145;
-    border-radius: 6px;
+    background: var(--night-card);
+    border: 1px solid var(--card-border);
+    border-radius: 4px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     font-size: 0.75rem;
-    color: #B8AED0;
+    color: var(--text-muted);
     gap: 2px;
   }
   .mini-day.empty {
-    background-color: transparent;
+    background: transparent;
     border: none;
   }
   .mini-day.today {
-    border-color: #8A5CF6;
+    border-color: var(--accent-violet);
   }
   .mini-day-dots {
     display: flex;
@@ -279,9 +284,9 @@ const { events = [] } = Astro.props;
     margin: 0 auto;
   }
   .event-card {
-    background-color: #1A1430;
-    border: 1px solid #2A2145;
-    border-radius: 12px;
+    background: var(--night-card);
+    border: 1px solid var(--card-border);
+    border-radius: 4px;
     padding: 1rem 1.25rem;
     margin-bottom: 1rem;
   }
@@ -295,7 +300,7 @@ const { events = [] } = Astro.props;
     font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
-    color: #0F0B1E;
+    color: var(--night-deepest);
   }
   .event-card-badge.gaming { background-color: #5865F2; color: #F0EDF7; }
   .event-card-badge.watch-party { background-color: #F76E11; }
@@ -304,22 +309,23 @@ const { events = [] } = Astro.props;
   .event-card-badge.seasonal { background-color: #F472B6; }
   .event-card-badge.nsfw { background-color: #EF4444; color: #F0EDF7; }
   .event-card h5 {
-    color: #F0EDF7;
+    font-family: var(--font-display);
+    color: var(--star-silver);
     margin: 0.5rem 0 0.25rem;
   }
   .event-card-time {
-    color: #8A7FA8;
+    color: var(--text-faint);
     font-size: 0.85rem;
     margin: 0 0 0.5rem;
   }
   .event-card-desc {
-    color: #B8AED0;
+    color: var(--text-muted);
     font-size: 0.9rem;
     margin: 0;
   }
   .no-events-message {
     text-align: center;
-    color: #8A7FA8;
+    color: var(--text-faint);
     font-size: 0.9rem;
     padding: 2rem 0;
   }

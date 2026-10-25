@@ -7,12 +7,13 @@ const { title } = Astro.props;
 </div>
 
 <style>
-  .card { background: #1A1430; padding: 1rem; border-radius: 8px; border: 1px solid #2A2145; }
-  .card h3 { font-size: 1.15rem; color: #C4B5FD; margin: 0 0 0.5rem; }
-  .card :global(p) { margin: 0; }
+  .card { background: var(--night-card); padding: 1.25rem; border-radius: 4px; border: 1px solid var(--card-border); }
+  .card h3 { font-family: var(--font-display); font-size: 1.1rem; color: var(--star-silver); margin: 0 0 0.5rem; }
+  .card :global(p) { margin: 0; font-family: var(--font-body); color: var(--text-muted); }
   .card :global(.placeholder-note) {
-    font-size: 0.9rem;
-    color: #8A7FA8;
+    font-family: var(--font-utility);
+    font-size: 0.85rem;
+    color: var(--text-faint);
     line-height: 1.5;
   }
 </style>

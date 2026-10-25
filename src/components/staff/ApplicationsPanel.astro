@@ -22,13 +22,13 @@ const { apps, applicationsAvailable, selectedGuildId } = Astro.props;
 </div>
 
 <style>
-  .panel { background: #1A1430; border: 1px solid #2A2145; border-radius: 12px; padding: 1.5rem; }
-  .panel h3 { margin: 0 0 1rem; font-size: 1.1rem; color: #C4B5FD; display: flex; align-items: center; gap: 0.5rem; }
-  .count { font-size: 0.8rem; background: #2A2145; color: #F0EDF7; border-radius: 999px; padding: 0.1rem 0.6rem; }
+  .panel { background: var(--night-card); border: 1px solid var(--card-border); border-radius: 4px; padding: 1.5rem; }
+  .panel h3 { margin: 0 0 1rem; font-family: var(--font-display); font-size: 1.1rem; color: var(--star-silver); display: flex; align-items: center; gap: 0.5rem; }
+  .count { font-family: var(--font-utility); font-size: 0.75rem; background: var(--night-rise); color: var(--star-silver); border-radius: 999px; padding: 0.1rem 0.6rem; }
   .detail-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.75rem; }
-  .detail-list li { display: flex; flex-direction: column; gap: 0.15rem; padding-bottom: 0.75rem; border-bottom: 1px solid #2A2145; }
+  .detail-list li { display: flex; flex-direction: column; gap: 0.15rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--card-border-soft); }
   .detail-list li:last-child { border-bottom: none; padding-bottom: 0; }
-  .detail-primary { color: #F0EDF7; font-weight: 600; font-size: 0.95rem; }
-  .detail-secondary { color: #8A7FA8; font-size: 0.8rem; }
-  .placeholder-note { margin: 0; font-size: 0.9rem; color: #8A7FA8; line-height: 1.5; }
+  .detail-primary { color: var(--text-primary); font-weight: 600; font-size: 0.95rem; }
+  .detail-secondary { color: var(--text-faint); font-family: var(--font-utility); font-size: 0.78rem; }
+  .placeholder-note { margin: 0; font-family: var(--font-body); font-size: 0.9rem; color: var(--text-faint); line-height: 1.5; }
 </style>

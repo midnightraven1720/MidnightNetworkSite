@@ -89,48 +89,48 @@ const { selectedGuildId, panelSaved, ticketServers, ticketGuildOptions, panels, 
 </div>
 
 <style>
-  .saved-note { color: #22C55E; font-weight: 600; font-size: 0.75rem; margin: 0 0 0.75rem; }
-  .placeholder-note { margin: 0; font-size: 0.9rem; color: #8A7FA8; line-height: 1.5; }
+  .saved-note { color: #4ADE80; font-weight: 600; font-size: 0.75rem; margin: 0 0 0.75rem; }
+  .placeholder-note { margin: 0; font-size: 0.9rem; color: var(--text-faint); line-height: 1.5; }
   .server-picker-form { margin-bottom: 0.75rem; }
   .command-select {
-    margin-top: 0.25rem; padding: 0.4rem 0.6rem; background: #1A1430; border: 1px solid #2A2145;
-    border-radius: 6px; color: #F0EDF7; font-size: 0.8rem;
+    margin-top: 0.25rem; padding: 0.4rem 0.6rem; background: var(--night-card); border: 1px solid var(--card-border);
+    border-radius: 6px; color: var(--text-primary); font-size: 0.8rem;
   }
 
   .panel-list { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1rem; }
   .panel-card {
-    background: #0F0B1E; border: 1px solid #2A2145; border-radius: 8px; padding: 0.65rem 0.85rem;
+    background: var(--night-deepest); border: 1px solid var(--card-border); border-radius: 8px; padding: 0.65rem 0.85rem;
   }
   .panel-card summary {
     cursor: pointer; display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
-    font-size: 0.82rem; color: #F0EDF7; list-style: none;
+    font-size: 0.82rem; color: var(--text-primary); list-style: none;
   }
   .panel-card summary::-webkit-details-marker { display: none; }
-  .panel-card summary::before { content: '▸'; color: #8A5CF6; }
+  .panel-card summary::before { content: '▸'; color: var(--accent-violet); }
   .panel-card[open] summary::before { content: '▾'; }
   .panel-kind {
-    font-size: 0.62rem; text-transform: uppercase; color: #8A7FA8; border: 1px solid #2A2145;
+    font-size: 0.62rem; text-transform: uppercase; color: var(--text-faint); border: 1px solid var(--card-border);
     border-radius: 4px; padding: 1px 5px;
   }
-  .panel-card summary code { font-size: 0.68rem; color: #C4B5FD; background: #1A1430; padding: 1px 5px; border-radius: 4px; }
-  .panel-status { margin-left: auto; font-size: 0.62rem; color: #8A7FA8; }
+  .panel-card summary code { font-size: 0.68rem; color: var(--star-silver); background: var(--night-card); padding: 1px 5px; border-radius: 4px; }
+  .panel-status { margin-left: auto; font-size: 0.62rem; color: var(--text-faint); }
   .panel-status.posted { color: #22D3EE; }
 
-  .panel-form { margin-top: 0.85rem; padding-top: 0.75rem; border-top: 1px solid #2A2145; }
+  .panel-form { margin-top: 0.85rem; padding-top: 0.75rem; border-top: 1px solid var(--card-border-soft); }
 
   .inline-form { display: flex; gap: 0.5rem; align-items: center; margin-top: 0.6rem; }
   .inline-form select {
-    flex: 1; padding: 0.4rem; background: #1A1430; border: 1px solid #2A2145; border-radius: 6px;
-    color: #F0EDF7; font-size: 0.75rem;
+    flex: 1; padding: 0.4rem; background: var(--night-card); border: 1px solid var(--card-border); border-radius: 6px;
+    color: var(--text-primary); font-size: 0.75rem;
   }
   .send-btn, .panel-actions button {
-    padding: 0.4rem 0.9rem; background: #2A2145; color: #F0EDF7; border: 1px solid #3A3160;
+    padding: 0.4rem 0.9rem; background: var(--night-rise); color: var(--text-primary); border: 1px solid var(--card-border);
     border-radius: 6px; font-size: 0.72rem; cursor: pointer;
   }
-  .send-btn:hover, .panel-actions button:hover { border-color: #8A5CF6; }
+  .send-btn:hover, .panel-actions button:hover { border-color: var(--accent-violet); }
   .panel-actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
   .danger-btn { color: #F87171; }
   .danger-btn:hover { border-color: #F87171; }
 
-  .new-panel summary { color: #8A5CF6; font-weight: 600; }
+  .new-panel summary { color: var(--accent-violet); font-weight: 600; }
 </style>

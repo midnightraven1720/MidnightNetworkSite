@@ -19,9 +19,12 @@ const user = getUser(Astro);
     <title>{title} | Midnight Network</title>
   </head>
   <body>
+    <div class="sky-gradient"></div>
+    <canvas id="starfield"></canvas>
+
     <input type="checkbox" id="nav-toggle" class="nav-toggle-checkbox" />
     <nav class="tabs">
-      <a href="/" class="site-title">Midnight Network</a>
+      <a href="/" class="site-title"><span class="brand-mark"></span>Midnight Network</a>
 
       <label for="nav-toggle" class="hamburger-btn" aria-label="Toggle menu">
         <span></span>
@@ -65,42 +68,183 @@ const user = getUser(Astro);
         <a href="/privacy-policy">Privacy Policy</a>
       </div>
     </footer>
+
+    <script>
+      (function () {
+        var canvas = document.getElementById('starfield') as HTMLCanvasElement | null;
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var stars: { x: number; y: number; r: number; base: number; phase: number; speed: number }[] = [];
+        var W: number, H: number;
+
+        function resize() {
+          W = canvas!.width = window.innerWidth;
+          H = canvas!.height = document.documentElement.scrollHeight;
+          var count = Math.floor((W * Math.min(H, window.innerHeight * 2.2)) / 7000);
+          stars = [];
+          for (var i = 0; i < count; i++) {
+            stars.push({
+              x: Math.random() * W,
+              y: Math.random() * Math.min(H, window.innerHeight * 2.2),
+              r: Math.random() * 1.1 + 0.3,
+              base: Math.random() * 0.5 + 0.35,
+              phase: Math.random() * Math.PI * 2,
+              speed: Math.random() * 0.015 + 0.005,
+            });
+          }
+        }
+
+        function draw(t: number) {
+          ctx!.clearRect(0, 0, W, H);
+          for (var i = 0; i < stars.length; i++) {
+            var s = stars[i];
+            var alpha = s.base;
+            if (!reduceMotion) alpha = s.base + Math.sin(t * s.speed + s.phase) * 0.3;
+            ctx!.beginPath();
+            ctx!.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            ctx!.fillStyle = 'rgba(233,236,251,' + Math.max(0.08, alpha) + ')';
+            ctx!.fill();
+          }
+          if (!reduceMotion) requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+        draw(0);
+        if (reduceMotion) draw(0);
+      })();
+    </script>
   </body>
 </html>
 <style is:global>
-  body {
-    margin: 0;
-    background-color: #0F0B1E;
-    color: #F0EDF7;
-    font-family: system-ui, sans-serif;
+  :root {
+    --night-deepest: #070a14;
+    --night-base: #0d1128;
+    --night-rise: #141a38;
+    --night-card: #131834;
+    --card-border: rgba(201, 210, 240, 0.14);
+    --card-border-soft: rgba(201, 210, 240, 0.08);
+    --moon-glow: #f3ead2;
+    --moon-glow-dim: #c9bd9c;
+    --star-silver: #c9d2f0;
+    --text-primary: #e9ecfb;
+    --text-muted: #9aa3c9;
+    --text-faint: #6b729a;
+    --accent-violet: #8a78dd;
+    --accent-violet-dim: rgba(138, 120, 221, 0.28);
+    --accent-gold: #cba465;
+    --font-display: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
+    --font-body: Cambria, Georgia, 'Sitka Text', 'Times New Roman', serif;
+    --font-utility: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   }
+
+  * { box-sizing: border-box; }
+
+  html {
+    scrollbar-color: var(--card-border) var(--night-deepest);
+    scrollbar-width: thin;
+  }
+  ::-webkit-scrollbar { width: 12px; height: 12px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--card-border);
+    border-radius: 100px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover { background-color: var(--accent-violet-dim); }
+  ::-webkit-scrollbar-corner { background: transparent; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--night-deepest);
+    color: var(--text-primary);
+    font-family: var(--font-utility);
+  }
+
+  body { position: relative; }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  a { color: inherit; }
+
+  #starfield {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .sky-gradient {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse at 82% 8%, rgba(138, 120, 221, 0.14), transparent 40%),
+      linear-gradient(180deg, var(--night-deepest) 0%, var(--night-base) 55%, var(--night-rise) 100%);
+    pointer-events: none;
+  }
+
   .nav-toggle-checkbox {
     display: none;
   }
+
   .tabs {
+    position: sticky;
+    top: 0;
+    z-index: 20;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0.85rem 1.5rem;
-    background-color: #150F26;
-    border-bottom: 1px solid #2A2145;
-    position: sticky;
-    top: 0;
-    z-index: 20;
+    background: rgba(7, 10, 20, 0.6);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--card-border-soft);
     gap: 1rem;
     flex-wrap: nowrap;
   }
+
   .site-title {
-    color: #F0EDF7;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--star-silver);
     text-decoration: none;
+    font-family: var(--font-display);
     font-size: 1.1rem;
-    font-weight: 700;
     letter-spacing: 0.02em;
     white-space: nowrap;
     flex-shrink: 0;
   }
-  .site-title:hover {
-    color: #C4B5FD;
+  .site-title:hover { color: var(--text-primary); }
+
+  .brand-mark {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--moon-glow);
+    position: relative;
+    flex: none;
+    box-shadow: 0 0 10px rgba(243, 234, 210, 0.5);
+  }
+  .brand-mark::after {
+    content: '';
+    position: absolute;
+    top: -18%;
+    left: -35%;
+    width: 105%;
+    height: 105%;
+    border-radius: 50%;
+    background: var(--night-base);
   }
 
   .hamburger-btn {
@@ -117,7 +261,7 @@ const user = getUser(Astro);
     display: block;
     height: 2px;
     width: 100%;
-    background-color: #F0EDF7;
+    background-color: var(--star-silver);
     border-radius: 2px;
     transition: transform 0.2s, opacity 0.2s;
   }
@@ -132,48 +276,55 @@ const user = getUser(Astro);
   }
   .tab-links {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.25rem;
     flex-wrap: nowrap;
     flex-shrink: 1;
     min-width: 0;
+    font-family: var(--font-utility);
   }
   .tab {
-    color: #F0EDF7;
+    position: relative;
+    color: var(--text-muted);
     text-decoration: none;
-    font-size: 0.9rem;
-    padding: 0.45rem 0.7rem;
-    border-radius: 6px;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    padding: 0.5rem 0.75rem;
     white-space: nowrap;
-    transition: background-color 0.2s, color 0.2s;
+    transition: color 0.2s ease;
   }
-  .tab:hover {
-    background-color: #8A5CF6;
+  .tab:hover { color: var(--star-silver); }
+  .tab.active { color: var(--star-silver); }
+  .tab.active::after {
+    content: '';
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 2px;
+    height: 1px;
+    background: var(--accent-violet);
+    box-shadow: 0 0 6px var(--accent-violet-dim);
   }
-  .tab.active {
-    background-color: #8A5CF6;
-    color: #F0EDF7;
-    font-weight: 600;
-  }
+
   .auth-area {
     display: flex;
     align-items: center;
     flex-shrink: 0;
+    font-family: var(--font-utility);
   }
   .login-button {
     display: inline-block;
-    padding: 0.45rem 1rem;
-    background-color: #5865F2;
-    color: #FFFFFF;
+    padding: 0.5rem 1.1rem;
+    background: var(--accent-violet);
+    color: var(--night-deepest);
     text-decoration: none;
-    border-radius: 6px;
+    border-radius: 100px;
     font-weight: 600;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     white-space: nowrap;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s ease;
   }
-  .login-button:hover {
-    background-color: #4752C4;
-  }
+  .login-button:hover { background: var(--moon-glow); }
+
   .user-badge {
     display: flex;
     align-items: center;
@@ -183,69 +334,118 @@ const user = getUser(Astro);
     width: 28px;
     height: 28px;
     border-radius: 50%;
+    border: 1px solid var(--card-border);
   }
   .username {
     font-size: 0.85rem;
     font-weight: 600;
-    color: #C4B5FD;
+    color: var(--star-silver);
     white-space: nowrap;
     text-decoration: none;
   }
   .logout-link {
-    color: #8A7FA8;
+    color: var(--text-faint);
     text-decoration: none;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
     white-space: nowrap;
-    transition: background-color 0.2s;
+    transition: color 0.2s ease;
   }
-  .logout-link:hover {
-    background-color: #2A2145;
-    color: #F0EDF7;
-  }
-  footer {
+  .logout-link:hover { color: var(--star-silver); }
+
+  /* ===== Reusable page hero (interior pages: About, Partnerships, Server profiles) ===== */
+  .page-hero {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
-    padding: 2rem;
-    color: #8A7FA8;
-    font-size: 0.9rem;
+    padding: 64px 32px 56px;
+    overflow: hidden;
   }
-  .footer-links {
-    margin-top: 0.5rem;
+  .page-hero .moon {
+    position: absolute;
+    top: -10px;
+    right: 10%;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 35%, #fbf5e4, var(--moon-glow) 60%, var(--moon-glow-dim) 100%);
+    box-shadow: 0 0 50px rgba(243, 234, 210, 0.28), 0 0 100px rgba(243, 234, 210, 0.12);
   }
-  .footer-links a {
-    color: #8A7FA8;
-    text-decoration: none;
+  .page-hero .moon::after {
+    content: '';
+    position: absolute;
+    top: -12%;
+    left: -32%;
+    width: 108%;
+    height: 108%;
+    border-radius: 50%;
+    background: var(--night-deepest);
   }
-  .footer-links a:hover {
-    color: #C4B5FD;
+  .page-hero-eyebrow {
+    font-family: var(--font-utility);
+    font-size: 0.76rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-violet);
+    margin-bottom: 14px;
   }
-  .footer-dot {
-    margin: 0 0.5rem;
-    color: #8A7FA8;
+  .page-hero h1 {
+    font-size: clamp(2rem, 5vw, 3.1rem);
+    color: var(--star-silver);
+    text-shadow: 0 0 40px rgba(201, 210, 240, 0.16);
   }
+  .page-hero-sub {
+    margin-top: 14px;
+    max-width: 52ch;
+    font-family: var(--font-body);
+    color: var(--text-muted);
+    font-size: 1.05rem;
+  }
+  @media (max-width: 640px) {
+    .page-hero .moon { width: 60px; height: 60px; top: 0; right: 6%; }
+  }
+
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 2.5rem 2rem;
+    border-top: 1px solid var(--card-border-soft);
+    color: var(--text-faint);
+    font-family: var(--font-utility);
+    font-size: 0.85rem;
+  }
+  .footer-links { margin-top: 0.5rem; }
+  .footer-links a { color: var(--text-faint); text-decoration: none; }
+  .footer-links a:hover { color: var(--star-silver); }
+  .footer-dot { margin: 0 0.5rem; color: var(--text-faint); }
+
   .section {
+    position: relative;
+    z-index: 1;
     padding: 4rem 2rem;
     text-align: center;
   }
   .section h2 {
-    font-size: 2rem;
-    color: #C4B5FD;
+    font-size: clamp(1.7rem, 3.4vw, 2.3rem);
+    color: var(--star-silver);
   }
 
   /* ===== Mobile nav ===== */
   @media (max-width: 768px) {
-    .hamburger-btn {
-      display: flex;
-    }
+    .hamburger-btn { display: flex; }
 
     .nav-menu {
       position: absolute;
       top: 100%;
       left: 0;
       right: 0;
-      background-color: #150F26;
-      border-bottom: 1px solid #2A2145;
+      background: var(--night-base);
+      border-bottom: 1px solid var(--card-border-soft);
       flex-direction: column;
       align-items: stretch;
       gap: 0;
@@ -253,30 +453,21 @@ const user = getUser(Astro);
       overflow: hidden;
       transition: max-height 0.25s ease;
     }
-    .tab-links {
-      flex-direction: column;
-      gap: 0;
-      padding: 0.5rem 0;
-    }
-    .tab {
-      padding: 0.9rem 1.5rem;
-      border-radius: 0;
-    }
+    .tab-links { flex-direction: column; gap: 0; padding: 0.5rem 0; }
+    .tab { padding: 0.9rem 1.5rem; }
+    .tab.active::after { display: none; }
+    .tab.active { background: var(--night-card); }
     .auth-area {
       padding: 0.75rem 1.5rem 1rem;
-      border-top: 1px solid #2A2145;
+      border-top: 1px solid var(--card-border-soft);
     }
-    .login-button {
-      width: 100%;
-      text-align: center;
-    }
-    .user-badge {
-      justify-content: space-between;
-      width: 100%;
-    }
+    .login-button { width: 100%; text-align: center; }
+    .user-badge { justify-content: space-between; width: 100%; }
 
-    .nav-toggle-checkbox:checked ~ .tabs .nav-menu {
-      max-height: 500px;
-    }
+    .nav-toggle-checkbox:checked ~ .tabs .nav-menu { max-height: 500px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
   }
 </style>

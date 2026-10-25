@@ -2,35 +2,68 @@
 const pathname = Astro.url.pathname;
 ---
 <aside class="sidebar">
-  <div class="brand-header">Midnight Network</div>
+  <div class="sidebar-header"><h3>Midnight Network</h3></div>
 
   <nav class="nav-section">
     <h4 class="nav-label">MY ACTIVITY</h4>
     <ul class="nav-list">
-      <li><a href="/user-dashboard" class={pathname === '/user-dashboard' ? 'active' : ''}>Overview</a></li>
-      <li><a href="/dashboard/tickets" class={pathname === '/dashboard/tickets' ? 'active' : ''}>Tickets & Support</a></li>
-      <li><a href="/dashboard/applications" class={pathname === '/dashboard/applications' ? 'active' : ''}>Staff Applications</a></li>
-      <li><a href="/dashboard/status" class={pathname === '/dashboard/status' ? 'active' : ''}>RP Scenes & Turns</a></li>
-      <li><a href="/dashboard/events" class={pathname === '/dashboard/events' ? 'active' : ''}>Upcoming Events</a></li>
+      <li><a href="/user-dashboard" class={`nav-item ${pathname === '/user-dashboard' ? 'active' : ''}`}>Overview</a></li>
+      <li><a href="/dashboard/tickets" class={`nav-item ${pathname === '/dashboard/tickets' ? 'active' : ''}`}>Tickets & Support</a></li>
+      <li><a href="/dashboard/applications" class={`nav-item ${pathname === '/dashboard/applications' ? 'active' : ''}`}>Staff Applications</a></li>
+      <li><a href="/dashboard/status" class={`nav-item ${pathname === '/dashboard/status' ? 'active' : ''}`}>RP Scenes & Turns</a></li>
+      <li><a href="/dashboard/events" class={`nav-item ${pathname === '/dashboard/events' ? 'active' : ''}`}>Upcoming Events</a></li>
     </ul>
   </nav>
 
   <nav class="nav-section">
     <h4 class="nav-label">BOT PROFILE</h4>
     <ul class="nav-list">
-      <li><a href="/dashboard/edit" class={pathname === '/dashboard/edit' ? 'active' : ''}>Manage Profiles</a></li>
-      <li><a href="/dashboard/bonds" class={pathname === '/dashboard/bonds' ? 'active' : ''}>Relationships & Bonds</a></li>
-      <li><a href="/dashboard/consent" class={pathname === '/dashboard/consent' ? 'active' : ''}>Consent Settings</a></li>
-      <li><a href="/dashboard/wallet" class={pathname === '/dashboard/wallet' ? 'active' : ''}>Wallet</a></li>
+      <li><a href="/dashboard/edit" class={`nav-item ${pathname === '/dashboard/edit' ? 'active' : ''}`}>Manage Profiles</a></li>
+      <li><a href="/dashboard/bonds" class={`nav-item ${pathname === '/dashboard/bonds' ? 'active' : ''}`}>Relationships & Bonds</a></li>
+      <li><a href="/dashboard/consent" class={`nav-item ${pathname === '/dashboard/consent' ? 'active' : ''}`}>Consent Settings</a></li>
+      <li><a href="/dashboard/wallet" class={`nav-item ${pathname === '/dashboard/wallet' ? 'active' : ''}`}>Wallet</a></li>
     </ul>
   </nav>
 </aside>
 
 <style>
-  .sidebar { width: 220px; flex-shrink: 0; background: #0F0B1E; border-right: 1px solid #2A2145; padding-top: 0.5rem; }
-  .brand-header { padding: 0.5rem 1rem; font-weight: bold; color: #8A5CF6; border-bottom: 1px solid #2A2145; }
-  .nav-label { font-size: 0.7rem; color: #8A7FA8; padding: 0.5rem 1rem; margin: 0; }
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: var(--night-base);
+    border-right: 1px solid var(--card-border-soft);
+    align-self: flex-start;
+    position: sticky;
+    top: 0;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  .sidebar-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--card-border-soft); }
+  .sidebar-header h3 { font-family: var(--font-display); font-size: 1.05rem; margin: 0; color: var(--star-silver); }
+  .nav-section { padding-top: 0.4rem; }
+  .nav-label {
+    font-family: var(--font-utility);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    color: var(--text-faint);
+    padding: 0.75rem 1.25rem 0.25rem;
+    margin: 0;
+  }
   .nav-list { list-style: none; padding: 0; margin: 0; }
-  .nav-list li a { display: block; padding: 0.5rem 1rem; color: #B8AED0; text-decoration: none; font-size: 0.85rem; }
-  .nav-list li a.active { background: #1A1430; border-left: 2px solid #8A5CF6; color: white; font-weight: bold; }
+  .nav-item {
+    display: block;
+    padding: 0.65rem 1.25rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-family: var(--font-utility);
+    font-size: 0.85rem;
+    transition: color 0.2s ease, background-color 0.2s ease;
+  }
+  .nav-item:hover { color: var(--star-silver); }
+  .nav-item.active {
+    background: var(--night-card);
+    color: var(--star-silver);
+    font-weight: 600;
+    box-shadow: inset 2px 0 0 var(--accent-violet);
+  }
 </style>

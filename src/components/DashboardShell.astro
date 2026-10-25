@@ -1,0 +1,104 @@
+---
+// Shared sidebar-shell layout — matches /bots' dashboard-wrapper/sidebar/main-content
+// pattern exactly, so every page using this looks structurally identical to it.
+interface NavItem {
+  href: string;
+  label: string;
+  active?: boolean;
+  icon?: string;
+  badge?: string;
+}
+interface Props {
+  heading: string;
+  navItems?: NavItem[];
+}
+const { heading, navItems = [] } = Astro.props as Props;
+const currentHash = Astro.url.hash;
+---
+<div class="dashboard-wrapper">
+  <aside class="sidebar">
+    <div class="sidebar-header"><h3>{heading}</h3></div>
+    <nav>
+      {navItems.map((item) => (
+        <a
+          href={item.href}
+          class={`nav-item ${(item.active ?? item.href === currentHash) ? 'active' : ''}`}
+        >
+          {item.icon && <img src={item.icon} alt="" class="nav-item-icon" />}
+          <span class="nav-item-label">{item.label}</span>
+          {item.badge && <span class="nav-item-badge">{item.badge}</span>}
+        </a>
+      ))}
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <slot />
+  </main>
+</div>
+
+<style>
+  .dashboard-wrapper { display: flex; position: relative; z-index: 1; }
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: var(--night-base);
+    border-right: 1px solid var(--card-border-soft);
+    align-self: flex-start;
+    position: sticky;
+    top: 0;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  .sidebar-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--card-border-soft); }
+  .sidebar-header h3 { font-family: var(--font-display); font-size: 1.05rem; margin: 0; color: var(--star-silver); }
+  .sidebar nav { display: flex; flex-direction: column; padding: 0.4rem 0; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.65rem 1.25rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: var(--font-utility);
+    text-decoration: none;
+    transition: color 0.2s ease, background-color 0.2s ease;
+  }
+  .nav-item:hover { color: var(--star-silver); }
+  .nav-item.active { color: var(--star-silver); box-shadow: inset 2px 0 0 var(--accent-violet); background: var(--night-card); }
+  .nav-item-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--card-border);
+    flex-shrink: 0;
+  }
+  .nav-item-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .nav-item-badge {
+    font-size: 0.6rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    border: 1px solid rgba(203, 164, 101, 0.35);
+    padding: 2px 6px;
+    border-radius: 100px;
+    flex-shrink: 0;
+  }
+  .main-content { flex: 1; min-width: 0; padding-bottom: 3rem; }
+
+  @media (max-width: 780px) {
+    .dashboard-wrapper { flex-direction: column; }
+    .sidebar {
+      width: 100%;
+      position: static;
+      max-height: none;
+      border-right: none;
+      border-bottom: 1px solid var(--card-border-soft);
+    }
+    .sidebar nav { flex-direction: row; overflow-x: auto; padding: 0.4rem; }
+    .nav-item { white-space: nowrap; }
+    .nav-item.active { box-shadow: inset 0 -2px 0 var(--accent-violet); }
+  }
+</style>
