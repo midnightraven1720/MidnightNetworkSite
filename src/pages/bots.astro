@@ -1,0 +1,74 @@
+---
+import Layout from '../layouts/Layout.astro';
+import data from '../data/generated/bots.json';
+import { BOT_COLORS, BOT_EMOJI } from '../data/site.js';
+import { md } from '../lib/md.js';
+---
+<Layout title="Our bots" description="What each of the server's bots does, and the commands members can use.">
+  <section class="hero small">
+    <div class="eyebrow">Made for this server</div>
+    <h1 class="title">Our <em>bots</em></h1>
+    <p class="tagline">Pick a bot to see what it does in plain words, then the commands you can use. Staff-only commands aren't listed.</p>
+  </section>
+
+  <section class="picker" data-tabs="hash">
+    <div class="tabs side" role="tablist">
+      {data.bots.map((b) => (
+        <button type="button" role="tab" data-tab={b.key} style={`--a:${BOT_COLORS[b.key]}`}>
+          <span class="ic">{BOT_EMOJI[b.key]}</span>
+          <span><b>{b.name}</b><small>{b.commands.length} for members</small></span>
+        </button>
+      ))}
+    </div>
+    {data.bots.map((b) => (
+      <article data-panel={b.key} role="tabpanel" class="stage" style={`--a:${BOT_COLORS[b.key]}`}>
+        <div class="ey">{BOT_EMOJI[b.key]} {b.blurb}</div>
+        <h2>{b.name}</h2>
+        {b.what && <p class="q">{b.what}</p>}
+        {b.how.length > 0 && (
+          <div class="how">
+            {b.how.map((h) => <p set:html={md(h)} />)}
+          </div>
+        )}
+        {b.commands.length > 0 ? (
+          <details class="faq">
+            <summary>All {b.commands.length} member commands</summary>
+            <div class="cmds">
+              {b.commands.map((c) => (
+                <div><code>{c.name}</code><span>{c.description}</span></div>
+              ))}
+            </div>
+          </details>
+        ) : (
+          <p class="muted small">Members don't need any commands for this one - it works through buttons and channels.</p>
+        )}
+        {b.staffCommandCount > 0 && <p class="muted small">Plus {b.staffCommandCount} staff command{b.staffCommandCount === 1 ? '' : 's'}.</p>}
+      </article>
+    ))}
+  </section>
+</Layout>
+
+<style>
+  .picker { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 18px; align-items: start; }
+  .tabs.side { display: grid; gap: 8px; margin: 0; justify-content: stretch; }
+  .tabs.side button { --a: var(--gold); display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: 10px; align-items: center; text-align: left; padding: 9px 12px; border-radius: 12px; border-left: 5px solid var(--a); }
+  .tabs.side button[aria-selected='true'] { border-color: var(--a); background: var(--panel-3); color: var(--text); }
+  .tabs.side .ic { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 9px; border: 1px solid var(--line); font-size: 20px; }
+  .tabs.side b { display: block; font-size: 15px; color: #fff; line-height: 1.2; }
+  .tabs.side small { font: 700 9px var(--mono); letter-spacing: 1.5px; text-transform: uppercase; color: var(--a); }
+  .stage { --a: var(--gold); border: 1px solid var(--a); border-radius: 22px; padding: 26px 24px; background: linear-gradient(135deg, var(--panel), #0a0e2e); display: grid; gap: 12px; }
+  .stage h2 { font-size: clamp(30px, 5vw, 48px); margin: 0; }
+  .stage .ey { font: 700 11px var(--mono); letter-spacing: 2px; text-transform: uppercase; color: var(--a); }
+  .stage .q { font: italic 400 19px/1.4 var(--display); color: var(--gold-soft); border-left: 3px solid var(--a); padding-left: 12px; margin: 0; }
+  .stage .how { display: grid; gap: 8px; color: #d9d1ff; max-width: 70ch; }
+  .stage .how p { margin: 0; }
+  .cmds { display: grid; gap: 6px; }
+  .cmds div { display: grid; grid-template-columns: minmax(150px, max-content) minmax(0, 1fr); gap: 12px; align-items: baseline; padding: 6px 0; border-top: 1px solid #ffffff14; font-size: 14px; }
+  @media (max-width: 760px) {
+    .picker { grid-template-columns: minmax(0, 1fr); }
+    .tabs.side { display: flex; overflow-x: auto; padding-bottom: 6px; }
+    .tabs.side button { flex: 0 0 auto; min-width: 200px; }
+    .stage { padding: 18px 16px; }
+    .cmds div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  }
+</style>

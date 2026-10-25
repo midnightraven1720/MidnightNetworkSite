@@ -1,0 +1,99 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getUser, isStaff, loginUrl } from '../lib/session.js';
+import { hasDatabase } from '../lib/db.js';
+import { staffOverview, openTickets, openVerifications, pendingApplications, channelLink } from '../lib/member-data.js';
+
+const user = getUser(Astro);
+if (!user) return Astro.redirect(loginUrl(Astro));
+if (!hasDatabase() || !(await isStaff(user))) return Astro.redirect('/me');
+
+const [o, tickets, verifications, applications] = await Promise.all([staffOverview(), openTickets(), openVerifications(), pendingApplications()]);
+const ago = (d: Date) => {
+  const mins = Math.round((Date.now() - new Date(d).getTime()) / 60000);
+  if (mins < 60) return `${mins} min ago`;
+  if (mins < 48 * 60) return `${Math.round(mins / 60)} h ago`;
+  return `${Math.round(mins / 1440)} days ago`;
+};
+const backupAge = o.lastBackup ? (Date.now() - new Date(o.lastBackup.created_at).getTime()) / 3600000 : null;
+---
+<Layout title="Staff">
+  <section class="hero small">
+    <div class="eyebrow">Staff only</div>
+    <h1 class="title">Staff <em>desk</em></h1>
+    <p class="tagline">What's waiting right now. Everything opens in Discord, where you deal with it as usual.</p>
+    <div class="counts">
+      <div><strong>{o.tickets}</strong><span>Open tickets</span></div>
+      <div><strong>{o.verifications}</strong><span>Verifications</span></div>
+      <div><strong>{o.applications}</strong><span>Applications</span></div>
+      <div><strong>{o.members}</strong><span>Members seen</span></div>
+    </div>
+  </section>
+
+  <section class="box gold" data-tabs="hash">
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" data-tab="tickets">🎫 Tickets</button>
+      <button type="button" role="tab" data-tab="verify">✅ Verification</button>
+      <button type="button" role="tab" data-tab="apps">📝 Applications</button>
+      <button type="button" role="tab" data-tab="safety">🛡️ Safety</button>
+    </div>
+
+    <div data-panel="tickets" role="tabpanel">
+      <p class="sub">Oldest first. Unclaimed ones need someone.</p>
+      {tickets.length === 0 && <p class="note ok">No open tickets. 🎉</p>}
+      <div class="rows">
+        {tickets.map((t) => (
+          <div class="row">
+            <div class="t"><b>{t.label || 'Ticket'}{t.reason ? ` - ${t.reason.slice(0, 80)}` : ''}</b><span>Opened {ago(t.created_at)} · {t.claimed_by ? 'claimed' : '⚠️ not claimed'}</span></div>
+            {t.channel_id && <a class="btn small" href={channelLink(t.channel_id)}>Open</a>}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div data-panel="verify" role="tabpanel">
+      <p class="sub">Members waiting to be verified.</p>
+      {verifications.length === 0 && <p class="note ok">Nobody waiting.</p>}
+      <div class="rows">
+        {verifications.map((v) => (
+          <div class="row">
+            <div class="t"><b>{v.username || v.user_id}</b><span>Waiting {ago(v.created_at)} · {v.claimed_by ? 'claimed' : '⚠️ not claimed'}</span></div>
+            {v.channel_id && <a class="btn small" href={channelLink(v.channel_id)}>Open</a>}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div data-panel="apps" role="tabpanel">
+      <p class="sub">Staff applications waiting for a decision. Review them in the applications channel.</p>
+      {applications.length === 0 && <p class="note ok">No applications waiting.</p>}
+      <div class="rows">
+        {applications.map((a) => (
+          <div class="row">
+            <div class="t"><b>Member {a.user_id}</b><span>Sent {ago(a.created_at)}</span></div>
+            <span class="chip on">{a.status === 'interview' ? 'Interview' : 'Waiting'}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div data-panel="safety" role="tabpanel">
+      <div class="grid">
+        <div class="card" style={`--a:${o.alt?.enabled ? 'var(--green)' : 'var(--rose)'}`}>
+          <span class="k">🕵️ Alt-account check</span>
+          <b>{o.alt?.enabled ? 'On' : 'Off'}</b>
+          {o.alt?.enabled ? (
+            <p>New accounts: under {o.alt.min_age_days} days · Auto-kick: {o.alt.auto_kick_days > 0 ? `under ${o.alt.auto_kick_days} days` : 'off'}{o.alt.channel_id ? '' : ' · ⚠️ no alert channel set'}</p>
+          ) : (
+            <p>Turn it on in Discord: <code>/alt-check on:True alert_channel:</code></p>
+          )}
+        </div>
+        <div class="card" style={`--a:${backupAge !== null && backupAge < 30 && !o.lastBackup?.error ? 'var(--green)' : 'var(--rose)'}`}>
+          <span class="k">💾 Nightly data backup</span>
+          <b>{o.lastBackup ? ago(o.lastBackup.created_at) : 'None yet'}</b>
+          <p>{o.lastBackup?.error ? `Last one failed: ${o.lastBackup.error}` : o.lastBackup ? `${Number(o.lastBackup.rows).toLocaleString()} rows saved to the backup server.` : 'Set it up with /data-backup in Lantern.'}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

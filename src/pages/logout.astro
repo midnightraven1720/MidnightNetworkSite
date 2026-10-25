@@ -1,4 +1,6 @@
 ---
-Astro.cookies.delete('midnight_session', { path: '/' });
+import { clearSession } from '../lib/session.js';
+
+clearSession(Astro);
 return Astro.redirect('/');
 ---

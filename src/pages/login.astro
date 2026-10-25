@@ -1,9 +1,23 @@
 ---
-const clientId = import.meta.env.DISCORD_CLIENT_ID;
-const siteUrl = import.meta.env.SITE_URL || Astro.url.origin;
-const redirectUri = `${siteUrl}/auth/callback`;
+import crypto from 'node:crypto';
+import { env, siteUrl } from '../lib/env.js';
 
-const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=identify`;
+// A random state ties Discord's reply to this browser (stops login CSRF).
+const state = crypto.randomBytes(16).toString('hex');
+const cookie = { path: '/', httpOnly: true, sameSite: 'lax', secure: import.meta.env.PROD, maxAge: 600 };
+Astro.cookies.set('oauth_state', state, cookie);
+const next = Astro.url.searchParams.get('next') || '';
+if (next.startsWith('/') && !next.startsWith('//')) Astro.cookies.set('oauth_next', next, cookie);
 
-return Astro.redirect(discordAuthUrl);
+const params = new URLSearchParams({
+  client_id: env('DISCORD_CLIENT_ID') || '',
+  redirect_uri: `${siteUrl(Astro)}/auth/callback`,
+  response_type: 'code',
+  // identify: your name and picture. guilds.members.read: your roles in our
+  // server, to know if you're a member or staff. Nothing else.
+  scope: 'identify guilds.members.read',
+  state,
+  prompt: 'none',
+});
+return Astro.redirect(`https://discord.com/oauth2/authorize?${params}`);
 ---

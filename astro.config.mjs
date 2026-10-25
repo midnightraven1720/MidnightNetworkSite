@@ -8,15 +8,19 @@ export default defineConfig({
   adapter: node({
     mode: 'standalone',
   }),
+  // Forms (DM card, time zone, reminders) only accept posts from this site.
   security: {
-    checkOrigin: false,
+    checkOrigin: true,
   },
+  // Old pages from the previous network point at their new homes.
   redirects: {
-    '/servers/server-1': '/servers/den-of-desire',
-    '/servers/server-2': '/servers/underground-gamer-lounge',
-    '/servers/server-3': '/servers/chaos-midnight-house',
-    '/servers/server-4': '/servers/smutty-library-cafe',
-    '/servers/server-5': '/servers/velvet-cosy-collars',
-    '/servers/server-6': '/servers/advertising-lounge',
+    '/user-dashboard': '/me',
+    '/staff-dashboard': '/staff',
+    '/account': '/me',
+    '/about-us': '/start',
+    '/partnerships': '/bots#partnership-bot',
+    '/servers': '/',
+    '/servers/[...slug]': '/',
+    '/dashboard/[...slug]': '/me',
   },
 });

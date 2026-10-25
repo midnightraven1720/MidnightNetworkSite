@@ -1,282 +1,93 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import DashboardShell from '../components/DashboardShell.astro';
-import { servers } from '../data/servers.js';
+import data from '../data/generated/bots.json';
+import { AREAS, BOT_COLORS, BOT_EMOJI } from '../data/site.js';
+import { INVITE_URL } from '../lib/env.js';
+import { hasDatabase } from '../lib/db.js';
+import { getEvents } from '../lib/member-data.js';
+import { what } from '../lib/md.js';
 
-const stats = [
-  { label: "Servers", value: String(servers.length) },
-  { label: "Bots", value: "9" },
-  { label: "Members", value: "1,000+" },
-  { label: "Network", value: "1" },
-];
-
-const featuredServers = servers.slice(0, 3);
-
-const navItems = [
-  { href: '#top', label: 'Welcome' },
-  { href: '#about', label: 'About' },
-  { href: '#stats', label: 'Network Totals' },
-  { href: '#featured', label: 'Featured Servers' },
-  { href: '#join', label: 'Join' },
-];
+const firstSteps = data.topics.find((t) => t.key === 'new')?.items || [];
+const commandCount = data.bots.reduce((n, b) => n + b.totalCommands, 0);
+const events = hasDatabase() ? await getEvents().catch(() => []) : [];
+const loginNote = Astro.url.searchParams.get('login');
+const when = (d: Date, tz: string | null) =>
+  new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: tz || 'UTC', timeZoneName: 'short' }).format(new Date(d));
 ---
-<Layout title="Home">
-  <DashboardShell heading="Midnight Network" navItems={navItems}>
-  <header class="hero" id="top">
-    <div class="moon" aria-hidden="true"></div>
-    <div class="hero-eyebrow">Midnight Network</div>
-    <h1>One network. Every night.</h1>
-    <p class="hero-tagline">A connected universe of communities, under one night sky.</p>
-    <div class="scroll-cue"><span></span>Scroll</div>
-  </header>
+<Layout title="Welcome">
+  {loginNote === 'cancelled' && <p class="note">Login was cancelled - no problem. You can look around without logging in.</p>}
+  {loginNote === 'failed' && <p class="note warn">Discord didn't let the login finish. Please try again in a minute.</p>}
 
-  <section class="section intro" id="about">
-    <div class="eyebrow">About</div>
-    <h2>What is Midnight Network?</h2>
-    <p>Midnight Network is a collection of 18+ Discord communities, connected under one network rather than existing as separate, unrelated servers. Each server has its own identity and focus, giving members the freedom to find the community that actually fits what they're into.</p>
+  <section class="hero">
+    <div class="eyebrow">Discord community · 18+</div>
+    <h1 class="title">Black Rose <em>In Silver</em></h1>
+    <p class="tagline">A friendly adult community for books, gaming, streaming and roleplay - with bots that do the busywork, so you can just talk to people.</p>
+    <div class="counts">
+      <div><strong>{AREAS.length}</strong><span>Areas</span></div>
+      <div><strong>{data.bots.length}</strong><span>Bots</span></div>
+      <div><strong>{commandCount}</strong><span>Commands</span></div>
+    </div>
+    <div class="actions">
+      {INVITE_URL && <a class="btn solid" href={INVITE_URL}>Join the server</a>}
+      <a class="btn gold" href="/start">New here? Start here</a>
+      <a class="btn" href="/me">My space</a>
+    </div>
   </section>
 
-  <section class="section stats" id="stats">
-    <div class="stats-grid">
-      {stats.map(stat => (
-        <div class="stat">
-          <span class="stat-value">{stat.value}</span>
-          <span class="stat-label">{stat.label}</span>
+  <section class="box">
+    <p class="t2">Your first ten minutes</p>
+    <p class="sub">You don't need to learn anything first. Do these in order and you're settled in.</p>
+    <div class="steps">
+      {firstSteps.map((s) => (
+        <div class="step">
+          <b set:html={what(s.what)} />
+          <p>{s.how.replace(/\*\*/g, '')}</p>
+        </div>
+      ))}
+    </div>
+    <div class="actions"><a class="btn gold" href="/start">See everything by topic</a></div>
+  </section>
+
+  <section class="box">
+    <p class="t2">Find your corner</p>
+    <p class="sub">Pick the areas you want on the areas panel in Discord. Some open up as you level up by chatting.</p>
+    <div class="grid">
+      {AREAS.map((a) => (
+        <div class="card" style={`--a:${a.color}`}>
+          <span class="k">{a.emoji} Area</span>
+          <b>{a.name}</b>
+          <p>{a.text}</p>
         </div>
       ))}
     </div>
   </section>
 
-  <section class="section featured" id="featured">
-    <div class="eyebrow">Explore</div>
-    <h2>Featured Servers</h2>
-    <div class="card-grid">
-      {featuredServers.map(server => (
-        <a href={`/servers/${server.slug}`} class="card">
-          <h3>{server.name}</h3>
-          <p>{server.description}</p>
+  {events.length > 0 && (
+    <section class="box">
+      <p class="t2">Coming up</p>
+      <p class="sub">Events run in the server. Press Going on the event post to get a reminder.</p>
+      <div class="rows">
+        {events.slice(0, 5).map((e) => (
+          <div class="row">
+            <div class="t"><b>{e.title}</b><span>{when(e.starts_at, e.tz)}{e.location ? ` · ${e.location}` : ''} · {e.going} going</span></div>
+            {e.link && <a class="btn small" href={e.link}>Open in Discord</a>}
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="box">
+    <p class="t2">Meet the bots</p>
+    <p class="sub">Each bot looks after one part of the server. You'll mostly use the first few.</p>
+    <div class="grid">
+      {data.bots.map((b) => (
+        <a class="card" href={`/bots#${b.key}`} style={`--a:${BOT_COLORS[b.key]}`}>
+          <span class="k">{BOT_EMOJI[b.key]} {b.commands.length} for members</span>
+          <b>{b.name}</b>
+          <p>{b.blurb}</p>
         </a>
       ))}
     </div>
-    <a href="/servers" class="view-all">View All Servers &rarr;</a>
   </section>
-
-  <section class="cta" id="join">
-    <div class="moon cta-moon" aria-hidden="true"></div>
-    <h2>Ready to Join?</h2>
-    <p>Step into the Midnight Network and find your community.</p>
-    <a href="#" class="cta-button">Join Our Discord</a>
-  </section>
-  </DashboardShell>
 </Layout>
-<style>
-  .hero {
-    position: relative;
-    z-index: 1;
-    min-height: 74vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 80px 32px 60px;
-  }
-
-  .moon {
-    position: absolute;
-    top: 10%;
-    right: 12%;
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 38% 35%, #fbf5e4, var(--moon-glow) 60%, var(--moon-glow-dim) 100%);
-    box-shadow: 0 0 60px rgba(243, 234, 210, 0.32), 0 0 120px rgba(243, 234, 210, 0.14);
-  }
-  .moon::after {
-    content: '';
-    position: absolute;
-    top: -12%;
-    left: -32%;
-    width: 108%;
-    height: 108%;
-    border-radius: 50%;
-    background: var(--night-deepest);
-  }
-
-  .hero-eyebrow {
-    font-family: var(--font-utility);
-    font-size: 0.78rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--accent-violet);
-    margin-bottom: 20px;
-  }
-
-  .hero h1 {
-    font-size: clamp(2.4rem, 6.5vw, 4rem);
-    letter-spacing: 0.01em;
-    color: var(--star-silver);
-    text-shadow: 0 0 40px rgba(201, 210, 240, 0.16);
-  }
-
-  .hero-tagline {
-    margin-top: 18px;
-    max-width: 42ch;
-    color: var(--text-muted);
-    font-family: var(--font-body);
-    font-size: 1.1rem;
-    font-style: italic;
-  }
-
-  .scroll-cue {
-    margin-top: 48px;
-    font-family: var(--font-utility);
-    font-size: 0.68rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--text-faint);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-  .scroll-cue span {
-    width: 1px;
-    height: 30px;
-    background: linear-gradient(var(--text-faint), transparent);
-  }
-
-  .eyebrow {
-    font-family: var(--font-utility);
-    font-size: 0.72rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--text-faint);
-    margin-bottom: 10px;
-  }
-
-  .intro p {
-    max-width: 60ch;
-    margin: 14px auto 0;
-    color: var(--text-muted);
-    font-family: var(--font-body);
-    line-height: 1.7;
-  }
-
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 1.25rem;
-    max-width: 800px;
-    margin: 1rem auto 0;
-    padding: 0 1rem;
-  }
-  .stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: var(--night-card);
-    border: 1px solid var(--card-border);
-    border-radius: 4px;
-    padding: 1.5rem 1rem;
-  }
-  .stat-value {
-    font-family: var(--font-display);
-    font-size: 2rem;
-    color: var(--star-silver);
-  }
-  .stat-label {
-    margin-top: 0.35rem;
-    font-family: var(--font-utility);
-    font-size: 0.72rem;
-    color: var(--text-faint);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-
-  .card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.5rem;
-    max-width: 1000px;
-    margin: 2rem auto 0;
-    padding: 0 1rem;
-  }
-  .card {
-    background: var(--night-card);
-    border: 1px solid var(--card-border);
-    border-radius: 4px;
-    padding: 1.5rem;
-    text-decoration: none;
-    color: var(--text-primary);
-    transition: transform 0.2s ease, border-color 0.2s ease;
-  }
-  .card:hover {
-    transform: translateY(-4px);
-    border-color: var(--accent-violet);
-  }
-  .card h3 {
-    color: var(--star-silver);
-    margin: 0 0 0.5rem;
-  }
-  .card p {
-    margin: 0;
-    font-size: 0.9rem;
-    font-family: var(--font-body);
-    color: var(--text-muted);
-  }
-
-  .view-all {
-    display: inline-block;
-    margin-top: 2rem;
-    font-family: var(--font-utility);
-    font-size: 0.85rem;
-    color: var(--accent-violet);
-    font-weight: 600;
-    text-decoration: none;
-  }
-  .view-all:hover { color: var(--star-silver); }
-
-  .cta {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    padding: 4rem 2rem;
-    border-top: 1px solid var(--card-border-soft);
-    overflow: hidden;
-  }
-  .cta-moon {
-    top: -30px;
-    right: 50%;
-    transform: translateX(50%);
-    width: 70px;
-    height: 70px;
-    opacity: 0.9;
-  }
-  .cta h2 {
-    font-size: 2rem;
-    color: var(--star-silver);
-    margin: 0 0 0.5rem;
-  }
-  .cta p {
-    color: var(--text-muted);
-    font-family: var(--font-body);
-    margin: 0 0 1.5rem;
-  }
-  .cta-button {
-    display: inline-block;
-    padding: 0.85rem 2.5rem;
-    background: var(--accent-violet);
-    color: var(--night-deepest);
-    text-decoration: none;
-    border-radius: 100px;
-    font-family: var(--font-utility);
-    font-weight: 600;
-    transition: background-color 0.2s ease;
-  }
-  .cta-button:hover { background: var(--moon-glow); }
-
-  @media (max-width: 640px) {
-    .moon { width: 76px; height: 76px; top: 6%; right: 8%; }
-  }
-</style>

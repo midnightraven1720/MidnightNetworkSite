@@ -1,0 +1,1634 @@
+{
+  "syncedAt": "2026-10-25T22:22:42.766Z",
+  "bots": [
+    {
+      "key": "community-bot",
+      "name": "Community Bot",
+      "blurb": "Games, coins and the shop, polls, QOTD, confessions, suggestions, birthdays and the starboard",
+      "what": "The fun side of the server: games, coins, polls, questions, confessions, suggestions, birthdays, quotes and the starboard.",
+      "how": [
+        "**Coins.** Use `/daily` every day for coins and a streak bonus, and `/work` once an hour. Coins are shared with Auction Bot, so `/balance` shows the same total. Spend them on roles in `/shop`.",
+        "**Casino.** `/slots`, `/roulette`, `/dice`, `/blackjack` and `/highlow` let you bet coins. It is play money only, with no real value, and the house has a small edge.",
+        "**Games.** Trivia, Hangman, UNO, Connect 4, coin flips, Truth or Dare and Would You Rather. Trivia and Hangman pay coins to whoever gets it right. Connect 4, coin flips and UNO can be played for coins: both bets are held until the game ends and the winner takes them.",
+        "**Polls and suggestions.** `/poll` lets you write a question with up to 25 options. `/suggest` posts an idea for the server that members vote Yes, Maybe or No on, and staff reply when they decide. Use the buttons on the suggestions panel, or `/suggest anonymous:True` to hide your name from members (staff can still see it).",
+        "**Questions.** Press \"Ask a question\" on a question panel, or use `/ask`, and your question gets its own thread. You can ask anonymously. Staff can always see who asked, so nobody can use it to hurt someone.",
+        "**Letters.** Press Write a letter (or Write anonymously) on the letters panel, or use `/letters write`. Send kind words to the server, a member or a love letter - they get a DM with a link. Do not want letters? `/letters off` stops anyone sending you one.",
+        "**Confessions.** `/confess` posts anonymously to members - pick `type: NSFW` for the NSFW confessions channel, or leave it as SFW. Staff can see who sent it.",
+        "**Counting.** In the counting channel, post the next number. Nobody can count twice in a row, and a wrong number resets it to 0.",
+        "**Birthdays.** `/birthday set` saves your day and month (never your age). On the day you get a shout-out.",
+        "**Quotes and stars.** Right-click a message → Apps → Quote message to save it to the quotes channel. Messages that collect enough ⭐ go to the starboard.",
+        "**Events.** Event cards show the time in your own time zone (and the host's), with Going, Maybe and Can't buttons and an Open in Events link. You get a reminder an hour before if you picked Going or Maybe - anyone who has not picked by the start is counted as not going. `/event list` shows what is coming up.",
+        "**Reminders and AFK.** `/remind me what: in:2h` (or `at:20:00` in your own time zone) sends you a DM when it is time; `/remind list` and `/remind cancel` manage them. `/afk reason:` tells anyone who mentions you that you are away - it clears by itself when you next talk.",
+        "**Giveaways and saved replies.** Press Enter on a giveaway to join (press again to leave); winners are drawn at random and told by DM. `/tag` posts one of the server's saved replies, like how to verify.",
+        "**Changing the topic.** `/topic` deals a random conversation card - press Another for a new one, or pick a deck (Starter, Gamer, Anime, Deep Talk, or the server’s own). Topics also pop up by themselves in some chats once things go quiet.",
+        "**Books.** `/book search` finds a book - press TBR, Reading, Read or DNF to put it on your bookcase (you can press them on anyone's search, too). `/book shelf` shows your bookcase: what you are reading, every book read as a coloured spine, and your stars. `/book tbr` is your to-be-read pile, `/book move` updates a book, and `/book review` gives it stars and a few words, posted for everyone with a thread to chat. Your Books profile shows a summary of your shelf.",
+        "**Book spoilers.** Every book has its own spoiler thread in the spoilers channel - open it with `/book spoilers` or the Spoiler chat button on a review. Only go into threads for books you have finished, and keep spoilers out of everywhere else (or hide them with ||spoiler tags||).",
+        "**Anime and games.** `/anime search`, `/anime manga` and `/anime character` look things up on AniList, `/anime random` picks something to watch, and `/anime season` and `/anime top` show the best. `/game` looks up any video game. 18+ results only show in age-restricted channels.",
+        "**Streamers.** Verified streamers have their own channels in 📺 Streamers with their plans, updates, polls and go-live alerts - chat in the threads. Press **Stream pings on / off** in #stream-info to be pinged when they go live or share a plan."
+      ],
+      "commands": [
+        {
+          "name": "/afk",
+          "description": "Say you're away - people who mention you are told why"
+        },
+        {
+          "name": "/anime character",
+          "description": "Find an anime or manga character"
+        },
+        {
+          "name": "/anime manga",
+          "description": "Find a manga, manhwa or light novel"
+        },
+        {
+          "name": "/anime random",
+          "description": "Get a random anime to watch"
+        },
+        {
+          "name": "/anime search",
+          "description": "Find an anime - score, episodes, studio and story"
+        },
+        {
+          "name": "/anime season",
+          "description": "The best anime airing this season"
+        },
+        {
+          "name": "/anime top",
+          "description": "The best anime of all time"
+        },
+        {
+          "name": "/ask",
+          "description": "Ask a question - it gets its own thread and goes on the question board"
+        },
+        {
+          "name": "/birthday check",
+          "description": "See someone's birthday"
+        },
+        {
+          "name": "/birthday remove",
+          "description": "Delete your saved birthday"
+        },
+        {
+          "name": "/birthday set",
+          "description": "Save your birthday"
+        },
+        {
+          "name": "/birthday setup",
+          "description": "Configure birthday announcements (Admin only)"
+        },
+        {
+          "name": "/birthday upcoming",
+          "description": "The next 10 birthdays"
+        },
+        {
+          "name": "/blackjack",
+          "description": "Play blackjack against the dealer for coins (play money)"
+        },
+        {
+          "name": "/book add",
+          "description": "Quickly put a book on your bookcase"
+        },
+        {
+          "name": "/book move",
+          "description": "Move one of your books - started it, finished it, gave up"
+        },
+        {
+          "name": "/book remove",
+          "description": "Take a book off your bookcase"
+        },
+        {
+          "name": "/book review",
+          "description": "Give a book stars and a few words - posted for everyone"
+        },
+        {
+          "name": "/book search",
+          "description": "Find a book and put it on your bookcase"
+        },
+        {
+          "name": "/book shelf",
+          "description": "See a bookcase - what they are reading and everything read"
+        },
+        {
+          "name": "/book spoilers",
+          "description": "Open a book's spoiler chat - for once you've finished it"
+        },
+        {
+          "name": "/book tbr",
+          "description": "See a to-be-read list"
+        },
+        {
+          "name": "/coinflip",
+          "description": "Bet coins against someone on a coin flip - winner takes both bets"
+        },
+        {
+          "name": "/confess",
+          "description": "Post an anonymous confession (anonymous to members - staff can see who sent it)"
+        },
+        {
+          "name": "/connect4",
+          "description": "Challenge someone to Connect 4, optionally for coins"
+        },
+        {
+          "name": "/counting setup",
+          "description": "Choose the counting channel - also resets the count (Admin only)"
+        },
+        {
+          "name": "/counting status",
+          "description": "Current number and best run"
+        },
+        {
+          "name": "/daily",
+          "description": "Claim your daily coins - come back every day to build a streak"
+        },
+        {
+          "name": "/dice",
+          "description": "Roll 1-100 and bet on over or under a number - riskier picks pay more (play money)"
+        },
+        {
+          "name": "/event cancel",
+          "description": "Cancel an event - everyone going is told by DM"
+        },
+        {
+          "name": "/event create",
+          "description": "Make an event - staff and Event Managers"
+        },
+        {
+          "name": "/event list",
+          "description": "Upcoming events"
+        },
+        {
+          "name": "/event setup",
+          "description": "The default events channel and ping role (Admin only)"
+        },
+        {
+          "name": "/game",
+          "description": "Look up a video game - rating, release date, platforms and genres"
+        },
+        {
+          "name": "/hangman",
+          "description": "Start a Hangman game the whole channel can play - whoever solves it earns coins"
+        },
+        {
+          "name": "/highlow",
+          "description": "Guess if the next card is higher or lower - cash out any time (play money)"
+        },
+        {
+          "name": "/kudos give",
+          "description": "Give someone kudos"
+        },
+        {
+          "name": "/kudos setup",
+          "description": "Where kudos are posted (Admin only - default: the channel they are given in)"
+        },
+        {
+          "name": "/kudos top",
+          "description": "Most appreciated members"
+        },
+        {
+          "name": "/leaderboard",
+          "description": "Top players for a game"
+        },
+        {
+          "name": "/letters off",
+          "description": "Stop people sending you letters"
+        },
+        {
+          "name": "/letters on",
+          "description": "Let people send you letters again"
+        },
+        {
+          "name": "/letters write",
+          "description": "Write a letter to the server or a member"
+        },
+        {
+          "name": "/live list",
+          "description": "See which Twitch channels get alerts here"
+        },
+        {
+          "name": "/live my-twitch",
+          "description": "Get an alert here when you go live on Twitch (Staff only)"
+        },
+        {
+          "name": "/live setup",
+          "description": "Where alerts post, who gets pinged, and Discord Go Live alerts on/off (Admin only)"
+        },
+        {
+          "name": "/live twitch-add",
+          "description": "Watch a Twitch channel for go-live alerts (Staff only)"
+        },
+        {
+          "name": "/live twitch-remove",
+          "description": "Stop watching a Twitch channel (Staff only)"
+        },
+        {
+          "name": "/ping",
+          "description": "Replies with the bot latency."
+        },
+        {
+          "name": "/poll",
+          "description": "Create a poll with up to 25 options - you write the question and options in the next step"
+        },
+        {
+          "name": "/qa board",
+          "description": "Post or refresh a category's question board (Staff only)"
+        },
+        {
+          "name": "/qa panel",
+          "description": "Post an \"Ask a question\" panel in this channel (Staff only)"
+        },
+        {
+          "name": "/qa panels-all",
+          "description": "Post an Ask panel in every text channel of a category (Staff only)"
+        },
+        {
+          "name": "/qa search",
+          "description": "Find past questions"
+        },
+        {
+          "name": "/qa setup",
+          "description": "Set up questions for a category (Admin only)"
+        },
+        {
+          "name": "/quote random",
+          "description": "Show a random quote"
+        },
+        {
+          "name": "/quote setup",
+          "description": "Choose the quotes channel (Admin only - defaults to a channel named #quotes)"
+        },
+        {
+          "name": "/remind cancel",
+          "description": "Cancel a reminder"
+        },
+        {
+          "name": "/remind list",
+          "description": "Your reminders still to come"
+        },
+        {
+          "name": "/remind me",
+          "description": "Set a reminder - give \"in\" or \"at\""
+        },
+        {
+          "name": "/roulette",
+          "description": "Spin the roulette wheel for coins (play money)"
+        },
+        {
+          "name": "/shop",
+          "description": "Spend your coins on roles"
+        },
+        {
+          "name": "/slots",
+          "description": "Spin the slot machine for coins (play money)"
+        },
+        {
+          "name": "/starboard setup",
+          "description": "Configure the starboard (Admin only)"
+        },
+        {
+          "name": "/starboard top",
+          "description": "Most-starred members"
+        },
+        {
+          "name": "/stream plan",
+          "description": "Share what you've got planned - when, what and any notes"
+        },
+        {
+          "name": "/stream poll",
+          "description": "Ask your viewers something with a real poll"
+        },
+        {
+          "name": "/stream update",
+          "description": "Post a quick update"
+        },
+        {
+          "name": "/suggest",
+          "description": "Suggest something for the server - members vote Yes, Maybe or No"
+        },
+        {
+          "name": "/tag",
+          "description": "Post one of the server's saved replies, e.g. how to verify or where the rules are"
+        },
+        {
+          "name": "/tod",
+          "description": "Start a game of Truth or Dare in this channel"
+        },
+        {
+          "name": "/topic",
+          "description": "Change the topic - deals a random conversation card"
+        },
+        {
+          "name": "/trivia",
+          "description": "Ask a trivia question - everyone has 20 seconds, right answers earn coins"
+        },
+        {
+          "name": "/uno leaderboard",
+          "description": "Top UNO players in this server"
+        },
+        {
+          "name": "/uno rules",
+          "description": "How UNO works here"
+        },
+        {
+          "name": "/uno start",
+          "description": "Open an UNO lobby in this channel"
+        },
+        {
+          "name": "/work",
+          "description": "Do a quick job for 50-150 coins (once an hour)"
+        },
+        {
+          "name": "/wyr",
+          "description": "Post a Would You Rather question everyone can vote on"
+        }
+      ],
+      "staffCommandCount": 24,
+      "totalCommands": 62
+    },
+    {
+      "key": "profile-bot",
+      "name": "Profile Bot",
+      "blurb": "Your profiles, DM status, DM requests and role menus",
+      "what": "Your profiles, your DM status, and the safe way to ask someone to DM or friend you.",
+      "how": [
+        "**Profiles.** `/profile make type:` and pick one - Introduction, Kink/Dynamic, Gamer, Music and so on. Answer the questions and your profile is posted in that type's channel. Run it again to update it.",
+        "**DM status.** `/dm-card settings` sets whether you're Open, Ask First or Closed to DMs and friend requests, so people know before they ask.",
+        "**Asking to DM.** Use the \"Ask to DM\" or \"Friend Request\" button on someone's DM card or profile, or `/ask-to-dm` anywhere (pick DM or friend request). You see the rules and their preferences before it sends. They get the request in their DMs and on the DM request board, and can accept or decline. If they have an Owner or Handler bond, the Owner or Handler is asked first.",
+        "**DM Board.** Your card shows your DM and friend request status, which topics you're fine with, want asked first, or don't want (status and topics are both set with `/dm-card settings`), your own do's and don'ts (`/dm-card edit`), and links to your profiles. Anyone pressing \"Ask to DM\" or \"Friend Request\" on your card sees all of that and the server rules before they can send.",
+        "**Role menus.** Pick your roles from the role menus staff post. Some use dropdowns, some use reactions.",
+        "**Time zones.** `/timezone set` puts your time zone on your DM card and profiles, with when the clocks next go forward or back there (it updates itself when they do). `/time @member` shows what time it is for someone right now, and how far ahead or behind you they are.",
+        "**Finding people.** `/find topic:` (e.g. Roleplay) or `interest:` (e.g. anime) searches DM cards and posted profiles - only what members chose to share - and can be limited to people open to DMs or ID Verified. Always read their card and the DM rules before asking.",
+        "**Pictures and the verified badge.** `/profile picture type: image:` puts a picture on one of your posted profiles (leave out `image` to remove it). Members verified through Ticket Bot get a ✅ ID Verified · 18+ badge on their DM card and profiles, updated by itself.",
+        "**Your own topics.** On top of the topics staff set, write your own on your card with `/dm-card edit` (or the ✏️ button on `/dm-card settings`) - fine with, ask first, or not for me.",
+        "**Areas.** Press **Choose my areas** on the areas panel to pick the parts of the server you want - Gaming, Anime, Books, Roleplay and so on. Each one unlocks its own channels; untick it to hide them again. Some areas need another role first, like ID Verified."
+      ],
+      "commands": [
+        {
+          "name": "/ask-to-dm",
+          "description": "Ask someone if you can DM them or add them as a friend"
+        },
+        {
+          "name": "/dm-card edit",
+          "description": "Write your dos, don'ts and your own topics"
+        },
+        {
+          "name": "/dm-card remove",
+          "description": "Take your card off the DM Board"
+        },
+        {
+          "name": "/dm-card settings",
+          "description": "Your DM and friend request status and the topics you are fine with"
+        },
+        {
+          "name": "/find",
+          "description": "Find members by the topics on their DM card and what their profiles say"
+        },
+        {
+          "name": "/ping",
+          "description": "Replies with the bot latency."
+        },
+        {
+          "name": "/profile make",
+          "description": "Make or update a profile - Introduction, Gamer, Books, Kink/Dynamic and more"
+        },
+        {
+          "name": "/profile picture",
+          "description": "Put a picture on one of your posted profiles, or take it off"
+        },
+        {
+          "name": "/time",
+          "description": "See what time it is for a member right now"
+        },
+        {
+          "name": "/timezone clear",
+          "description": "Take your time zone off your card and profiles"
+        },
+        {
+          "name": "/timezone set",
+          "description": "Set your time zone - type a city, country or e.g. EST"
+        }
+      ],
+      "staffCommandCount": 14,
+      "totalCommands": 21
+    },
+    {
+      "key": "dynamic-bot",
+      "name": "Dynamic Bot",
+      "blurb": "Bonds between members, consent-based mechanics, check-ins and safewords",
+      "what": "Register bonds with other members and, with consent, use playful mechanics like gags and leashes. Safety tools are always one command away.",
+      "how": [
+        "**Bonds.** `/dynamic-request` sends a bond request: Owner-Pet, Handler-Pet, Romantic or Chosen Family. For Owner-Pet and Handler-Pet, the person sending the request is the Owner or Handler.",
+        "**Consent.** Accepting an Owner-Pet or Handler-Pet bond lets the Owner or Handler use mechanics on the Pet. Romantic bonds work both ways. Chosen Family bonds never carry mechanics. Nothing can be used on you without a bond you accepted.",
+        "**Mechanics.** `/gag` garbles someone's messages, `/leash` tethers you together and `/bind` stops them messaging, each for a set time and only in channels where staff have turned mechanics on.",
+        "**Limits.** `/dynamic-limits` records your hard and soft limits with a specific Owner or Handler.",
+        "**Check-ins.** `/dynamic-check` logs Green, Yellow or Red. Yellow pauses mechanics until the Owner or Handler resumes them. Red alerts your Owner or Handler and staff.",
+        "**Safeword.** `/safeword` instantly stops everything active on you. No permission or cooldown needed. Your Owner or Handler and staff are told.",
+        "**Ending a bond.** `/dynamic-remove` ends a bond any time, and either person can do it alone.",
+        "**Punishments.** Done something that warrants one? Log it yourself with `/ifuckedup reason` (or `-ifuckedup`; add `sub` or `dom` for your role). You get the Caged Time role and it's posted in the punishment log with your saved limits - add your aftercare needs and whether you need check-ins there. Your Owner/Handler or staff end it with `/kennelend`, and aftercare always follows. `/checkpunishment @user` shows if someone has one. One at a time, always within your limits, and always completed in server."
+      ],
+      "commands": [
+        {
+          "name": "/bind",
+          "description": "Block a user from messaging in Dynamic-enabled channels (requires mechanics consent)"
+        },
+        {
+          "name": "/checkpunishment",
+          "description": "Check whether a member has an active punishment"
+        },
+        {
+          "name": "/dynamic-active",
+          "description": "Check what's currently active on you or someone else"
+        },
+        {
+          "name": "/dynamic-check",
+          "description": "Log a safety check-in status for someone"
+        },
+        {
+          "name": "/dynamic-history",
+          "description": "View your own private safeword history (only visible to you)"
+        },
+        {
+          "name": "/dynamic-limits",
+          "description": "Set or view your hard/soft limits with a specific handler"
+        },
+        {
+          "name": "/dynamic-list",
+          "description": "View someone's registered bonds"
+        },
+        {
+          "name": "/dynamic-remove",
+          "description": "End a bond (usable unilaterally) and revoke any mechanics consent it carried"
+        },
+        {
+          "name": "/dynamic-request",
+          "description": "Send a bond request (also grants standing mechanics consent when accepted)"
+        },
+        {
+          "name": "/dynamic-resume",
+          "description": "Resume mechanics you paused with a Yellow check-in (handler only)"
+        },
+        {
+          "name": "/dynamic-status",
+          "description": "Full personal overview of your bonds and their oversight settings"
+        },
+        {
+          "name": "/dynamic-theme",
+          "description": "Set your personal gag text style"
+        },
+        {
+          "name": "/gag",
+          "description": "Garble a user's messages until it expires (requires a bond that carries mechanics consent)"
+        },
+        {
+          "name": "/ifuckedup",
+          "description": "Log your own punishment - you get Caged Time until your Owner/Handler or staff end it"
+        },
+        {
+          "name": "/kennelend",
+          "description": "End someone's punishment and remove Caged Time - their Owner/Handler or staff"
+        },
+        {
+          "name": "/leash",
+          "description": "Tether yourself to another user for a set time (requires mechanics consent)"
+        },
+        {
+          "name": "/ping",
+          "description": "Replies with the bot latency."
+        },
+        {
+          "name": "/safeword",
+          "description": "Instantly stop everything active on you, no permissions or cooldown"
+        }
+      ],
+      "staffCommandCount": 3,
+      "totalCommands": 21
+    },
+    {
+      "key": "auction-bot",
+      "name": "Auction Bot",
+      "blurb": "Auctions, XP and coins, and your auction bio",
+      "what": "Earn XP and coins by being active, sign up for auctions where members bid coins on each other, and roleplay as your own characters.",
+      "how": [
+        "**Earning.** Chatting earns XP and coins, and so does time in voice when you're actually talking with someone (not deafened, not in AFK, with another person there). `/balance` shows your total.",
+        "**Levels.** The same XP levels you up. `/rank` shows your level and progress, and `/levels` shows the top 10. Levels unlock parts of the server by themselves once you are ID Verified: the casino at level 3, roleplay and posting images in general at level 5, and auctions at level 15.",
+        "**Signing up.** Press **Join List** on the auction panel. If you don't meet a requirement yet (account age, time in server, level, verified role, a bio, or a minimum balance), it tells you exactly what's missing. **Skip Auction** sits you out of the next one.",
+        "**Your bio.** `/bio set` writes the bio bidders see.",
+        "**Reminders.** You're reminded 3, 2 and 1 days before the auction.",
+        "**Bidding.** During the auction each member on the list goes up in turn. Bid with the buttons or a custom amount. Your bid is held from your balance, and if someone outbids you it's refunded straight away.",
+        "**Winning.** The winner picks **Pay Back** (taken until you've earned back the winning bid), **Have for a Week**, or **Custom** (a set number of days). You get the Taken role and a status panel.",
+        "**Safeword.** The Safeword button on your status panel, or `/safeword`, ends your Taken period at any time. Only staff are told why.",
+        "**D&D.** `/roll 1d20+5` or `4d6kh3` (keep the highest 3), with advantage or disadvantage. Make a sheet with `/dnd-character create` and roll checks from it: `/roll check:stealth`. Join campaigns with `/dnd-campaign join` (sessions are reminded a day and an hour before), and `/initiative` starts a fight tracker. Natural 1s end up in the D&D hall of shame.",
+        "**Roleplay characters.** `/roleplay create` makes a character with a name, picture and description (up to 5). `/roleplay post` posts in a roleplay channel as them, with their name and picture.",
+        "**Personas.** `/persona create` makes a persona, a different side of yourself (up to 4). `/persona post` posts as them in the persona channels.",
+        "**Anonymous.** Both can post as Anonymous instead. Other members won't know who it was, but staff can always see, so nobody can abuse it.",
+        "**Deleting a post.** Right-click your post → Apps → Delete character post."
+      ],
+      "commands": [
+        {
+          "name": "/balance",
+          "description": "Check your (or someone else's) XP and coins"
+        },
+        {
+          "name": "/bio set",
+          "description": "Write or edit your bio"
+        },
+        {
+          "name": "/bio view",
+          "description": "View someone's bio"
+        },
+        {
+          "name": "/dnd-campaign create",
+          "description": "Start a campaign as its DM - it gets its own channel"
+        },
+        {
+          "name": "/dnd-campaign end",
+          "description": "End a campaign (DM or staff)"
+        },
+        {
+          "name": "/dnd-campaign info",
+          "description": "Players and upcoming sessions"
+        },
+        {
+          "name": "/dnd-campaign join",
+          "description": "Join a campaign"
+        },
+        {
+          "name": "/dnd-campaign leave",
+          "description": "Leave a campaign"
+        },
+        {
+          "name": "/dnd-campaign list",
+          "description": "All active campaigns"
+        },
+        {
+          "name": "/dnd-campaign schedule",
+          "description": "Schedule a session (DM) - players are reminded a day and an hour before"
+        },
+        {
+          "name": "/dnd-character create",
+          "description": "Make (or remake) your character"
+        },
+        {
+          "name": "/dnd-character delete",
+          "description": "Delete your character"
+        },
+        {
+          "name": "/dnd-character edit",
+          "description": "Change one thing on your sheet"
+        },
+        {
+          "name": "/dnd-character hp",
+          "description": "Take damage or heal"
+        },
+        {
+          "name": "/dnd-character rest",
+          "description": "Long rest - back to full HP"
+        },
+        {
+          "name": "/dnd-character skills",
+          "description": "Skills and saves you are proficient in"
+        },
+        {
+          "name": "/dnd-character view",
+          "description": "See a character sheet"
+        },
+        {
+          "name": "/dnd-shame",
+          "description": "Post a player in the D&D hall of shame for an in-game blunder (DMs and staff)"
+        },
+        {
+          "name": "/initiative",
+          "description": "Start a D&D fight here - a panel to roll initiative and track turns and HP"
+        },
+        {
+          "name": "/level-ping",
+          "description": "Choose whether you get pinged when you level up"
+        },
+        {
+          "name": "/levels",
+          "description": "The top 10 members by level"
+        },
+        {
+          "name": "/persona create",
+          "description": "Create a persona"
+        },
+        {
+          "name": "/persona delete",
+          "description": "Delete one of your personas"
+        },
+        {
+          "name": "/persona edit",
+          "description": "Change one of your personas"
+        },
+        {
+          "name": "/persona list",
+          "description": "See your personas, or someone else's"
+        },
+        {
+          "name": "/persona post",
+          "description": "Post in this channel as one of your personas, or anonymously"
+        },
+        {
+          "name": "/rank",
+          "description": "Your level and how close you are to the next one"
+        },
+        {
+          "name": "/roleplay create",
+          "description": "Create a roleplay character"
+        },
+        {
+          "name": "/roleplay delete",
+          "description": "Delete one of your roleplay characters"
+        },
+        {
+          "name": "/roleplay edit",
+          "description": "Change one of your roleplay characters"
+        },
+        {
+          "name": "/roleplay list",
+          "description": "See your roleplay characters, or someone else's"
+        },
+        {
+          "name": "/roleplay post",
+          "description": "Post in this channel as one of your roleplay characters, or anonymously"
+        },
+        {
+          "name": "/roll",
+          "description": "Roll dice: 1d20+5, 4d6kh3, 2d6+1d4 - or a check from your D&D sheet"
+        },
+        {
+          "name": "/safeword",
+          "description": "End your Taken period immediately and alert staff privately"
+        }
+      ],
+      "staffCommandCount": 9,
+      "totalCommands": 22
+    },
+    {
+      "key": "ticket-bot",
+      "name": "Ticket Bot",
+      "blurb": "Age verification, tickets and modmail",
+      "what": "Age verification, support tickets and private contact with staff.",
+      "how": [
+        "**Verifying.** On the verification panel, choose **Text Verification** or **Voice Verification**. A private ticket opens just for you and staff (voice also gets a private voice channel). Staff will walk you through the steps.",
+        "**The steps.** **ID Verified** opens the main area. **NSFW Access** is opt-in: once verified and at the NSFW level (level 5), turn it on or off any time with `/nsfw-access` or the NSFW Access panel - it opens the NSFW chat and topic channels. **NSFW Gallery Access** opens by itself at the gallery level (level 5) while NSFW Access is on: the member gallery and its comments. Your **gender tag** lets you post in the gender image channels: once the gallery is open, press **Request my gender tag** in `/nsfw-access` and staff check it against your ID. `/nsfw-access` also shows how close you are.",
+        "**Scheduling.** Need a different time? `/schedule-call` proposes one inside your ticket and the other side confirms it. Times show in each person's own timezone.",
+        "**Couples and groups.** Once everyone is individually verified, `/couple-verify-start` opens a quick couple or group ticket for a combined tag. No new ID is needed.",
+        "**Support tickets.** Press a button on a ticket panel to open a private ticket with staff. Some ask a few questions first.",
+        "**Contacting staff privately.** Press **Contact Staff** on the modmail panel and write what you need - a question you'd rather not ask in the help chat, a private concern, an appeal, or anything you need staff for one to one. To report a member or rule-breaking, open a report on the ticket panel instead. If your DMs are open the conversation carries on there; if not, a private channel opens for just you and staff. Staff can also message you this way, and replies always come from the Staff Team."
+      ],
+      "commands": [
+        {
+          "name": "/couple-verify-start",
+          "description": "Open a couple/group verification ticket - everyone named must already be individually ID verified"
+        },
+        {
+          "name": "/nsfw-access",
+          "description": "Turn NSFW Access on or off for yourself (ID verified members)"
+        },
+        {
+          "name": "/ping",
+          "description": "Replies with the bot latency."
+        },
+        {
+          "name": "/schedule-call",
+          "description": "Propose a time to continue this verification (member or staff) - works in text or voice tickets"
+        }
+      ],
+      "staffCommandCount": 31,
+      "totalCommands": 35
+    },
+    {
+      "key": "voice-bot",
+      "name": "Voice Bot",
+      "blurb": "Create-a-room voice channels and the voice guidelines",
+      "what": "Make your own voice room whenever you need one. No commands needed.",
+      "how": [
+        "**Making a room.** Join the create-a-room channel in the General, SFW or NSFW area. A room is made for you and you're moved into it. It's deleted when everyone leaves.",
+        "**Controls.** As the owner you can **Rename** it, **Set Limit** on how many people can join, lock it, and **Add Co-Owner** to share control.",
+        "**Locked rooms.** Locked rooms still show in the room directory. To get in, pick the room in the directory and the owner can **Approve** or **Deny** you in the room's text chat.",
+        "**NSFW area.** NSFW rooms follow the 18+ category's permissions, so only people who can see that area can join."
+      ],
+      "commands": [
+        {
+          "name": "/ping",
+          "description": "Replies with the bot latency."
+        }
+      ],
+      "staffCommandCount": 6,
+      "totalCommands": 7
+    },
+    {
+      "key": "velvet-bot",
+      "name": "Velvet Desires",
+      "blurb": "Roleplay interactions - hugs, kisses, dynamic and NSFW actions, with consent",
+      "what": "Roleplay interactions with other members - affection, playful, dynamic and NSFW - with consent built in.",
+      "how": [
+        "**Using one.** Type the action and pick someone, e.g. `/hug member:@someone`. A line is posted, with how many times you have done it to them. `/velvet list` shows every action.",
+        "**Affection and playful.** Hug, cuddle, kiss, pat, boop, poke, tickle, bonk and more - they post straight away.",
+        "**Dynamic.** Collar, leash, praise, kneel, spank and more - the other person gets Yes / No first, unless you share a bond in Dynamic Bot.",
+        "**NSFW.** Only in age-restricted channels, both of you need NSFW Access and level 5, and they get Yes / No every time. A no is only shown to you.",
+        "**Your choice.** `/velvet off` stops anyone using interactions on you; `/velvet on` turns them back on. `/velvet stats` shows what you have given and received."
+      ],
+      "commands": [
+        {
+          "name": "/velvet list",
+          "description": "Every interaction and how it works"
+        },
+        {
+          "name": "/velvet off",
+          "description": "Nobody can use interactions on you (and you can't use them)"
+        },
+        {
+          "name": "/velvet on",
+          "description": "Turn interactions back on"
+        },
+        {
+          "name": "/velvet stats",
+          "description": "Most given and received"
+        }
+      ],
+      "staffCommandCount": 1,
+      "totalCommands": 2
+    },
+    {
+      "key": "partnership-bot",
+      "name": "Partnership Bot",
+      "blurb": "Partnership applications and the partner directory",
+      "what": "Partnerships with other servers, and the partner directory.",
+      "how": [
+        "**Applying.** Server owners apply through the partnership panel and answer a few questions. The decision comes by DM, or in the panel channel if DMs are closed.",
+        "**Partners.** Approved partners get the partner role, a profile channel and a spot in the partner directory. Use `/partner-update-listing` to change your directory listing."
+      ],
+      "commands": [
+        {
+          "name": "/partner-update-listing",
+          "description": "Update your public partner directory listing info"
+        },
+        {
+          "name": "/ping",
+          "description": "Replies with the bot latency."
+        }
+      ],
+      "staffCommandCount": 16,
+      "totalCommands": 18
+    },
+    {
+      "key": "staff-bot",
+      "name": "Council Bot",
+      "blurb": "Moderation, staff tools and grounding support",
+      "what": "Support when you need it, and how moderation works here.",
+      "how": [
+        "**Grounding support.** `/ground-request` asks for help when you're struggling. Choose shared, so the community can help, or private, so only staff see it. You can ask for a check-in later.",
+        "**Venting.** Press Vent or Vent anonymously on the vent panel. Choose Just listening (no replies) or Support welcome (others can reply, named or anonymously, and you get a DM), and add a content warning to hide your vent behind a spoiler. Anonymous vents hide your name from members, but staff can see who wrote it so they can check in.",
+        "**Joining the staff team.** Press Apply for staff on the staff application panel and answer a few questions. You need to be ID Verified, at the level shown on the panel, and in the server for 3 months. If it is a good fit you are invited to a private interview channel, and you get a DM either way.",
+        "**Helping someone.** `/ground-task` suggests a grounding task for someone's open request.",
+        "**If you're muted.** You'll only see the mute channel, with the reason and an **Appeal** button. Your roles come back when the mute ends."
+      ],
+      "commands": [
+        {
+          "name": "/ground-request",
+          "description": "Ask for grounding support"
+        },
+        {
+          "name": "/ground-task",
+          "description": "Suggest a grounding task for an open request"
+        },
+        {
+          "name": "/ping",
+          "description": "Replies with the bot latency."
+        }
+      ],
+      "staffCommandCount": 64,
+      "totalCommands": 67
+    },
+    {
+      "key": "log-bot",
+      "name": "Server Log Bot",
+      "blurb": "Server logs, the rulebook and the server map",
+      "what": "Keeps the rules, guidelines, FAQ and server map up to date.",
+      "how": [
+        "**Rulebook.** The Rules, Guidelines and FAQ channels always show the current version, grouped into general rules plus rules for specific channels.",
+        "**Server map.** The server map lists every channel you can see, with a short description of each. Channels opened by NSFW Access, the NSFW gallery or a level are shown too, marked with what unlocks them. It updates itself when channels change.",
+        "**Server updates.** The server update log says what changed in the server: new or updated rules, guidelines and FAQ, new channels and categories, roles, and who joined or moved up in the staff team."
+      ],
+      "commands": [
+        {
+          "name": "/ping",
+          "description": "Check if the bot is responsive"
+        }
+      ],
+      "staffCommandCount": 29,
+      "totalCommands": 30
+    },
+    {
+      "key": "lantern-guide",
+      "name": "Lantern Guide",
+      "blurb": "This guide",
+      "what": "This guide, and the board where bot updates are posted.",
+      "how": [
+        "**Start here.** `/help` (or the Start here panel) shows the commands you will actually use, grouped by what you want to do - new here, levels and coins, games, profiles and DMs, hobbies, events, sharing, roleplay, 18+, and help.",
+        "**Quick lookup.** `/bots` shows every bot and its commands, and only you can see the reply.",
+        "**Leaderboards.** The leaderboard channel shows the top members for levels, coins, games, the casino, kudos and interactions, updated every 30 minutes. `/leaderboards view` lets you page through them anywhere.",
+        "**These channels.** Each bot has a channel here explaining what it does and how it works. They update themselves whenever a bot changes.",
+        "**Bot update log.** Whenever a bot gets new features, loses some or changes how one works, it's posted in the bot update log. Changes to the server itself (rules, channels, roles, staff) are in the server update log."
+      ],
+      "commands": [
+        {
+          "name": "/bots",
+          "description": "See every bot in the server and what its commands do"
+        },
+        {
+          "name": "/help",
+          "description": "The commands you will actually use, grouped by what you want to do"
+        },
+        {
+          "name": "/leaderboards setup",
+          "description": "Post the live leaderboards in a channel - they update every 30 minutes (Admin only)"
+        },
+        {
+          "name": "/leaderboards stop",
+          "description": "Stop updating the live leaderboards (Admin only)"
+        },
+        {
+          "name": "/leaderboards view",
+          "description": "Page through the leaderboards"
+        },
+        {
+          "name": "/ping",
+          "description": "Replies with the bot latency."
+        }
+      ],
+      "staffCommandCount": 15,
+      "totalCommands": 19
+    }
+  ],
+  "topics": [
+    {
+      "key": "new",
+      "emoji": "🌱",
+      "label": "New here",
+      "intro": "The first few things to do.",
+      "items": [
+        {
+          "what": "Verify",
+          "how": "Follow the verification channel - it opens the main server."
+        },
+        {
+          "what": "Pick your areas",
+          "how": "Press **Choose my areas** on the areas panel - Books, Gaming, Streamers, Roleplay."
+        },
+        {
+          "what": "/profile make type:Introduction",
+          "how": "Say hello with a short profile."
+        },
+        {
+          "what": "/dm-card settings",
+          "how": "Set whether you are open to DMs and friend requests, and your topics."
+        },
+        {
+          "what": "/timezone set",
+          "how": "Show your time zone so people know when you are around."
+        },
+        {
+          "what": "/rank",
+          "how": "See your level - chatting earns XP and unlocks more of the server."
+        }
+      ]
+    },
+    {
+      "key": "levels",
+      "emoji": "📈",
+      "label": "Levels & coins",
+      "intro": "Chat to level up and earn coins.",
+      "items": [
+        {
+          "what": "/rank",
+          "how": "Your level and progress."
+        },
+        {
+          "what": "/levels",
+          "how": "The top 10."
+        },
+        {
+          "what": "/level-ping",
+          "how": "Choose whether level-ups ping you."
+        },
+        {
+          "what": "/daily",
+          "how": "Coins once a day, with a streak bonus."
+        },
+        {
+          "what": "/work",
+          "how": "More coins once an hour."
+        },
+        {
+          "what": "/balance",
+          "how": "How many coins you have."
+        },
+        {
+          "what": "/shop",
+          "how": "Spend coins on roles."
+        },
+        {
+          "what": "/leaderboards",
+          "how": "Every leaderboard in one place."
+        }
+      ]
+    },
+    {
+      "key": "games",
+      "emoji": "🎮",
+      "label": "Games",
+      "intro": "Play on your own or with others.",
+      "items": [
+        {
+          "what": "/trivia",
+          "how": "Answer questions for coins."
+        },
+        {
+          "what": "/hangman",
+          "how": "Guess the word."
+        },
+        {
+          "what": "/uno",
+          "how": "UNO with friends, for coins if you like."
+        },
+        {
+          "what": "/connect4",
+          "how": "Challenge someone."
+        },
+        {
+          "what": "/tod",
+          "how": "Truth or dare."
+        },
+        {
+          "what": "/wyr",
+          "how": "Would you rather."
+        },
+        {
+          "what": "/slots",
+          "how": "Casino games too: /blackjack, /roulette, /dice, /highlow - play money only."
+        },
+        {
+          "what": "/topic",
+          "how": "Stuck for something to say? Deal a conversation card."
+        }
+      ]
+    },
+    {
+      "key": "profiles",
+      "emoji": "👤",
+      "label": "Profiles & DMs",
+      "intro": "Show who you are and connect safely.",
+      "items": [
+        {
+          "what": "/profile make type:Introduction",
+          "how": "Your intro - there are profiles for gaming, books, music, art and more."
+        },
+        {
+          "what": "/profile picture",
+          "how": "Put a picture on a profile."
+        },
+        {
+          "what": "/dm-card settings",
+          "how": "Open, Ask First or Closed - and the topics you are fine with."
+        },
+        {
+          "what": "/dm-card edit",
+          "how": "Write your own dos, don'ts and topics on your DM card."
+        },
+        {
+          "what": "/ask-to-dm",
+          "how": "Ask someone to DM - you see their preferences first."
+        },
+        {
+          "what": "/find",
+          "how": "Find people by topic or interest, e.g. anime or roleplay."
+        },
+        {
+          "what": "/time",
+          "how": "What time it is for someone right now."
+        }
+      ]
+    },
+    {
+      "key": "hobbies",
+      "emoji": "📚",
+      "label": "Hobbies",
+      "intro": "Books, anime, games and streamers.",
+      "items": [
+        {
+          "what": "/book",
+          "how": "Your bookcase - search, TBR, reviews and spoiler threads."
+        },
+        {
+          "what": "/anime",
+          "how": "Look up anime, manga and characters."
+        },
+        {
+          "what": "/game",
+          "how": "Look up any video game."
+        },
+        {
+          "what": "/live",
+          "how": "See whose Twitch alerts are on."
+        },
+        {
+          "what": "Stream pings",
+          "how": "Press **Stream pings on / off** in #stream-info to hear when our streamers go live."
+        }
+      ]
+    },
+    {
+      "key": "events",
+      "emoji": "🎉",
+      "label": "Events & community",
+      "intro": "What is going on and how to join in.",
+      "items": [
+        {
+          "what": "/event",
+          "how": "Upcoming events - press Going or Maybe on a card for a reminder."
+        },
+        {
+          "what": "Giveaways",
+          "how": "Press **Enter** on a giveaway card."
+        },
+        {
+          "what": "/poll",
+          "how": "Ask everyone something."
+        },
+        {
+          "what": "/suggest",
+          "how": "Suggest an idea for the server."
+        },
+        {
+          "what": "/kudos",
+          "how": "Thank someone."
+        },
+        {
+          "what": "/birthday",
+          "how": "Get a shout-out on your birthday."
+        },
+        {
+          "what": "/remind",
+          "how": "A reminder by DM - \"in 2h\" or \"at 20:00\"."
+        },
+        {
+          "what": "/afk",
+          "how": "Let people know you are away."
+        }
+      ]
+    },
+    {
+      "key": "share",
+      "emoji": "💌",
+      "label": "Share & be heard",
+      "intro": "Say what is on your mind - named or anonymously.",
+      "items": [
+        {
+          "what": "/confess",
+          "how": "An anonymous confession."
+        },
+        {
+          "what": "/letters",
+          "how": "Kind words or a love letter to someone - or turn letters off."
+        },
+        {
+          "what": "Vent",
+          "how": "Press **Vent** on the vent panel - choose just listening or support welcome."
+        },
+        {
+          "what": "/ask",
+          "how": "Ask a question, anonymously if you like."
+        },
+        {
+          "what": "/ground-request",
+          "how": "Ask for support when you are struggling."
+        }
+      ]
+    },
+    {
+      "key": "roleplay",
+      "emoji": "🎭",
+      "label": "Roleplay & D&D",
+      "intro": "Characters, personas and dice.",
+      "items": [
+        {
+          "what": "/roleplay",
+          "how": "Make a character and post as them."
+        },
+        {
+          "what": "/persona",
+          "how": "Post as a different side of yourself."
+        },
+        {
+          "what": "/roll",
+          "how": "Roll dice, e.g. 1d20+5."
+        },
+        {
+          "what": "/dnd-character",
+          "how": "Your D&D character sheet."
+        },
+        {
+          "what": "/dnd-campaign",
+          "how": "Run or join a campaign."
+        },
+        {
+          "what": "/initiative",
+          "how": "Turn order for fights."
+        }
+      ]
+    },
+    {
+      "key": "adult",
+      "emoji": "🔞",
+      "label": "18+ & interactions",
+      "intro": "Opt-in only - consent first, always.",
+      "items": [
+        {
+          "what": "/nsfw-access",
+          "how": "Turn NSFW Access on or off (from your NSFW level)."
+        },
+        {
+          "what": "/velvet",
+          "how": "Interactions like /hug - see the list, or switch them off for yourself."
+        },
+        {
+          "what": "/dynamic-request",
+          "how": "Ask someone into a dynamic."
+        },
+        {
+          "what": "/dynamic-limits",
+          "how": "Set your limits."
+        },
+        {
+          "what": "/safeword",
+          "how": "Stops everything straight away - no questions asked."
+        },
+        {
+          "what": "/bio",
+          "how": "Your bio, needed for auctions."
+        }
+      ]
+    },
+    {
+      "key": "help",
+      "emoji": "🛟",
+      "label": "Help & safety",
+      "intro": "When you need staff or something feels wrong.",
+      "items": [
+        {
+          "what": "Tickets",
+          "how": "Open a ticket from the ticket panel to talk to staff privately."
+        },
+        {
+          "what": "/safeword",
+          "how": "Stops a scene, auction or dynamic straight away."
+        },
+        {
+          "what": "/ground-request",
+          "how": "Ask for support - shared or private."
+        },
+        {
+          "what": "/letters",
+          "how": "/letters off stops anyone sending you letters."
+        },
+        {
+          "what": "/velvet",
+          "how": "/velvet off stops anyone using interactions on you."
+        },
+        {
+          "what": "/bots",
+          "how": "Every bot and every command, if you want the full list."
+        }
+      ]
+    }
+  ],
+  "profileTypes": {
+    "introduction": {
+      "label": "Introduction",
+      "questions": [
+        {
+          "id": "nickname",
+          "label": "Name/Nickname"
+        },
+        {
+          "id": "age",
+          "label": "Age"
+        },
+        {
+          "id": "pronouns",
+          "label": "Pronouns"
+        },
+        {
+          "id": "location",
+          "label": "Location/Timezone"
+        },
+        {
+          "id": "aboutMe",
+          "label": "About Me"
+        },
+        {
+          "id": "interests",
+          "label": "Hobbies & Interests"
+        },
+        {
+          "id": "foundUs",
+          "label": "How I Found This Server"
+        },
+        {
+          "id": "funFact",
+          "label": "Fun Fact"
+        },
+        {
+          "id": "lookingFor",
+          "label": "Looking For"
+        },
+        {
+          "id": "notes",
+          "label": "Additional Notes"
+        }
+      ]
+    },
+    "kink-dynamic": {
+      "label": "Kink/Dynamic",
+      "questions": [
+        {
+          "id": "nickname",
+          "label": "Name/Nickname"
+        },
+        {
+          "id": "role",
+          "label": "Role"
+        },
+        {
+          "id": "age",
+          "label": "Age"
+        },
+        {
+          "id": "pronouns",
+          "label": "Pronouns"
+        },
+        {
+          "id": "kinks",
+          "label": "Kinks & Interests"
+        },
+        {
+          "id": "softLimits",
+          "label": "Soft Limits"
+        },
+        {
+          "id": "hardLimits",
+          "label": "Hard Limits"
+        },
+        {
+          "id": "currently",
+          "label": "Currently"
+        },
+        {
+          "id": "status",
+          "label": "Relationship Status"
+        },
+        {
+          "id": "notes",
+          "label": "Additional Notes"
+        }
+      ]
+    },
+    "gamer": {
+      "label": "Gamer",
+      "questions": [
+        {
+          "id": "nickname",
+          "label": "Name/Nickname"
+        },
+        {
+          "id": "age",
+          "label": "Age"
+        },
+        {
+          "id": "pronouns",
+          "label": "Pronouns"
+        },
+        {
+          "id": "favoriteGames",
+          "label": "Favorite Games"
+        },
+        {
+          "id": "platforms",
+          "label": "Platforms"
+        },
+        {
+          "id": "gamertag",
+          "label": "Gamertag/Steam ID/Discord Tag"
+        },
+        {
+          "id": "playstyle",
+          "label": "Playstyle"
+        },
+        {
+          "id": "lookingFor",
+          "label": "Looking For"
+        },
+        {
+          "id": "availability",
+          "label": "Availability"
+        },
+        {
+          "id": "notes",
+          "label": "Additional Notes"
+        }
+      ]
+    },
+    "pet": {
+      "label": "Pet",
+      "questions": [
+        {
+          "id": "nickname",
+          "label": "Name/Nickname"
+        },
+        {
+          "id": "petType",
+          "label": "Pet Type"
+        },
+        {
+          "id": "age",
+          "label": "Age"
+        },
+        {
+          "id": "pronouns",
+          "label": "Pronouns"
+        },
+        {
+          "id": "owner",
+          "label": "Owner (if any)"
+        },
+        {
+          "id": "traits",
+          "label": "Traits & Personality"
+        },
+        {
+          "id": "favoriteRewards",
+          "label": "Favorite Rewards"
+        },
+        {
+          "id": "dislikes",
+          "label": "Triggers & Dislikes"
+        },
+        {
+          "id": "currently",
+          "label": "Currently"
+        },
+        {
+          "id": "notes",
+          "label": "Additional Notes"
+        }
+      ]
+    },
+    "owner-handler": {
+      "label": "Owner/Handler",
+      "questions": [
+        {
+          "id": "nickname",
+          "label": "Name/Nickname"
+        },
+        {
+          "id": "age",
+          "label": "Age"
+        },
+        {
+          "id": "pronouns",
+          "label": "Pronouns"
+        },
+        {
+          "id": "handlingStyle",
+          "label": "Handling Style"
+        },
+        {
+          "id": "pets",
+          "label": "Pet(s) (if any)"
+        },
+        {
+          "id": "expectations",
+          "label": "Expectations"
+        },
+        {
+          "id": "rewardsGiven",
+          "label": "Rewards & Affection"
+        },
+        {
+          "id": "disciplineStyle",
+          "label": "Discipline Style"
+        },
+        {
+          "id": "currently",
+          "label": "Currently"
+        },
+        {
+          "id": "notes",
+          "label": "Additional Notes"
+        }
+      ]
+    },
+    "anime-manga": {
+      "label": "Anime/Manga",
+      "questions": [
+        {
+          "id": "nickname",
+          "label": "Name/Nickname"
+        },
+        {
+          "id": "age",
+          "label": "Age"
+        },
+        {
+          "id": "pronouns",
+          "label": "Pronouns"
+        },
+        {
+          "id": "favoriteAnime",
+          "label": "Favorite Anime/Manga"
+        },
+        {
+          "id": "favoriteGenre",
+          "label": "Favorite Genre"
+        },
+        {
+          "id": "currentlyWatching",
+          "label": "Currently Watching/Reading"
+        },
+        {
+          "id": "waifuHusbando",
+          "label": "Waifu/Husbando"
+        },
+        {
+          "id": "conventions",
+          "label": "Conventions"
+        },
+        {
+          "id": "buddyWatch",
+          "label": "Buddy Watch"
+        },
+        {
+          "id": "notes",
+          "label": "Additional Notes"
+        }
+      ]
+    },
+    "books": {
+      "label": "Books",
+      "questions": [
+        {
+          "id": "nickname",
+          "label": "Name/Nickname"
+        },
+        {
+          "id": "age",
+          "label": "Age"
+        },
+        {
+          "id": "pronouns",
+          "label": "Pronouns"
+        },
+        {
+          "id": "favoriteBooks",
+          "label": "Favorite Books/Authors"
+        },
+        {
+          "id": "favoriteGenre",
+          "label": "Favorite Genre"
+        },
+        {
+          "id": "currentlyReading",
+          "label": "Currently Reading"
+        },
+        {
+          "id": "readingGoal",
+          "label": "Reading Goal"
+        },
+        {
+          "id": "buddyRead",
+          "label": "Buddy Read"
+        },
+        {
+          "id": "notes",
+          "label": "Additional Notes"
+        }
+      ]
+    },
+    "music": {
+      "label": "Music",
+      "questions": [
+        {
+          "id": "nickname",
+          "label": "Name/Nickname"
+        },
+        {
+          "id": "age",
+          "label": "Age"
+        },
+        {
+          "id": "pronouns",
+          "label": "Pronouns"
+        },
+        {
+          "id": "favoriteGenres",
+          "label": "Favorite Genres"
+        },
+        {
+          "id": "favoriteArtists",
+          "label": "Favorite Artists/Bands"
+        },
+        {
+          "id": "instruments",
+          "label": "Instruments Played"
+        },
+        {
+          "id": "currentlyListening",
+          "label": "Currently Listening To"
+        },
+        {
+          "id": "concerts",
+          "label": "Concerts"
+        },
+        {
+          "id": "notes",
+          "label": "Additional Notes"
+        }
+      ]
+    },
+    "art": {
+      "label": "Art",
+      "questions": [
+        {
+          "id": "nickname",
+          "label": "Name/Nickname"
+        },
+        {
+          "id": "age",
+          "label": "Age"
+        },
+        {
+          "id": "pronouns",
+          "label": "Pronouns"
+        },
+        {
+          "id": "mediums",
+          "label": "Medium(s)"
+        },
+        {
+          "id": "favoriteSubject",
+          "label": "Favorite Subject"
+        },
+        {
+          "id": "portfolioLink",
+          "label": "Portfolio Link"
+        },
+        {
+          "id": "currentlyWorkingOn",
+          "label": "Currently Working On"
+        },
+        {
+          "id": "commissionStatus",
+          "label": "Commission Status"
+        },
+        {
+          "id": "notes",
+          "label": "Additional Notes"
+        }
+      ]
+    },
+    "relationship": {
+      "label": "Relationship",
+      "questions": [
+        {
+          "id": "partners",
+          "label": "Partner(s)"
+        },
+        {
+          "id": "relationshipType",
+          "label": "Relationship Type"
+        },
+        {
+          "id": "howWeMet",
+          "label": "How We Met"
+        },
+        {
+          "id": "since",
+          "label": "Together Since"
+        },
+        {
+          "id": "whatWeLove",
+          "label": "What We Love About Each Other"
+        },
+        {
+          "id": "currently",
+          "label": "Currently"
+        },
+        {
+          "id": "notes",
+          "label": "Additional Notes"
+        }
+      ]
+    }
+  }
+}
